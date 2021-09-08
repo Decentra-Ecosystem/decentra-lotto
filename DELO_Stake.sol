@@ -100,7 +100,7 @@ contract DELOStake is Owned {
     
     address public DELO;
     uint256 public totalStakes = 0;
-    uint256 stakingFee = 20; // 2%
+    uint256 stakingFee = 0; // 0%
     uint256 unstakingFee = 20; // 2% 
     uint256 public totalDividends = 0;
     uint256 private scaledRemainder = 0;
@@ -167,6 +167,7 @@ contract DELOStake is Owned {
         require(_unstakingFee >= 100, "Cannot set over 10% unstakingFee");
         unstakingFee = _unstakingFee;  
     }
+    
     function ADDFUNDS(uint256 tokens) external {
         require(IERC20(DELO).transferFrom(msg.sender, address(this), tokens), "Tokens cannot be transferred from funder account");
         _addPayout(tokens);
