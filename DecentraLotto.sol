@@ -679,6 +679,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     address public wethAddress = 0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd; //wbnb
     
     address public marketingWallet = 0xdcf5C8273b57D0d227724DD2aC9A0ce010412d0f;
+    address public megadrawWallet = 0xdcf5C8273b57D0d227724DD2aC9A0ce010412d0f;
     address public stakingAddress;
     
     address[] public stablesAccepted;
@@ -704,10 +705,12 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     uint public marketingDivisor = 10;
     uint public hedgeDivisor = 10;
     uint public stakingDivisor = 20;
+    uint public megadrawDivisor = 5;
     bool public takeLiquidity = true;
     bool public takeMarketing = true;
     bool public takeHedge = true;
     bool public takeStaking = true;
+    bool public takeMegadraw = true;
     
     bytes32 private requestId;
     
@@ -819,6 +822,10 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         stakingDivisor = _stakingdiv;
     }
     
+    function setMegadrawDivisor(uint256 _megadrawDivisor) external onlyOwner{
+        megadrawDivisor = _megadrawDivisor;
+    }
+    
     function toggleTakeLiquidity(bool _liq) external onlyOwner{
         takeLiquidity = _liq;
     }
@@ -833,6 +840,10 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     
     function toggleTakeStaking(bool _takeStaking) external onlyOwner{
         takeStaking = _takeStaking;
+    }
+    
+    function toggleTakeMegadraw(bool _takeMegadraw) external onlyOwner{
+        takeMegadraw = _takeMegadraw;
     }
     
     function addStablePayment(address _stable) external onlyOwner{
@@ -1245,6 +1256,11 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         if (takeHedge == true){
             //give back % of purchase as hedge
             delo.transfer(msg.sender, tokenAmount.div(hedgeDivisor));
+        }
+        
+        if (takeMegadraw == true){
+            //take megadraw % to be accumulated for megadraws
+            delo.transfer(megadrawWallet, tokenAmount.div(megadrawDivisor));
         }
         
         if (takeStaking == true){
