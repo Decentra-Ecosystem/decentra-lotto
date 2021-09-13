@@ -159,12 +159,12 @@ contract DELOStake is Owned {
     }
 
     function addStakingfee(uint256 _stakingFee) public onlyOwner {
-        require(_stakingFee >= 100, "Cannot set over 10% stakingFee");  
+        require(_stakingFee <= 100, "Cannot set over 10% stakingFee");  
         stakingFee = _stakingFee;  
     }
 
     function addUnStakingfee(uint256 _unstakingFee) public onlyOwner {
-        require(_unstakingFee >= 100, "Cannot set over 10% unstakingFee");
+        require(_unstakingFee <= 100, "Cannot set over 10% unstakingFee");
         unstakingFee = _unstakingFee;  
     }
     
