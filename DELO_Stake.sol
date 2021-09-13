@@ -220,7 +220,7 @@ contract DELOStake is Owned {
         
         uint256 _unstakingFee = (onePercent(tokens).mul(unstakingFee)).div(10);
         
-       uint256 owing = pendingReward(msg.sender);
+        uint256 owing = pendingReward(msg.sender);
         stakers[msg.sender].remainder += owing;
                 
         require(IERC20(DELO).transfer(msg.sender, tokens.sub(_unstakingFee)), "Error in un-staking tokens");
