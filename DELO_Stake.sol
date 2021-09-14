@@ -135,8 +135,10 @@ contract DELOStake is Owned {
         require(IERC20(DELO).transferFrom(msg.sender, address(this), tokens), "Tokens cannot be transferred from user account");
         require( !(isContract(msg.sender)), 'inValid caller');
         uint256 _stakingFee = 0;
-        if(totalStakes > 0)
-            _stakingFee= (onePercent(tokens).mul(stakingFee)).div(10); 
+        if (stakingFee > 0){
+            if(totalStakes > 0)
+                _stakingFee= (onePercent(tokens).mul(stakingFee)).div(10); 
+        }
         
         if(totalStakes > 0)
             _addPayout(_stakingFee);
@@ -218,7 +220,9 @@ contract DELOStake is Owned {
         
         require(stakers[msg.sender].stakedTokens >= tokens && tokens > 0, "Invalid token amount to withdraw");
         
-        uint256 _unstakingFee = (onePercent(tokens).mul(unstakingFee)).div(10);
+        uint256 _unstakingFee = 0;
+        if (unstakingFee > 0)
+            _unstakingFee = (onePercent(tokens).mul(unstakingFee)).div(10);
         
         uint256 owing = pendingReward(msg.sender);
         stakers[msg.sender].remainder += owing;
