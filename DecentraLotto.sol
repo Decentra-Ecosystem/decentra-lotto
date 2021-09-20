@@ -698,8 +698,8 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     
     uint256 public priceOneTicket = 10 *10**18;
     uint256 public discountFiveTickets = 5;
-    uint256 public discountTenTickets = 15;
-    uint256 public discountTwentyTickets = 30;
+    uint256 public discountTenTickets = 10;
+    uint256 public discountTwentyTickets = 20;
     
     uint public liquidityDivisor = 10;
     uint public marketingDivisor = 10;
@@ -992,7 +992,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         uint256 deloCost = getTicketCostInDelo();
         uint256 bal = delo.balanceOf(address(this)).div(2);
         while (bal >= deloCost){
-            bal -= delo.balanceOf(address(this)).div(2);
+            bal = bal.sub(bal.div(2));
             numWinners++;
         }
         return numWinners;
