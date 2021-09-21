@@ -682,7 +682,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     address public megadrawWallet = 0xdcf5C8273b57D0d227724DD2aC9A0ce010412d0f;
     address public stakingAddress;
     
-    address[] public stablesAccepted;
+    mapping (address => bool) public stablesAccepted;
     
     uint public drawLength;
     mapping (uint => NewDraw) public draws;
@@ -712,6 +712,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     bool public takeStaking = true;
     bool public takeMegadraw = true;
     
+    uint public maxWinners = 40;
     bytes32 private requestId;
     
     IUniswapV2Router02 public uniswapV2Router;
@@ -729,9 +730,9 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         deloStaking = DELOStaking(deloStakingAddress);
         weth = IERC20(wethAddress);
         drawLength = 1 * 1 weeks;
-        stablesAccepted.push(0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7);//busd testnet
-        stablesAccepted.push(0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867);//dai testnet
-        stablesAccepted.push(0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684);//usdt testnet
+        stablesAccepted[0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7] = true; //busd testnet
+        stablesAccepted[0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867] = true; //dai testnet
+        stablesAccepted[0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684] = true; //usdt testnet
         createNextDraw();
         stakingAddress = address(this);
     }
@@ -766,6 +767,10 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         NewDraw storage draw = draws[currentDraw];
         draw.state = _newState;
         emit LotteryStateChanged(draw.state);
+    }
+    
+    function setMaxWinners(uint amt) external onlyOwner{
+        maxWinners = amt;
     }
     
     function setMarketingWallet(address _address) external onlyOwner{
@@ -850,7 +855,11 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     }
     
     function addStablePayment(address _stable) external onlyOwner{
-        stablesAccepted.push(_stable);
+        stablesAccepted[_stable] = true;
+    }
+    
+    function removeStablePayment(address _stable) external onlyOwner{
+        stablesAccepted[_stable] = false;
     }
     
     //withdraw dust
@@ -864,16 +873,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         require(_address != deloAddress, "Cannot withdraw Lottery pot");
         IERC20 token = IERC20(_address);
         token.transfer(msg.sender, amount);
-    }
-    
-    function removeStablePayment(address _stable) external onlyOwner{
-        for(uint i=0; i<stablesAccepted.length; i++){
-            if (stablesAccepted[i] == _stable){
-                stablesAccepted[i] = stablesAccepted[stablesAccepted.length-1];
-                stablesAccepted.pop();
-                break;
-            }
-        }
     }
     
     function setDrawLength(uint multiplier, uint unit) external onlyOwner returns(bool){
@@ -994,7 +993,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         uint numWinners = 0;
         uint256 deloCost = getTicketCostInDelo();
         uint256 bal = delo.balanceOf(address(this)).div(2);
-        while (bal >= deloCost){
+        while (bal >= deloCost && numWinners <= maxWinners){
             bal = bal.sub(bal.div(2));
             numWinners++;
         }
@@ -1014,7 +1013,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         
         draw.totalPot = delo.balanceOf(address(this));
         
-        while (delo.balanceOf(address(this)).div(2) >= deloCost){
+        while (delo.balanceOf(address(this)).div(2) >= deloCost && seed <= maxWinners){
             //pick a random winner
             address winner = winnersRemoveAt(uint256(keccak256(abi.encode(randomResult, seed))).mod(draw.tickets.length));
             //add them to the winners array
@@ -1088,11 +1087,11 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         uint256 cost = 0;
         uint256 price;
         if (numTickets >= 20){
-            price = priceOneTicket - priceOneTicket.div(100).mul(discountTwentyTickets);
+            price = priceOneTicket - priceOneTicket.mul(discountTwentyTickets).div(100);
         }else if(numTickets >= 10){
-            price = priceOneTicket - priceOneTicket.div(100).mul(discountTenTickets);
+            price = priceOneTicket - priceOneTicket.mul(discountTenTickets).div(100);
         }else if(numTickets >= 5){
-            price = priceOneTicket - priceOneTicket.div(100).mul(discountFiveTickets);
+            price = priceOneTicket - priceOneTicket.mul(discountFiveTickets).div(100);
         }else{
             price = priceOneTicket;
         }
@@ -1105,12 +1104,10 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
             uint256[] memory amountIn = uniswapV2Router.getAmountsIn(price, path);
             cost = amountIn[0] * numTickets;
         }else{
-            //returns the amount of stable needed
-            for(uint q=0; q < stablesAccepted.length; q++) {
-                if (stablesAccepted[q] == tokenAddress){
-                    cost = price * numTickets;
-                    break;
-                }
+            if (stablesAccepted[tokenAddress] == true){
+                cost = price * numTickets;
+            }else{
+                revert('Stable not accepted as payment');
             }
         }
         return cost;
