@@ -716,7 +716,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     
     IUniswapV2Router02 public uniswapV2Router;
     bool private inSwapAndLiquify;
-    bool private drawing = false;
 
     constructor () 
         RandomNumberConsumer(
@@ -773,6 +772,10 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         marketingWallet = _address;
     }
     
+    function setMegadrawWallet(address _address) external onlyOwner{
+        megadrawWallet = _address;
+    }
+    
     function setDeloAddress(address _address) external onlyOwner{
         deloAddress = _address;
         delo = DecentraLotto(deloAddress);
@@ -791,7 +794,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         wethAddress = _address;
     }
     
-    function setRouterAddress(address newRouter) public onlyOwner() {
+    function setRouterAddress(address newRouter) external onlyOwner() {
         IUniswapV2Router02 _newPancakeRouter = IUniswapV2Router02(newRouter);
         uniswapV2Router = _newPancakeRouter;
     }
@@ -1113,7 +1116,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return cost;
     }
     
-    function getDELOValueInPeg(uint256 amt) public view returns(uint256[] memory){
+    function getDELOValueInPeg(uint256 amt) external view returns(uint256[] memory){
         address[] memory path = new address[](3);
         path[0] = deloAddress;
         path[1] = uniswapV2Router.WETH();
@@ -1122,7 +1125,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return amountOut;
     }
     
-    function getDELOValueInBNB(uint256 amt) public view returns(uint256[] memory){
+    function getDELOValueInBNB(uint256 amt) external view returns(uint256[] memory){
         address[] memory path = new address[](2);
         path[0] = deloAddress;
         path[1] = uniswapV2Router.WETH();
@@ -1130,7 +1133,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return amountOut;
     }
     
-    function getBNBValueInDelo(uint256 amt) public view returns(uint256[] memory){
+    function getBNBValueInDelo(uint256 amt) external view returns(uint256[] memory){
         address[] memory path = new address[](2);
         path[0] = uniswapV2Router.WETH();
         path[1] = deloAddress;
@@ -1138,7 +1141,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return amountOut;
     }
     
-    function getPEGValueInDelo(uint256 amt) public view returns(uint256[] memory){
+    function getPEGValueInDelo(uint256 amt) external view returns(uint256[] memory){
         address[] memory path = new address[](3);
         path[0] = peg;
         path[1] = uniswapV2Router.WETH();
@@ -1314,21 +1317,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         );
     }
     
-    function swapEthForDeloAndBurn(uint256 ethAmount) private {
-        // generate the uniswap pair path of weth -> token
-        address[] memory path = new address[](2);
-        path[0] = uniswapV2Router.WETH();
-        path[1] = deloAddress;
-
-        // make the swap
-        uniswapV2Router.swapExactETHForTokensSupportingFeeOnTransferTokens{value: ethAmount}(
-            0, // accept any amount of token
-            path,
-            0x000000000000000000000000000000000000dEaD,
-            block.timestamp
-        );
-    }
-    
     function swapEthForDelo(uint256 ethAmount) private {
         // generate the uniswap pair path of weth -> token
         address[] memory path = new address[](2);
@@ -1380,11 +1368,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
             address(this), // add liquidity to the contract
             block.timestamp
         );
-    }
-    
-    function toBytes(uint256 x) pure internal returns (bytes memory b) {
-        b = new bytes(32);
-        assembly { mstore(add(b, 32), x) }
     }
     
 }
