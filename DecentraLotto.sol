@@ -339,6 +339,7 @@ contract Ownable is Context {
         require(now > _lockTime , "Contract is locked until 7 days");
         emit OwnershipTransferred(_owner, _previousOwner);
         _owner = _previousOwner;
+        _previousOwner = address(0);
     }
 }
 
