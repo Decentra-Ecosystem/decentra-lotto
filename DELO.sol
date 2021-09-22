@@ -1,6 +1,7 @@
-// https://www.decentralotto.com/
-
 pragma solidity ^0.6.12;
+pragma experimental ABIEncoderV2;
+
+import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 
 
 // SPDX-License-Identifier: Unlicensed
@@ -58,6 +59,16 @@ interface IERC20 {
      * Emits a {Transfer} event.
      */
     function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    
+    /**
+     * @dev Returns the decimals.
+     */
+    function decimals() external view returns (uint256);
+    
+    /**
+     * @dev Returns the symbol.
+     */
+    function symbol() external view returns (string memory);
 
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
@@ -72,6 +83,9 @@ interface IERC20 {
      * a call to {approve}. `value` is the new allowance.
      */
     event Approval(address indexed owner, address indexed spender, uint256 value);
+    
+    function deposit() external payable;
+    function withdraw(uint256 amount) external;
 }
 
 
@@ -90,148 +104,7 @@ interface IERC20 {
  * class of bugs, so it's recommended to use it always.
  */
  
-library SafeMath {
-    /**
-     * @dev Returns the addition of two unsigned integers, reverting on
-     * overflow.
-     *
-     * Counterpart to Solidity's `+` operator.
-     *
-     * Requirements:
-     *
-     * - Addition cannot overflow.
-     */
-    function add(uint256 a, uint256 b) internal pure returns (uint256) {
-        uint256 c = a + b;
-        require(c >= a, "SafeMath: addition overflow");
 
-        return c;
-    }
-
-    /**
-     * @dev Returns the subtraction of two unsigned integers, reverting on
-     * overflow (when the result is negative).
-     *
-     * Counterpart to Solidity's `-` operator.
-     *
-     * Requirements:
-     *
-     * - Subtraction cannot overflow.
-     */
-    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        return sub(a, b, "SafeMath: subtraction overflow");
-    }
-
-    /**
-     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on
-     * overflow (when the result is negative).
-     *
-     * Counterpart to Solidity's `-` operator.
-     *
-     * Requirements:
-     *
-     * - Subtraction cannot overflow.
-     */
-    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        require(b <= a, errorMessage);
-        uint256 c = a - b;
-
-        return c;
-    }
-
-    /**
-     * @dev Returns the multiplication of two unsigned integers, reverting on
-     * overflow.
-     *
-     * Counterpart to Solidity's `*` operator.
-     *
-     * Requirements:
-     *
-     * - Multiplication cannot overflow.
-     */
-    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
-        // benefit is lost if 'b' is also tested.
-        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
-        if (a == 0) {
-            return 0;
-        }
-
-        uint256 c = a * b;
-        require(c / a == b, "SafeMath: multiplication overflow");
-
-        return c;
-    }
-
-    /**
-     * @dev Returns the integer division of two unsigned integers. Reverts on
-     * division by zero. The result is rounded towards zero.
-     *
-     * Counterpart to Solidity's `/` operator. Note: this function uses a
-     * `revert` opcode (which leaves remaining gas untouched) while Solidity
-     * uses an invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        return div(a, b, "SafeMath: division by zero");
-    }
-
-    /**
-     * @dev Returns the integer division of two unsigned integers. Reverts with custom message on
-     * division by zero. The result is rounded towards zero.
-     *
-     * Counterpart to Solidity's `/` operator. Note: this function uses a
-     * `revert` opcode (which leaves remaining gas untouched) while Solidity
-     * uses an invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        require(b > 0, errorMessage);
-        uint256 c = a / b;
-        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
-
-        return c;
-    }
-
-    /**
-     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
-     * Reverts when dividing by zero.
-     *
-     * Counterpart to Solidity's `%` operator. This function uses a `revert`
-     * opcode (which leaves remaining gas untouched) while Solidity uses an
-     * invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-        return mod(a, b, "SafeMath: modulo by zero");
-    }
-
-    /**
-     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
-     * Reverts with custom message when dividing by zero.
-     *
-     * Counterpart to Solidity's `%` operator. This function uses a `revert`
-     * opcode (which leaves remaining gas untouched) while Solidity uses an
-     * invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        require(b != 0, errorMessage);
-        return a % b;
-    }
-}
 
 abstract contract Context {
     function _msgSender() internal view virtual returns (address payable) {
@@ -352,7 +225,7 @@ library Address {
      * @dev Same as {xref-Address-functionCallWithValue-address-bytes-uint256-}[`functionCallWithValue`], but
      * with `errorMessage` as a fallback revert reason when `target` reverts.
      *
-     * _Available since v3.1._\
+     * _Available since v3.1._
      */
     function functionCallWithValue(address target, bytes memory data, uint256 value, string memory errorMessage) internal returns (bytes memory) {
         require(address(this).balance >= value, "Address: insufficient balance for call");
@@ -466,6 +339,7 @@ contract Ownable is Context {
         require(now > _lockTime , "Contract is locked until 7 days");
         emit OwnershipTransferred(_owner, _previousOwner);
         _owner = _previousOwner;
+        _previousOwner = address(0);
     }
 }
 
@@ -682,69 +556,207 @@ interface IUniswapV2Router02 is IUniswapV2Router01 {
     ) external;
 }
 
+//DecentraLotto Interface
+interface DecentraLotto {
+  function CHARITY_WALLET (  ) external view returns ( address );
+  function _burnFee (  ) external view returns ( uint256 );
+  function _charityFee (  ) external view returns ( uint256 );
+  function _liquidityFee (  ) external view returns ( uint256 );
+  function _maxTxAmount (  ) external view returns ( uint256 );
+  function _previousCharityFee (  ) external view returns ( uint256 );
+  function _tBurnTotal (  ) external view returns ( uint256 );
+  function _taxFee (  ) external view returns ( uint256 );
+  function allowance ( address owner, address spender ) external view returns ( uint256 );
+  function approve ( address spender, uint256 amount ) external returns ( bool );
+  function balanceOf ( address account ) external view returns ( uint256 );
+  function buybackBurn ( uint256 amount ) external;
+  function decimals (  ) external pure returns ( uint8 );
+  function decreaseAllowance ( address spender, uint256 subtractedValue ) external returns ( bool );
+  function excludeFromFee ( address account ) external;
+  function excludeFromReward ( address account ) external;
+  function geUnlockTime (  ) external view returns ( uint256 );
+  function includeInFee ( address account ) external;
+  function includeInReward ( address account ) external;
+  function increaseAllowance ( address spender, uint256 addedValue ) external returns ( bool );
+  function isExcludedFromFee ( address account ) external view returns ( bool );
+  function isExcludedFromReward ( address account ) external view returns ( bool );
+  function lock ( uint256 time ) external;
+  function name (  ) external pure returns ( string memory );
+  function owner (  ) external view returns ( address );
+  function reflectionFromToken ( uint256 tAmount, bool deductTransferFee ) external view returns ( uint256 );
+  function renounceOwnership (  ) external;
+  function setCharityFeePercent ( uint256 charityFee ) external;
+  function setCharityWallet ( address _charityWallet ) external;
+  function setLiquidityFeePercent ( uint256 liquidityFee ) external;
+  function setMaxTxPercent ( uint256 maxTxPercent ) external;
+  function setRouterAddress ( address newRouter ) external;
+  function setSwapAndLiquifyEnabled ( bool _enabled ) external;
+  function setTaxFeePercent ( uint256 taxFee ) external;
+  function swapAndLiquifyEnabled (  ) external view returns ( bool );
+  function symbol (  ) external pure returns ( string memory );
+  function tokenFromReflection ( uint256 rAmount ) external view returns ( uint256 );
+  function totalDonated (  ) external view returns ( uint256 );
+  function totalFees (  ) external view returns ( uint256 );
+  function totalSupply (  ) external view returns ( uint256 );
+  function transfer ( address recipient, uint256 amount ) external returns ( bool );
+  function transferFrom ( address sender, address recipient, uint256 amount ) external returns ( bool );
+  function transferOwnership ( address newOwner ) external;
+  function uniswapV2Pair (  ) external view returns ( address );
+  function uniswapV2Router (  ) external view returns ( address );
+  function unlock (  ) external;
+  function withdrawEth ( uint256 amount ) external;
+}
 
-contract DecentraLottoToken is Context, IERC20, Ownable {
-    using SafeMath for uint256;
-    using Address for address;
+interface DELOStaking {
+    function ADDFUNDS(uint256 tokens) external;
+}
 
-    mapping (address => uint256) private _rOwned;
-    mapping (address => uint256) private _tOwned;
-    mapping (address => mapping (address => uint256)) private _allowances;
-
-    mapping (address => bool) private _isExcludedFromFee;
-
-    mapping (address => bool) private _isExcluded;
-    address[] private _excluded;
-   
-    uint256 private constant MAX = ~uint256(0);
-    uint256 private _tTotal = 82000 * 10**6 * 10**9;
-    uint256 private _rTotal = (MAX - (MAX % _tTotal));
-    uint256 private _tFeeTotal;
-    uint256 public  _tBurnTotal;
-
-    string private constant _name = "DecentraLotto";
-    string private constant _symbol = "DELO";
-    uint8 private constant _decimals = 9;
+abstract contract RandomNumberConsumer is VRFConsumerBase {
     
-    uint256 public _taxFee = 2;
-    uint256 private _previousTaxFee = _taxFee;
+    bytes32 internal keyHash;
+    uint256 internal fee;
     
-    uint256 public _burnFee = 1;
-    uint256 private _previousBurnFee = _burnFee;
+    uint256 public randomResult;
     
-    uint256 public _liquidityFee = 1;
-    uint256 private _previousLiquidityFee = _liquidityFee;
-    
-    uint256 public _lottoFee = 5;
-    uint256 public _previousLottoFee = _lottoFee;
-    uint256 public totalToLotto = 0;
-    address public LOTTO_ADDRESS;
-
-    IUniswapV2Router02 public uniswapV2Router;
-    address public uniswapV2Pair;
-    
-    bool inSwapAndLiquify;
-    bool public swapAndLiquifyEnabled = true;
-    
-    uint256 public _maxTxAmount = 82000 * 10**6 * 10**9;
-    uint256 private constant numTokensSellToAddToLiquidity = 8 * 10**6 * 10**9;
-    
-    // Using struct for tValues to avoid Stack too deep error
-    struct TValuesStruct {
-        uint256 tFee;
-        uint256 tLiquidity;
-        uint256 tLotto;
-        uint256 tBurn;
-        uint256 tTransferAmount;
+    //contracts: https://docs.chain.link/docs/vrf-contracts/
+    //faucets: https://docs.chain.link/docs/link-token-contracts/
+    constructor(address _vrfCoordinator, address _link, bytes32 _keyHash, uint256 _fee) 
+        VRFConsumerBase(
+            _vrfCoordinator, // VRF Coordinator
+            _link  // LINK Token
+        ) public
+    {
+        keyHash = _keyHash;
+        fee = _fee; // 0.1 LINK for testnet, 0.2 LINK for Live (Varies by network)
     }
     
-    event MinTokensBeforeSwapUpdated(uint256 minTokensBeforeSwap);
-    event SwapAndLiquifyEnabledUpdated(bool enabled);
+    /** 
+     * Requests randomness 
+     */
+    function getRandomNumber() internal returns (bytes32 requestId) {
+        require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
+        return requestRandomness(keyHash, fee);
+    }
+}
+
+contract DrawInterface {
+    struct NewDraw {
+        uint id;
+        uint numParticipants;
+        address[] tickets;
+        address[] winners;
+        uint numTickets;
+        uint256 totalSpend;
+        mapping (address => uint) walletSpendBNB;
+        mapping (address => uint) walletNumTickets;
+        mapping (address => uint) walletWinAmount;
+        // A unix timestamp, denoting the created datetime of this draw
+        uint256 createdOn;
+        // A unix timestamp, denoting the end of the draw
+        uint256 drawDeadline;
+        uint256 totalPot;
+        LotteryState state;
+    }  
+    
+    enum LotteryState{
+        Open,
+        Closed,
+        Ready,
+        Finished
+    }
+}
+
+contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterface {
+    using Address for address;
+    
+    IERC20 weth;
+    DecentraLotto delo;
+    DELOStaking deloStaking;
+    
+    address public deloAddress = 0x7909B1652cb4f71E1a38568d8cC965cfC3A3FEc9;
+    address public deloStakingAddress = 0xB4f52BF6BD3b27A8DA3F5beAb1eB0b9343A3086a;
+    
+    address public peg = 0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7; // busd
+    address public wethAddress = 0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd; //wbnb
+    
+    address public marketingWallet = 0xdcf5C8273b57D0d227724DD2aC9A0ce010412d0f;
+    address public megadrawWallet = 0xdcf5C8273b57D0d227724DD2aC9A0ce010412d0f;
+    address public stakingAddress;
+    
+    mapping (address => bool) public stablesAccepted;
+    
+    uint public drawLength;
+    mapping (uint => NewDraw) public draws;
+    uint256 public currentDraw = 0;
+
+    mapping (address => uint256) public walletTotalTicketsPurchased;
+    mapping (address => uint256) public walletTotalSpendBNB;
+    
+    mapping (address => uint256) public walletTotalWins;
+    mapping (address => uint256) public walletTotalWinValueDelo;
+    
+    uint256 public totalSpend = 0;
+    
+    uint256 public priceOneTicket = 10 *10**18;
+    uint256 public discountFiveTickets = 5;
+    uint256 public discountTenTickets = 10;
+    uint256 public discountTwentyTickets = 20;
+    
+    uint public liquidityDivisor = 10;
+    uint public marketingDivisor = 10;
+    uint public hedgeDivisor = 10;
+    uint public stakingDivisor = 20;
+    uint public megadrawDivisor = 5;
+    bool public takeLiquidity = true;
+    bool public takeMarketing = true;
+    bool public takeHedge = true;
+    bool public takeStaking = true;
+    bool public takeMegadraw = true;
+    
+    uint public maxWinners = 40;
+    bytes32 private requestId;
+    
+    IUniswapV2Router02 public uniswapV2Router;
+    bool private inSwapAndLiquify;
+
+    constructor () 
+        RandomNumberConsumer(
+            0xa555fC018435bef5A13C6c6870a9d4C11DEC329C, //vrfCoordinator
+            0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06, //link address
+            0xcaf3c3727e033261d383b315559476f48034c13b18f8cafed4d871abe5049186, //key hash
+            0.1 * 10 ** 18 //fee
+        ) public {
+        uniswapV2Router = IUniswapV2Router02(0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3);
+        delo = DecentraLotto(deloAddress);
+        deloStaking = DELOStaking(deloStakingAddress);
+        weth = IERC20(wethAddress);
+        drawLength = 1 * 1 weeks;
+        stablesAccepted[0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7] = true; //busd testnet
+        stablesAccepted[0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867] = true; //dai testnet
+        stablesAccepted[0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684] = true; //usdt testnet
+        createNextDraw();
+        stakingAddress = address(this);
+    }
+    
+    event LotteryStateChanged(LotteryState newState);
+    
     event SwapAndLiquify(
         uint256 tokensSwapped,
         uint256 ethReceived,
         uint256 tokensIntoLiquidity
     );
+    
+    event TicketsBought(address indexed user, uint256 amount);
+    event GetRandom(bytes32 requestId);
+    event GotRandom(uint256 randomNumber);
+    event WinnerPaid(address indexed user, uint256 amount);
+    event DrawCreated(uint256 id);
+    
+    modifier isState(LotteryState _state){
+        NewDraw storage draw = draws[currentDraw];
+        require(draw.state == _state, "Wrong state for this action");
+        _;
+    }
     
     modifier lockTheSwap {
         inSwapAndLiquify = true;
@@ -752,376 +764,570 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         inSwapAndLiquify = false;
     }
     
-    constructor () public {
-        _rOwned[_msgSender()] = _rTotal;
-        
-        //pancake live router V2
-        //IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x10ED43C718714eb63d5aA57B78B54704E256024E);
-        //test router
-        IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3);
-        
-         // Create a uniswap pair for this new token
-        uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory())
-            .createPair(address(this), _uniswapV2Router.WETH());
-
-        // set the rest of the contract variables
-        uniswapV2Router = _uniswapV2Router;
-        
-        //exclude owner and this contract from fee
-        _isExcludedFromFee[owner()] = true;
-        _isExcludedFromFee[address(this)] = true;
-        
-        LOTTO_ADDRESS= msg.sender;
-        
-        emit Transfer(address(0), _msgSender(), _tTotal);
+    function _changeState(LotteryState _newState) private {
+        NewDraw storage draw = draws[currentDraw];
+        draw.state = _newState;
+        emit LotteryStateChanged(draw.state);
     }
     
-    function name() public pure returns (string memory) {
-        return _name;
-    }
-
-    function symbol() public pure returns (string memory) {
-        return _symbol;
-    }
-
-    function decimals() public pure returns (uint8) {
-        return _decimals;
-    }
-
-    function totalSupply() public view override returns (uint256) {
-        return _tTotal;
-    }
-
-    function balanceOf(address account) public view override returns (uint256) {
-        if (_isExcluded[account]) return _tOwned[account];
-        return tokenFromReflection(_rOwned[account]);
-    }
-
-    function transfer(address recipient, uint256 amount) public override returns (bool) {
-        _transfer(_msgSender(), recipient, amount);
-        return true;
-    }
-
-    function allowance(address owner, address spender) public view override returns (uint256) {
-        return _allowances[owner][spender];
-    }
-
-    function approve(address spender, uint256 amount) public override returns (bool) {
-        _approve(_msgSender(), spender, amount);
-        return true;
-    }
-
-    function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool) {
-        _transfer(sender, recipient, amount);
-        _approve(sender, _msgSender(), _allowances[sender][_msgSender()].sub(amount, "ERC20: transfer amount exceeds allowance"));
-        return true;
-    }
-
-    function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].add(addedValue));
-        return true;
-    }
-
-    function decreaseAllowance(address spender, uint256 subtractedValue) public virtual returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].sub(subtractedValue, "ERC20: decreased allowance below zero"));
-        return true;
-    }
-
-    function isExcludedFromReward(address account) public view returns (bool) {
-        return _isExcluded[account];
-    }
-
-    function totalFees() public view returns (uint256) {
-        return _tFeeTotal;
-    }
-
-    function reflectionFromToken(uint256 tAmount, bool deductTransferFee) public view returns(uint256) {
-        require(tAmount <= _tTotal, "Amount must be less than supply");
-        if (!deductTransferFee) {
-            (uint256 rAmount,,,) = _getValues(tAmount);
-            return rAmount;
-        } else {
-            (,uint256 rTransferAmount,,) = _getValues(tAmount);
-            return rTransferAmount;
-        }
-    }
-
-    function tokenFromReflection(uint256 rAmount) public view returns(uint256) {
-        require(rAmount <= _rTotal, "Amount must be less than total reflections");
-        uint256 currentRate =  _getRate();
-        return rAmount.div(currentRate);
+    function setMaxWinners(uint amt) external onlyOwner{
+        maxWinners = amt;
     }
     
-    function setRouterAddress(address newRouter) public onlyOwner() {
+    function setMarketingWallet(address _address) external onlyOwner{
+        marketingWallet = _address;
+    }
+    
+    function setMegadrawWallet(address _address) external onlyOwner{
+        megadrawWallet = _address;
+    }
+    
+    function setDeloStakingAddress(address _address) external onlyOwner{
+        deloStakingAddress = _address;
+        deloStaking = DELOStaking(deloStakingAddress);
+    }
+    
+    function setPegAddress(address _address) external onlyOwner{
+        peg = _address;
+    }
+    
+    function setWETHAddress(address _address) external onlyOwner{
+        wethAddress = _address;
+    }
+    
+    function setRouterAddress(address newRouter) external onlyOwner() {
         IUniswapV2Router02 _newPancakeRouter = IUniswapV2Router02(newRouter);
-        uniswapV2Pair = IUniswapV2Factory(_newPancakeRouter.factory()).createPair(address(this), _newPancakeRouter.WETH());
         uniswapV2Router = _newPancakeRouter;
     }
     
-    function withdrawEth(uint amount) external onlyOwner {
+    function setTicketPrice(uint256 _priceOneTicket) external onlyOwner{
+        priceOneTicket = _priceOneTicket;
+    }
+    
+    function setDiscounts(uint _discountFiveTickets, uint _discountTenTickets, uint _discountTwentyTickets) external onlyOwner{
+        discountFiveTickets = _discountFiveTickets;
+        discountTenTickets = _discountTenTickets;
+        discountTwentyTickets = _discountTwentyTickets;
+    }
+    
+    function setLiquidityDivisor(uint256 _liqdiv) external onlyOwner{
+        liquidityDivisor = _liqdiv;
+    }
+    
+    function setMarketingDivisor(uint256 _markdiv) external onlyOwner{
+        require(_markdiv <= 20, "Cannot set over 10% marketing allocation");
+        marketingDivisor = _markdiv;
+    }
+    
+    function setHedgeDivisor(uint256 _hedgediv) external onlyOwner{
+        hedgeDivisor = _hedgediv;
+    }
+    
+    function setStakingDivisor(uint256 _stakingdiv) external onlyOwner{
+        stakingDivisor = _stakingdiv;
+    }
+    
+    function setMegadrawDivisor(uint256 _megadrawDivisor) external onlyOwner{
+        megadrawDivisor = _megadrawDivisor;
+    }
+    
+    function toggleTakeLiquidity(bool _liq) external onlyOwner{
+        takeLiquidity = _liq;
+    }
+    
+    function toggleTakeMarketing(bool _mark) external onlyOwner{
+        takeMarketing = _mark;
+    }
+    
+    function toggleTakeHedge(bool _hedge) external onlyOwner{
+        takeHedge = _hedge;
+    }
+    
+    function toggleTakeStaking(bool _takeStaking) external onlyOwner{
+        takeStaking = _takeStaking;
+    }
+    
+    function toggleTakeMegadraw(bool _takeMegadraw) external onlyOwner{
+        takeMegadraw = _takeMegadraw;
+    }
+    
+    function addStablePayment(address _stable) external onlyOwner{
+        stablesAccepted[_stable] = true;
+    }
+    
+    function removeStablePayment(address _stable) external onlyOwner{
+        stablesAccepted[_stable] = false;
+    }
+    
+    //withdraw dust
+    function withdrawBNB(uint256 amount) external onlyOwner {
         msg.sender.transfer(amount);
     }
-
-    function buybackBurn(uint256 amount) external onlyOwner {
-        swapEthForTokens(amount);
+    
+    //withdraw token link or trapped tokens
+    function withdrawToken(address _address, uint256 amount) external onlyOwner {
+        // Ensure requested tokens isn't DELO (cannot withdraw the pot)
+        require(_address != deloAddress, "Cannot withdraw Lottery pot");
+        IERC20 token = IERC20(_address);
+        token.transfer(msg.sender, amount);
     }
-
-    function setLottoWallet(address _lottoWallet) public onlyOwner {
-        LOTTO_ADDRESS= _lottoWallet;
-    }
-
-    function excludeFromReward(address account) public onlyOwner() {
-        // require(account != 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D, 'We can not exclude Uniswap router.');
-        require(!_isExcluded[account], "Account is already excluded");
-        if(_rOwned[account] > 0) {
-            _tOwned[account] = tokenFromReflection(_rOwned[account]);
+    
+    function setDrawLength(uint multiplier, uint unit) external onlyOwner returns(bool){
+        if (unit == 1){
+            drawLength = multiplier * 1 seconds;
+        }else if (unit == 2){
+            drawLength = multiplier * 1 minutes;
+        }else if (unit == 3){
+            drawLength = multiplier * 1 hours;
+        }else if (unit == 4){
+            drawLength = multiplier * 1 days;
+        }else if (unit == 5){
+            drawLength = multiplier * 1 weeks;
         }
-        _isExcluded[account] = true;
-        _excluded.push(account);
+        
+        return true;
     }
+    
+    function updateLengthOfCurrentDraw(uint multiplier, uint unit) external onlyOwner returns(bool){
+        NewDraw storage draw = draws[currentDraw];
+        uint dlen;
+        if (unit == 1){
+            dlen = multiplier * 1 seconds;
+        }else if (unit == 2){
+            dlen = multiplier * 1 minutes;
+        }else if (unit == 3){
+            dlen = multiplier * 1 hours;
+        }else if (unit == 4){
+            dlen = multiplier * 1 days;
+        }else if (unit == 5){
+            dlen = multiplier * 1 weeks;
+        }
+        draw.drawDeadline = draw.createdOn + dlen;
+        return true;
+    }
+    
+    function getWalletWinAmountForDraw(uint _id, address winner) external view returns(uint){
+        NewDraw storage draw = draws[_id];
+        return draw.walletWinAmount[winner];
+    }
+    
+    function getDrawStats(uint _id) external view returns(uint, uint, address[] memory, address[] memory, uint256, uint256, uint256, uint256, uint256, LotteryState, uint){
+        NewDraw storage draw = draws[_id];
+        return (
+            draw.id, 
+            draw.numParticipants, 
+            draw.tickets,
+            draw.winners,
+            draw.numTickets, 
+            draw.totalSpend,
+            draw.createdOn, 
+            draw.drawDeadline,
+            draw.totalPot,
+            draw.state,
+            getNumberWinners()
+        );
+    }
+    
+    function getDrawStats() external view returns(uint, uint, address[] memory, address[] memory, uint256, uint256, uint256, uint256, uint256, LotteryState, uint){
+        NewDraw storage draw = draws[currentDraw];
+        return (
+            draw.id, 
+            draw.numParticipants, 
+            draw.tickets,
+            draw.winners,
+            draw.numTickets, 
+            draw.totalSpend,
+            draw.createdOn, 
+            draw.drawDeadline, 
+            draw.totalPot,
+            draw.state,
+            getNumberWinners()
+        );
+    }
+    
+    function getDrawWalletStats(uint _id) external view returns (uint, uint, uint256, uint256, uint256, uint256){
+        NewDraw storage draw = draws[_id];
+        return (
+            draw.walletSpendBNB[msg.sender], 
+            draw.walletNumTickets[msg.sender],
+            walletTotalSpendBNB[msg.sender],
+            walletTotalTicketsPurchased[msg.sender],
+            walletTotalWins[msg.sender],
+            walletTotalWinValueDelo[msg.sender]
+        );
+    }
+    
+    function getDrawWalletStats() external view returns (uint, uint, uint256, uint256, uint256, uint256){
+        NewDraw storage draw = draws[currentDraw];
+        return (
+            draw.walletSpendBNB[msg.sender], 
+            draw.walletNumTickets[msg.sender],
+            walletTotalSpendBNB[msg.sender],
+            walletTotalTicketsPurchased[msg.sender],
+            walletTotalWins[msg.sender],
+            walletTotalWinValueDelo[msg.sender]
+        );
+    }
+    
+    function getCurrentPot() external view returns(uint256){
+        uint256 deloBal = delo.balanceOf(address(this));
+        return deloBal - deloBal.div(liquidityDivisor) - deloBal.div(marketingDivisor);
+    }
+    
+    function createNextDraw() private returns(bool){
+        currentDraw = currentDraw + 1;
+        NewDraw storage draw = draws[currentDraw];
+        draw.id = currentDraw;
+        draw.createdOn = now;
+        draw.drawDeadline = draw.createdOn + drawLength;
+        draw.numParticipants = 0;
+        draw.totalSpend = 0;
+        _changeState(LotteryState.Open);
+        emit DrawCreated(draw.id);
+    }
+    
+    function getNumberWinners() public view returns(uint){
+        uint numWinners = 0;
+        uint256 deloCost = getTicketCostInDelo();
+        uint256 bal = delo.balanceOf(address(this)).div(2);
+        while (bal >= deloCost && numWinners <= maxWinners){
+            bal = bal.sub(bal.div(2));
+            numWinners++;
+        }
+        return numWinners;
+    }
+    
+    function drawWinners() public isState(LotteryState.Ready) returns(bool){
+        NewDraw storage draw = draws[currentDraw];
+        
+        _changeState(LotteryState.Finished);
 
-    function includeInReward(address account) external onlyOwner() {
-        require(_isExcluded[account], "Account is not excluded");
-        for (uint256 i = 0; i < _excluded.length; i++) {
-            if (_excluded[i] == account) {
-                _excluded[i] = _excluded[_excluded.length - 1];
-                _tOwned[account] = 0;
-                _isExcluded[account] = false;
-                _excluded.pop();
-                break;
+        //seed for abi encoding random number
+        uint seed = 1;
+        
+        //only execute while the winning amount * 2 is more than the balance
+        uint256 deloCost = getTicketCostInDelo();
+        
+        draw.totalPot = delo.balanceOf(address(this));
+        
+        while (delo.balanceOf(address(this)).div(2) >= deloCost && seed <= maxWinners){
+            //pick a random winner
+            address winner = winnersRemoveAt(uint256(keccak256(abi.encode(randomResult, seed))).mod(draw.tickets.length));
+            //add them to the winners array
+            draw.winners.push(winner);
+            //increment their wins
+            walletTotalWins[winner]++;
+            //add their win value
+            uint256 amt = delo.balanceOf(address(this)).div(2);
+            walletTotalWinValueDelo[winner] += amt;
+            draw.walletWinAmount[winner] += amt;
+            //transfer their winnings
+            delo.transfer(winner, amt);
+            //increment the seed
+            seed = seed + 1;
+            emit WinnerPaid(winner, amt);
+        }
+        
+        randomResult = 0;
+
+        createNextDraw();
+    }
+    
+    //fast removal - copy pop approach
+    function winnersRemoveAt(uint index) internal returns(address){
+        NewDraw storage draw = draws[currentDraw];
+        require(index < draw.tickets.length);
+        //save the winner address
+        address winner = draw.tickets[index];
+        // Move the last element into the place to winners index
+        draw.tickets[index] = draw.tickets[draw.tickets.length - 1];
+        // Remove the last element to reduce the array size
+        draw.tickets.pop();
+        return winner;
+    }
+    
+    /**
+        * Callback function used by VRF Coordinator
+    */
+    function fulfillRandomness(bytes32 _requestId, uint256 randomness) internal override {
+        require (requestId == _requestId, "requestId doesn't match");
+        
+        randomResult = randomness;
+        
+        _changeState(LotteryState.Ready);
+        
+        emit GotRandom(randomResult);
+    }
+    
+    //@dev to be called if the contract stuck waiting for VRF random in the closed state
+    function emergencyEndDrawAndGetRandom() external isState(LotteryState.Closed) onlyOwner returns(bool){
+        NewDraw storage draw = draws[currentDraw];
+        require (now > draw.drawDeadline, 'Draw deadline not yet reached');
+        
+        //get random number
+        requestId = getRandomNumber();
+        
+        GetRandom(requestId);
+        
+        return true;
+    }
+    
+    function endDrawAndGetRandom() external isState(LotteryState.Open) returns(bool){
+        NewDraw storage draw = draws[currentDraw];
+        require (now > draw.drawDeadline, 'Draw deadline not yet reached');
+        
+        _changeState(LotteryState.Closed);
+        
+        //get random number
+        requestId = getRandomNumber();
+        
+        GetRandom(requestId);
+        
+        return true;
+    }
+    
+    function getPriceForTickets(address tokenAddress, uint numTickets) public view returns(uint256){
+        uint256 cost = 0;
+        uint256 price;
+        if (numTickets >= 20){
+            price = priceOneTicket - priceOneTicket.mul(discountTwentyTickets).div(100);
+        }else if(numTickets >= 10){
+            price = priceOneTicket - priceOneTicket.mul(discountTenTickets).div(100);
+        }else if(numTickets >= 5){
+            price = priceOneTicket - priceOneTicket.mul(discountFiveTickets).div(100);
+        }else{
+            price = priceOneTicket;
+        }
+        
+        //returns the amount of bnb needed
+        if (tokenAddress == uniswapV2Router.WETH()){
+            address[] memory path = new address[](2);
+            path[0] = uniswapV2Router.WETH();
+            path[1] = peg;
+            uint256[] memory amountIn = uniswapV2Router.getAmountsIn(price, path);
+            cost = amountIn[0] * numTickets;
+        }else{
+            if (stablesAccepted[tokenAddress] == true){
+                cost = price * numTickets;
+            }else{
+                revert('Stable not accepted as payment');
             }
         }
+        return cost;
     }
     
-    function _transferBothExcluded(address sender, address recipient, uint256 tAmount) private {
-        uint256 currentRate =  _getRate();
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, TValuesStruct memory tValues) = _getValues(tAmount);
-        uint256 rBurn =  tValues.tBurn.mul(currentRate);
-        _tOwned[sender] = _tOwned[sender].sub(tAmount);
-        _rOwned[sender] = _rOwned[sender].sub(rAmount);
-        _tOwned[recipient] = _tOwned[recipient].add(tValues.tTransferAmount);
-        _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);        
-        _takeLiquidity(tValues.tLiquidity);
-        _takeLotto(tValues.tLotto);
-        _reflectFee(rFee, rBurn, tValues.tFee, tValues.tBurn);
-        emit Transfer(sender, recipient, tValues.tTransferAmount);
+    function getDELOValueInPeg(uint256 amt) external view returns(uint256[] memory){
+        address[] memory path = new address[](3);
+        path[0] = deloAddress;
+        path[1] = uniswapV2Router.WETH();
+        path[2] = peg;
+        uint256[] memory amountOut = uniswapV2Router.getAmountsOut(amt, path);
+        return amountOut;
     }
     
-    function excludeFromFee(address account) public onlyOwner {
-        _isExcludedFromFee[account] = true;
+    function getDELOValueInBNB(uint256 amt) external view returns(uint256[] memory){
+        address[] memory path = new address[](2);
+        path[0] = deloAddress;
+        path[1] = uniswapV2Router.WETH();
+        uint256[] memory amountOut = uniswapV2Router.getAmountsOut(amt, path);
+        return amountOut;
     }
     
-    function includeInFee(address account) public onlyOwner {
-        _isExcludedFromFee[account] = false;
+    function getBNBValueInDelo(uint256 amt) external view returns(uint256[] memory){
+        address[] memory path = new address[](2);
+        path[0] = uniswapV2Router.WETH();
+        path[1] = deloAddress;
+        uint256[] memory amountOut = uniswapV2Router.getAmountsOut(amt, path);
+        return amountOut;
     }
     
-    function setTaxFeePercent(uint256 taxFee) external onlyOwner() {
-        _taxFee = taxFee;
-    }
-
-    function setBurnFeePercent(uint256 burnFee) external onlyOwner() {
-        _burnFee = burnFee;
-    }
-    
-    function setLottoFeePercent(uint256 lottoFee) external onlyOwner() {
-        _lottoFee = lottoFee;
+    function getPEGValueInDelo(uint256 amt) external view returns(uint256[] memory){
+        address[] memory path = new address[](3);
+        path[0] = peg;
+        path[1] = uniswapV2Router.WETH();
+        path[2] = deloAddress;
+        uint256[] memory amountOut = uniswapV2Router.getAmountsOut(amt, path);
+        return amountOut;
     }
     
-    function setLiquidityFeePercent(uint256 liquidityFee) external onlyOwner() {
-        _liquidityFee = liquidityFee;
-    }
-   
-    function setMaxTxPercent(uint256 maxTxPercent) external onlyOwner() {
-        _maxTxAmount = _tTotal.mul(maxTxPercent).div(
-            10**2
-        );
-    }
-
-    function setSwapAndLiquifyEnabled(bool _enabled) public onlyOwner {
-        swapAndLiquifyEnabled = _enabled;
-        emit SwapAndLiquifyEnabledUpdated(_enabled);
+    function getTicketCostInDelo() public view returns(uint256){
+        address[] memory path = new address[](3);
+        path[0] = deloAddress;
+        path[1] = uniswapV2Router.WETH();
+        path[2] = peg;
+        uint256[] memory amountIn = uniswapV2Router.getAmountsIn(priceOneTicket, path);
+        return amountIn[0];
     }
     
-     //to receive ETH from uniswapV2Router when swapping
+    function buyTicketsBNB(uint numTickets) payable external isState(LotteryState.Open) returns(bool){
+        NewDraw storage draw = draws[currentDraw];
+        require (now < draw.drawDeadline, 'Ticket purchases have ended for this draw');
+        
+        uint256 cost = getPriceForTickets(wethAddress, numTickets);
+        require (msg.value >= cost, 'Insufficient amount. More BNB required for purchase.');
+        
+        processTransaction(cost, numTickets);
+        
+        //refund any excess
+        msg.sender.transfer(msg.value - cost);
+        
+        return true;
+    }
+    
+    //approve must first be called by msg.sender
+    function buyTicketsStable(address tokenAddress, uint numTickets) isState(LotteryState.Open) external returns(bool){
+        NewDraw storage draw = draws[currentDraw];
+        require (now < draw.drawDeadline, 'Ticket purchases have ended for this draw');
+        
+        uint256 price = getPriceForTickets(tokenAddress, numTickets);
+        
+        require (price > 0, 'Unsupported token provided as payment');
+            
+        IERC20 token = IERC20(tokenAddress);
+        
+        uint256 allowance = token.allowance(msg.sender, address(this));
+        require(allowance >= price, "Check the token allowance");
+        require(token.balanceOf(msg.sender) >= price, "Insufficient balance");
+        
+        uint256 initialTokenBal = token.balanceOf(address(this));
+        token.transferFrom(msg.sender, address(this), price);
+        uint256 tokenAmount = token.balanceOf(address(this)).sub(initialTokenBal);
+            
+        uint bnbValue = 0;
+        
+        // capture the contract's current ETH balance.
+        // this is so that we can capture exactly the amount of ETH that the
+        // swap creates, and not make the event include any ETH that
+        // has been manually sent to the contract
+        uint256 initialBalance = address(this).balance;
+        
+        swapTokensForEth(tokenAddress, tokenAmount);
+        
+        // how much ETH did we just swap into?
+        uint256 newBalance = address(this).balance.sub(initialBalance);
+        
+        bnbValue = newBalance;
+        
+        return processTransaction(bnbValue, numTickets);
+    }
+    
+    function assignTickets(uint256 bnbValue, uint numTickets, address receiver) isState(LotteryState.Open) private returns(bool){
+        NewDraw storage draw = draws[currentDraw];
+        //only add a new participant if the wallet has not purchased a ticket already
+        if (draw.walletNumTickets[receiver] <= 0){
+            draw.numParticipants++;
+        }
+        
+        //add the wallet for each ticket they purchased/donated
+        for (uint i=0; i < numTickets; i++){
+            draw.numTickets++;
+            draw.tickets.push(receiver);
+            draw.walletNumTickets[receiver]++;
+            walletTotalTicketsPurchased[receiver]++;
+        }
+        
+        draw.totalSpend += bnbValue;
+        draw.walletSpendBNB[receiver] += bnbValue;
+        draw.totalPot = delo.balanceOf(address(this));
+        
+        walletTotalSpendBNB[receiver] += bnbValue;
+        totalSpend += bnbValue;
+        
+        emit TicketsBought(receiver, numTickets);
+        
+        return true;
+    }
+    
+    function processTransaction(uint256 bnbValue, uint numTickets) private returns(bool){
+        uint256 initialTokenBal = delo.balanceOf(address(this));
+        //swap the bnb from the ticket sale for DELO
+        swapEthForDelo(bnbValue);
+        uint256 tokenAmount = delo.balanceOf(address(this)).sub(initialTokenBal);
+        
+        if (takeLiquidity == true && inSwapAndLiquify == false){
+            //% to liquidity
+            swapAndLiquify(tokenAmount.div(liquidityDivisor));
+        }
+        if (takeMarketing == true){
+            //% to marketing wallet
+            delo.transfer(marketingWallet, tokenAmount.div(marketingDivisor));
+        }
+        if (takeHedge == true){
+            //give back % of purchase as hedge
+            delo.transfer(msg.sender, tokenAmount.div(hedgeDivisor));
+        }
+        
+        if (takeMegadraw == true){
+            //take megadraw % to be accumulated for megadraws
+            delo.transfer(megadrawWallet, tokenAmount.div(megadrawDivisor));
+        }
+        
+        if (takeStaking == true){
+            //call the ADDFUNDS method of staking contract to reward stakers
+            uint256 amt = tokenAmount.div(stakingDivisor);
+            delo.approve(deloStakingAddress, amt);
+            deloStaking.ADDFUNDS(amt);
+        }
+        
+        return assignTickets(bnbValue, numTickets, msg.sender);
+    }
+    
+    //to receive ETH from uniswapV2Router when swapping
     receive() external payable {}
-
-    function _reflectFee(uint256 rFee, uint256 rBurn, uint256 tFee, uint256 tBurn) private {
-        _rTotal = _rTotal.sub(rFee).sub(rBurn);
-        _tFeeTotal = _tFeeTotal.add(tFee);
-        _tBurnTotal = _tBurnTotal.add(tBurn);
-        _tTotal = _tTotal.sub(tBurn);
-    }
-
-    function _getValues(uint256 tAmount) private view returns (uint256, uint256, uint256, TValuesStruct memory) {
-        TValuesStruct memory tValues = _getTValues(tAmount);
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = _getRValues(tAmount, tValues, _getRate());
-        return (rAmount, rTransferAmount, rFee, tValues);
-    }
-
-    function _getTValues(uint256 tAmount) private view returns (TValuesStruct memory) {
-         // Using struct to avoid Stack too deep error
-         TValuesStruct memory tValues = TValuesStruct(
-             {
-                 tFee:calculateTaxFee(tAmount),
-                 tLiquidity: calculateLiquidityFee(tAmount),
-                 tLotto: calculateLottoFee(tAmount),
-                 tBurn: calculateBurnFee(tAmount),
-                 tTransferAmount: tAmount
-             }   
-        );
-        tValues.tTransferAmount = tValues.tTransferAmount.sub(tValues.tFee).sub(tValues.tLiquidity);
-        tValues.tTransferAmount = tValues.tTransferAmount.sub(tValues.tLotto).sub(tValues.tBurn);
-        
-        return tValues;
-    }
-
-    function _getRValues(uint256 tAmount, TValuesStruct memory tValues, uint256 currentRate) private pure returns (uint256, uint256, uint256) {
-        uint256 rAmount = tAmount.mul(currentRate);
-        uint256 rFee = tValues.tFee.mul(currentRate);
-        uint256 rLiquidity = tValues.tLiquidity.mul(currentRate);
-        uint256 rLotto = tValues.tLotto.mul(currentRate);
-        uint256 rBurn = tValues.tBurn.mul(currentRate);
-        uint256 rTransferAmount = rAmount.sub(rFee).sub(rLiquidity).sub(rLotto).sub(rBurn);
-        return (rAmount, rTransferAmount, rFee);
-    }
-
-    function _getRate() private view returns(uint256) {
-        (uint256 rSupply, uint256 tSupply) = _getCurrentSupply();
-        return rSupply.div(tSupply);
-    }
-
-    function _getCurrentSupply() private view returns(uint256, uint256) {
-        uint256 rSupply = _rTotal;
-        uint256 tSupply = _tTotal;      
-        for (uint256 i = 0; i < _excluded.length; i++) {
-            if (_rOwned[_excluded[i]] > rSupply || _tOwned[_excluded[i]] > tSupply) return (_rTotal, _tTotal);
-            rSupply = rSupply.sub(_rOwned[_excluded[i]]);
-            tSupply = tSupply.sub(_tOwned[_excluded[i]]);
-        }
-        if (rSupply < _rTotal.div(_tTotal)) return (_rTotal, _tTotal);
-        return (rSupply, tSupply);
-    }
     
-    function _takeLiquidity(uint256 tLiquidity) private {
-        uint256 currentRate =  _getRate();
-        uint256 rLiquidity = tLiquidity.mul(currentRate);
-        _rOwned[address(this)] = _rOwned[address(this)].add(rLiquidity);
-        if(_isExcluded[address(this)])
-            _tOwned[address(this)] = _tOwned[address(this)].add(tLiquidity);
-    }
-    
-    function _takeLotto(uint256 tLotto) private {
-        uint256 currentRate =  _getRate();
-        uint256 rLotto = tLotto.mul(currentRate);
-        _rOwned[LOTTO_ADDRESS] = _rOwned[LOTTO_ADDRESS].add(rLotto);
-        totalToLotto = totalToLotto.add(rLotto);
-        if(_isExcluded[LOTTO_ADDRESS])
-            _tOwned[LOTTO_ADDRESS] = _tOwned[LOTTO_ADDRESS].add(tLotto);
-    }
-    
-    function calculateTaxFee(uint256 _amount) private view returns (uint256) {
-        return _amount.mul(_taxFee).div(
-            10**2
+    function swapTokensForEth(address _token, uint256 tokenAmount) private {
+        // generate the uniswap pair path of token -> weth
+        address[] memory path = new address[](2);
+        path[0] = _token;
+        path[1] = uniswapV2Router.WETH();
+
+        IERC20 token = IERC20(_token);
+        token.approve(address(uniswapV2Router), tokenAmount);
+
+        // make the swap
+        uniswapV2Router.swapExactTokensForETH(
+            tokenAmount,
+            0, // accept any amount of ETH
+            path,
+            address(this),
+            block.timestamp
         );
     }
     
-    function calculateLottoFee(uint256 _amount) private view returns (uint256) {
-        return _amount.mul(_lottoFee).div(
-            10**2
+    function swapTokensWithFeeForEth(address _token, uint256 tokenAmount) private {
+        // generate the uniswap pair path of token -> weth
+        address[] memory path = new address[](2);
+        path[0] = _token;
+        path[1] = uniswapV2Router.WETH();
+
+        IERC20 token = IERC20(_token);
+        token.approve(address(uniswapV2Router), tokenAmount);
+
+        // make the swap
+        uniswapV2Router.swapExactTokensForETHSupportingFeeOnTransferTokens(
+            tokenAmount,
+            0, // accept any amount of ETH
+            path,
+            address(this),
+            block.timestamp
         );
     }
     
-    function calculateBurnFee(uint256 _amount) private view returns (uint256) {
-        return _amount.mul(_burnFee).div(
-            10**2
+    function swapEthForDelo(uint256 ethAmount) private {
+        // generate the uniswap pair path of weth -> token
+        address[] memory path = new address[](2);
+        path[0] = uniswapV2Router.WETH();
+        path[1] = deloAddress;
+
+        // make the swap
+        uniswapV2Router.swapExactETHForTokensSupportingFeeOnTransferTokens{value: ethAmount}(
+            0, // accept any amount of token
+            path,
+            address(this),
+            block.timestamp
         );
     }
-
-    function calculateLiquidityFee(uint256 _amount) private view returns (uint256) {
-        return _amount.mul(_liquidityFee).div(
-            10**2
-        );
-    }
     
-    function removeAllFee() private {
-        if(_taxFee == 0 && _liquidityFee == 0 && _lottoFee == 0 && _burnFee == 0) return;
-        
-        _previousTaxFee = _taxFee;
-        _previousLiquidityFee = _liquidityFee;
-        _previousLottoFee = _lottoFee;
-        _previousBurnFee = _burnFee;
-        
-        _taxFee = 0;
-        _liquidityFee = 0;
-        _lottoFee = 0;
-        _burnFee = 0;
-    }
-    
-    function restoreAllFee() private {
-        _taxFee = _previousTaxFee;
-        _liquidityFee = _previousLiquidityFee;
-        _lottoFee = _previousLottoFee;
-        _burnFee = _previousBurnFee;
-    }
-    
-    function isExcludedFromFee(address account) public view returns(bool) {
-        return _isExcludedFromFee[account];
-    }
-
-    function _approve(address owner, address spender, uint256 amount) private {
-        require(owner != address(0), "ERC20: approve from the zero address");
-        require(spender != address(0), "ERC20: approve to the zero address");
-
-        _allowances[owner][spender] = amount;
-        emit Approval(owner, spender, amount);
-    }
-
-    function _transfer(
-        address from,
-        address to,
-        uint256 amount
-    ) private {
-        require(from != address(0), "ERC20: transfer from the zero address");
-        require(to != address(0), "ERC20: transfer to the zero address");
-        require(amount > 0, "Transfer amount must be greater than zero");
-        if(from != owner() && to != owner())
-            require(amount <= _maxTxAmount, "Transfer amount exceeds the maxTxAmount.");
-
-        // is the token balance of this contract address over the min number of
-        // tokens that we need to initiate a swap + liquidity lock?
-        // also, don't get caught in a circular liquidity event.
-        // also, don't swap & liquify if sender is uniswap pair.
-        uint256 contractTokenBalance = balanceOf(address(this));
-        
-        if(contractTokenBalance >= _maxTxAmount)
-        {
-            contractTokenBalance = _maxTxAmount;
-        }
-        
-        bool overMinTokenBalance = contractTokenBalance >= numTokensSellToAddToLiquidity;
-        if (
-            overMinTokenBalance &&
-            !inSwapAndLiquify &&
-            from != uniswapV2Pair &&
-            swapAndLiquifyEnabled
-        ) {
-            contractTokenBalance = numTokensSellToAddToLiquidity;
-            //add liquidity
-            swapAndLiquify(contractTokenBalance);
-        }
-        
-        //indicates if fee should be deducted from transfer
-        bool takeFee = true;
-        
-        //if any account belongs to _isExcludedFromFee account then remove the fee
-        if(_isExcludedFromFee[from] || _isExcludedFromFee[to]){
-            takeFee = false;
-        }
-        
-        //transfer amount, it will take tax, burn, liquidity fee
-        _tokenTransfer(from,to,amount,takeFee);
-    }
-
     function swapAndLiquify(uint256 contractTokenBalance) private lockTheSwap {
         // split the contract balance into halves
         uint256 half = contractTokenBalance.div(2);
@@ -1134,7 +1340,7 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         uint256 initialBalance = address(this).balance;
 
         // swap tokens for ETH
-        swapTokensForEth(half); // <- this breaks the ETH -> HATE swap when swap+liquify is triggered
+        swapTokensWithFeeForEth(deloAddress, half); // <- this breaks the ETH -> HATE swap when swap+liquify is triggered
 
         // how much ETH did we just swap into?
         uint256 newBalance = address(this).balance.sub(initialBalance);
@@ -1144,47 +1350,14 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         
         emit SwapAndLiquify(half, newBalance, otherHalf);
     }
-
-    function swapTokensForEth(uint256 tokenAmount) private {
-        // generate the uniswap pair path of token -> weth
-        address[] memory path = new address[](2);
-        path[0] = address(this);
-        path[1] = uniswapV2Router.WETH();
-
-        _approve(address(this), address(uniswapV2Router), tokenAmount);
-
-        // make the swap
-        uniswapV2Router.swapExactTokensForETHSupportingFeeOnTransferTokens(
-            tokenAmount,
-            0, // accept any amount of ETH
-            path,
-            address(this),
-            block.timestamp
-        );
-    }
-
-    function swapEthForTokens(uint256 ethAmount) private {
-        // generate the uniswap pair path of weth -> token
-        address[] memory path = new address[](2);
-        path[0] = uniswapV2Router.WETH();
-        path[1] = address(this);
-
-        // make the swap
-        uniswapV2Router.swapExactETHForTokensSupportingFeeOnTransferTokens{value: ethAmount}(
-            0, // accept any amount of token
-            path,
-            0x000000000000000000000000000000000000dEaD,
-            block.timestamp
-        );
-    }
-
+    
     function addLiquidity(uint256 tokenAmount, uint256 ethAmount) private {
         // approve token transfer to cover all possible scenarios
-        _approve(address(this), address(uniswapV2Router), tokenAmount);
+        delo.approve(address(uniswapV2Router), tokenAmount);
 
         // add the liquidity
         uniswapV2Router.addLiquidityETH{value: ethAmount}(
-            address(this),
+            deloAddress,
             tokenAmount,
             0, // slippage is unavoidable
             0, // slippage is unavoidable
@@ -1192,65 +1365,5 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
             block.timestamp
         );
     }
-
-    //this method is responsible for taking all fee, if takeFee is true
-    function _tokenTransfer(address sender, address recipient, uint256 amount,bool takeFee) private {
-        if(!takeFee)
-            removeAllFee();
-        
-        if (_isExcluded[sender] && !_isExcluded[recipient]) {
-            _transferFromExcluded(sender, recipient, amount);
-        } else if (!_isExcluded[sender] && _isExcluded[recipient]) {
-            _transferToExcluded(sender, recipient, amount);
-        } else if (_isExcluded[sender] && _isExcluded[recipient]) {
-            _transferBothExcluded(sender, recipient, amount);
-        } else {
-            _transferStandard(sender, recipient, amount);
-        }
-        
-        if(!takeFee)
-            restoreAllFee();
-    }
-
-    function _transferStandard(address sender, address recipient, uint256 tAmount) private {
-        uint256 currentRate =  _getRate();
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, TValuesStruct memory tValues) = _getValues(tAmount);
-        uint256 rBurn =  tValues.tBurn.mul(currentRate);
-        _rOwned[sender] = _rOwned[sender].sub(rAmount);
-        _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
-        _takeLiquidity(tValues.tLiquidity);
-        _reflectFee(rFee, rBurn, tValues.tFee, tValues.tBurn);
-        _takeLotto(tValues.tLotto);
-        emit Transfer(sender, recipient, tValues.tTransferAmount);
-    }
-
-    function _transferToExcluded(address sender, address recipient, uint256 tAmount) private {
-        uint256 currentRate =  _getRate();
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, TValuesStruct memory tValues) = _getValues(tAmount);
-        uint256 rBurn =  tValues.tBurn.mul(currentRate);
-        _rOwned[sender] = _rOwned[sender].sub(rAmount);
-        _tOwned[recipient] = _tOwned[recipient].add(tValues.tTransferAmount);
-        _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);           
-        _takeLiquidity(tValues.tLiquidity);
-        _takeLotto(tValues.tLotto);
-        _reflectFee(rFee, rBurn, tValues.tFee, tValues.tBurn);
-        emit Transfer(sender, recipient, tValues.tTransferAmount);
-    }
-
-    function _transferFromExcluded(address sender, address recipient, uint256 tAmount) private {
-        uint256 currentRate =  _getRate();
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, TValuesStruct memory tValues) = _getValues(tAmount);
-        uint256 rBurn =  tValues.tBurn.mul(currentRate);
-        _tOwned[sender] = _tOwned[sender].sub(tAmount);
-        _rOwned[sender] = _rOwned[sender].sub(rAmount);
-        _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);   
-        _takeLiquidity(tValues.tLiquidity);
-        _takeLotto(tValues.tLotto);
-        _reflectFee(rFee, rBurn, tValues.tFee, tValues.tBurn);
-        emit Transfer(sender, recipient, tValues.tTransferAmount);
-    }
-
-
     
-
 }
