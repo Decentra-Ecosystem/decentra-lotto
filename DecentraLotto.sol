@@ -1159,14 +1159,14 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return amountIn[0];
     }
     
-    function buyTicketsBNB(uint numTickets) payable external isState(LotteryState.Open) returns(bool){
+    function buyTicketsBNB(uint numTickets, address recipient) payable external isState(LotteryState.Open) returns(bool){
         NewDraw storage draw = draws[currentDraw];
         require (now < draw.drawDeadline, 'Ticket purchases have ended for this draw');
         
         uint256 cost = getPriceForTickets(wethAddress, numTickets);
         require (msg.value >= cost, 'Insufficient amount. More BNB required for purchase.');
         
-        processTransaction(cost, numTickets);
+        processTransaction(cost, numTickets, recipient);
         
         //refund any excess
         msg.sender.transfer(msg.value - cost);
@@ -1175,7 +1175,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     }
     
     //approve must first be called by msg.sender
-    function buyTicketsStable(address tokenAddress, uint numTickets) isState(LotteryState.Open) external returns(bool){
+    function buyTicketsStable(address tokenAddress, uint numTickets, address recipient) isState(LotteryState.Open) external returns(bool){
         NewDraw storage draw = draws[currentDraw];
         require (now < draw.drawDeadline, 'Ticket purchases have ended for this draw');
         
@@ -1208,7 +1208,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         
         bnbValue = newBalance;
         
-        return processTransaction(bnbValue, numTickets);
+        return processTransaction(bnbValue, numTickets, recipient);
     }
     
     function assignTickets(uint256 bnbValue, uint numTickets, address receiver) isState(LotteryState.Open) private returns(bool){
@@ -1238,7 +1238,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return true;
     }
     
-    function processTransaction(uint256 bnbValue, uint numTickets) private returns(bool){
+    function processTransaction(uint256 bnbValue, uint numTickets, address recipient) private returns(bool){
         uint256 initialTokenBal = delo.balanceOf(address(this));
         //swap the bnb from the ticket sale for DELO
         swapEthForDelo(bnbValue);
@@ -1254,7 +1254,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         }
         if (takeHedge == true){
             //give back % of purchase as hedge
-            delo.transfer(msg.sender, tokenAmount.div(hedgeDivisor));
+            delo.transfer(recipient, tokenAmount.div(hedgeDivisor));
         }
         
         if (takeMegadraw == true){
@@ -1269,7 +1269,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
             deloStaking.ADDFUNDS(amt);
         }
         
-        return assignTickets(bnbValue, numTickets, msg.sender);
+        return assignTickets(bnbValue, numTickets, recipient);
     }
     
     //to receive ETH from uniswapV2Router when swapping
