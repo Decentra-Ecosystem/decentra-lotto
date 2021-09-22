@@ -8,6 +8,10 @@
   background-color: #010022;
 }
 
+.linkText{
+  font-family: 'AquireBold', 'arial', sans-serif;
+}
+
 .toolbar{
   padding: 0 5px;
   height: 80px;

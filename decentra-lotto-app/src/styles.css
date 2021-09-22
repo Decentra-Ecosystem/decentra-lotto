@@ -16,6 +16,11 @@ font-family: 'LeagueSpartan', 'arial', sans-serif;
     src: local("LeagueSpartan"), url(./assets/fonts/LeagueSpartan/LeagueSpartan-Bold.otf) format("truetype");
 }
 
+@font-face {
+    font-family: "AquireBold";
+    src: local("AquireBold"), url(./assets/fonts/aquire-font/AquireBold-8Ma60.otf) format("truetype");
+}
+
 .mat-dialog-container {
     font-family: 'LeagueSpartan', 'arial', sans-serif;
     background: rgb(110,48,180) !important;

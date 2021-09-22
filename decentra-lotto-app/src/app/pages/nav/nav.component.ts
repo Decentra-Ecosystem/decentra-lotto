@@ -47,7 +47,7 @@ export class NavComponent implements OnInit, OnDestroy {
 
   headerDict = {
     'accept': 'application/json',
-    'X-API-Key': '2YYUnTdkG4UWHzYrSLEQLo7PoLAVLcxcq24EBN4apquEtK4CyfoPCW5wvd6dtpVS',
+    //'X-API-Key': '2YYUnTdkG4UWHzYrSLEQLo7PoLAVLcxcq24EBN4apquEtK4CyfoPCW5wvd6dtpVS',
   }
   requestOptions: any;
 
@@ -105,7 +105,7 @@ export class NavComponent implements OnInit, OnDestroy {
     this.getPrice()
     .pipe(takeUntil(this.ngUnsubscribe))
     .subscribe((data: any) => {
-      this.deloUSDPrice = Math.round(data.usdPrice * 10000000000) / 10000000000;
+      this.deloUSDPrice = Math.round(data.data.price * 10000000000) / 10000000000;
         this.pollingTimer = setTimeout(()=>{
           this.pollPrice();
         }, 10000);
@@ -137,7 +137,8 @@ export class NavComponent implements OnInit, OnDestroy {
   }
 
   getPrice() {
-    return this.http.get("https://deep-index.moralis.io/api/v2/erc20/"+DELO_CONTRACT_ADDRESS_MAIN_NET+"/price?chain=bsc", this.requestOptions);
+    return this.http.get("https://api.pancakeswap.info/api/v2/tokens/"+DELO_CONTRACT_ADDRESS_MAIN_NET, this.requestOptions);
+    //return this.http.get("https://deep-index.moralis.io/api/v2/erc20/"+DELO_CONTRACT_ADDRESS_MAIN_NET+"/price?chain=bsc", this.requestOptions);
   }
 
   disconnect(){

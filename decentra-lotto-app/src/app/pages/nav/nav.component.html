@@ -4,7 +4,7 @@
       [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
       [mode]="(isHandset$ | async) ? 'over' : 'side'"
       [opened]="(isHandset$ | async) === false">
-    <mat-toolbar style="color: white;">Menu</mat-toolbar>
+    <mat-toolbar class="linkText" style="color: white;">Menu</mat-toolbar>
     <mat-nav-list class="list">
       <span *ngFor="let item of menuItems">
         <span *ngIf="item.url == ''">
@@ -13,7 +13,7 @@
           [routerLink]="'/'+item.name" 
           routerLinkActive="active-link"
           > 
-              {{item.name | titlecase}} <img *ngIf="item.enabled == false" src="../../../assets/images/coming_soon.png">
+              <span class="linkText">{{item.name | titlecase}}</span> <img *ngIf="item.enabled == false" src="../../../assets/images/coming_soon.png">
           </a>
         </span>
         <span *ngIf="item.url != ''">
@@ -22,7 +22,7 @@
           href="{{item.url}}"
           target="_blank"
           > 
-              {{item.name | titlecase}} <img *ngIf="item.enabled == false" src="../../../assets/images/coming_soon.png">
+          <span class="linkText">{{item.name | titlecase}}</span> <img *ngIf="item.enabled == false" src="../../../assets/images/coming_soon.png">
           </a>
         </span>
       </span>
