@@ -672,7 +672,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     DecentraLotto delo;
     DELOStaking deloStaking;
     
-    address public deloAddress = 0xbE9917FF108c5aDe647546dA64E0DDAB1F6DB6FD;
+    address public deloAddress = 0x7909B1652cb4f71E1a38568d8cC965cfC3A3FEc9;
     address public deloStakingAddress = 0xB4f52BF6BD3b27A8DA3F5beAb1eB0b9343A3086a;
     
     address public peg = 0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7; // busd
@@ -781,11 +781,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         megadrawWallet = _address;
     }
     
-    function setDeloAddress(address _address) external onlyOwner{
-        deloAddress = _address;
-        delo = DecentraLotto(deloAddress);
-    }
-    
     function setDeloStakingAddress(address _address) external onlyOwner{
         deloStakingAddress = _address;
         deloStaking = DELOStaking(deloStakingAddress);
@@ -819,6 +814,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     }
     
     function setMarketingDivisor(uint256 _markdiv) external onlyOwner{
+        require(_markdiv <= 20, "Cannot set over 10% marketing allocation");
         marketingDivisor = _markdiv;
     }
     
@@ -1062,11 +1058,17 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         emit GotRandom(randomResult);
     }
     
-    //@dev to be called in case of chainlink dependancy failure
-    function emergencyDrawWinners(uint256 random) external onlyOwner returns(bool){
-        randomResult = random;
-        _changeState(LotteryState.Ready);
-        return drawWinners();
+    //@dev to be called if the contract stuck waiting for VRF random in the closed state
+    function emergencyEndDrawAndGetRandom() external isState(LotteryState.Closed) onlyOwner returns(bool){
+        NewDraw storage draw = draws[currentDraw];
+        require (now > draw.drawDeadline, 'Draw deadline not yet reached');
+        
+        //get random number
+        requestId = getRandomNumber();
+        
+        GetRandom(requestId);
+        
+        return true;
     }
     
     function endDrawAndGetRandom() external isState(LotteryState.Open) returns(bool){
@@ -1206,10 +1208,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         bnbValue = newBalance;
         
         return processTransaction(bnbValue, numTickets);
-    }
-    
-    function mintTickets(address receiverAddress, uint numTickets) isState(LotteryState.Open) external onlyOwner returns(bool){
-        return assignTickets(0, numTickets, receiverAddress);
     }
     
     function assignTickets(uint256 bnbValue, uint numTickets, address receiver) isState(LotteryState.Open) private returns(bool){
