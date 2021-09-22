@@ -1,0 +1,100 @@
+
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport
+      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+      [mode]="(isHandset$ | async) ? 'over' : 'side'"
+      [opened]="(isHandset$ | async) === false">
+    <mat-toolbar style="color: white;">Menu</mat-toolbar>
+    <mat-nav-list class="list">
+      <span *ngFor="let item of menuItems">
+        <span *ngIf="item.url == ''">
+          <a class="link" 
+          mat-list-item 
+          [routerLink]="'/'+item.name" 
+          routerLinkActive="active-link"
+          > 
+              {{item.name | titlecase}} <img *ngIf="item.enabled == false" src="../../../assets/images/coming_soon.png">
+          </a>
+        </span>
+        <span *ngIf="item.url != ''">
+          <a class="link" 
+          mat-list-item 
+          href="{{item.url}}"
+          target="_blank"
+          > 
+              {{item.name | titlecase}} <img *ngIf="item.enabled == false" src="../../../assets/images/coming_soon.png">
+          </a>
+        </span>
+      </span>
+      
+    </mat-nav-list>
+    <button 
+        mat-raised-button 
+        color="primary" 
+        type="button" 
+        style="background: #666666da; margin: 20px;" 
+        (click)="setDeadline()">
+        Start Test
+    </button>
+
+    <div class="bottomPanel">
+      <h2 style="text-align: left;"><img width="35px;" src="assets/images/logo/decentra-lotto-O_s.png">${{deloUSDPrice}}</h2>
+      <div class="bottom">
+        <a style="padding:8px;" href="https://t.me/decentra-lotto" target="_blank"><img src="../../../assets/images/tg_icon.png"></a>
+        <a style="padding:8px;" href="https://twitter.com/DecetraLotto" target="_blank"><img src="../../../assets/images/twitter_icon.png"></a>
+        <button mat-button [matMenuTriggerFor]="languageMenu"><mat-icon aria-hidden="false" aria-label="language selector">language</mat-icon></button>
+      </div>
+    </div>
+    <mat-menu #languageMenu="matMenu" yPosition="above">
+      <button mat-menu-item>English</button>
+      <!-- <button mat-menu-item>Spanish</button> -->
+    </mat-menu>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="toolbar">
+      <button
+        class="menuButton"
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async">
+        <mat-icon class="white" aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span *ngIf="!isMobile()" class="white">
+        <img src="assets/images/logo/decentra-lotto_m.png" alt="DELO">
+      </span>
+      <span *ngIf="isMobile()" class="white">
+        <img src="assets/images/logo/decentra-lotto-O_m.png" alt="DELO">
+      </span>
+      <span class="flexExpand white"></span>
+      <div>
+        <mat-card class="outer-card">
+          <mat-card-header>
+              <mat-card-title>
+                <button *ngIf="!(!user || connectionError)" class="dashboard-card">
+                  <span *ngIf="user && !connectionError">
+                    <img class="wallet_image" src="assets/images/logo/decentra-lotto-O_m.png"> {{user.balance}}
+                  </span>
+                </button>
+                <button (click)="connect()" class="dashboard-card">
+                  <span *ngIf="!isMobile() && user && !connectionError">
+                    <img class="wallet_image" [src]="chain_image"> {{user.truncatedAddress}} 
+                  </span>
+                  <span *ngIf="isMobile() && user && !connectionError">
+                    <img class="wallet_image" [src]="chain_image"> {{user.superTruncatedAddress}}
+                  </span>
+                  <span *ngIf="!user || connectionError">
+                    Connect
+                  </span>
+                </button>
+              </mat-card-title>
+          </mat-card-header>
+        </mat-card>
+        <!-- Test -->
+      </div>
+    </mat-toolbar>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+<a style="display: none;" href='https://www.freepik.com/vectors/background'>Background vector created by freepik - www.freepik.com</a>

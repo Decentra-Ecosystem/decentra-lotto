@@ -1,0 +1,55 @@
+<div *ngIf="connectionError" class="outer-container">
+  <h1 class="white">Connect your wallet to continue...</h1>
+</div>
+<!--dash.component.html-->
+<div *ngIf="!connectionError" class="outer-container">
+  <div class="grid-container">
+    <!-- <h1 class="mat-h1">Dashboard</h1> -->
+    <mat-grid-list cols="{{ ( cardLayout | async )?.columns }}" [rowHeight]="rowHeight">
+      <!-- Top Summary Cards -->
+      <div *ngIf="mobile()">
+        <mat-grid-tile *ngFor="let mc of miniCardTopData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+          [rowspan]="( cardLayout | async )?.miniCard?.rows">
+          <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+        </mat-grid-tile>
+      </div>
+      <!-- Buy Panel -->
+      <mat-grid-tile [colspan]="( cardLayout | async )?.buy?.cols" [rowspan]="( cardLayout | async )?.buy?.rows">
+        <app-card title="Enter Draw">
+          <app-enter-draw-card></app-enter-draw-card>
+        </app-card>
+      </mat-grid-tile>
+      <!--Summary Cards-->
+      <div *ngIf="mobile()">
+        <mat-grid-tile *ngFor="let mc of miniCardBottomData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+          [rowspan]="( cardLayout | async )?.miniCard?.rows">
+          <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+        </mat-grid-tile>
+      </div>
+      <div *ngIf="!mobile()">
+        <mat-grid-tile *ngFor="let mc of miniCardData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+          [rowspan]="( cardLayout | async )?.miniCard?.rows">
+          <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+        </mat-grid-tile>
+      </div>
+      
+      <!-- Info Panel -->
+      <mat-grid-tile [colspan]="( cardLayout | async )?.explainer?.cols" [rowspan]="( cardLayout | async )?.explainer?.rows">
+        <app-card title="Information">
+          <app-info-card title="Information"></app-info-card>
+        </app-card>
+      </mat-grid-tile>
+      <!--Stats Panel-->
+      <mat-grid-tile [colspan]="( cardLayout | async )?.stats?.cols" [rowspan]="( cardLayout | async )?.stats?.rows">
+        <app-card title="Your Statistics">
+          <app-draw-stats-card [displayDrawStats]="displayDrawStats" [displayWalletStats]="displayWalletStats" (update)="Update()"></app-draw-stats-card>
+        </app-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+  <h5 style="color: white; padding-left: 40px; padding-right: 40px; text-align: justify; text-justify: inter-word;"><strong>Disclaimer:</strong> A ticket has no inherent value other than as entry into the Decentra-Lotto draw, and does not give the user any rights or privileges. 
+    Due to the complex nature of the Decentra-Lotto contract, ticket refunds are not possible. 
+    You alone are responsilbe for doing your own research and being aware of the risks before making any purchase. 
+    Never invest more than you are willing to lose.
+  </h5>
+</div>

@@ -1,0 +1,83 @@
+<div class="outer">
+    <div class="switch">
+        <mat-slide-toggle [(ngModel)]="isChecked">
+            <span *ngIf="isChecked == true">
+                Stake DELO
+            </span>
+            <span *ngIf="isChecked == false">
+                Withdraw DELO
+            </span>
+        </mat-slide-toggle><img class="wallet_image" src="assets/images/logo/decentra-lotto-O_s.png">
+    </div>
+    <div class="container">
+        <div class="form-outer">
+            <form class="example-container">
+                <mat-form-field *ngIf="isChecked == true" hintLabel="Staked:" appearance="fill">
+                    <mat-label *ngIf="user.balance != null" style="font-size: 16px;">Balance: {{user.balance}}</mat-label>
+                    <input matInput #input maxlength="10" max="{{user.balance}}" type="number" placeholder="1" [formControl]="balanceControl" min="1" (change)="isApproved()">
+                    <mat-hint *ngIf="walletStakedRounded" align="end">{{walletStakedRounded}}</mat-hint>
+                    <button matSuffix mat-icon-button aria-label="Max" (click)="setMax(user.balance)">
+                        Max
+                    </button>
+                    <mat-error *ngIf="balanceControl.invalid">Error - invalid amount</mat-error>
+                </mat-form-field>
+
+                <mat-form-field *ngIf="isChecked == false" hintLabel="Balance:" appearance="fill">
+                    <mat-label *ngIf="walletStakedRounded" style="font-size: 16px;">Staked: {{walletStakedRounded}}</mat-label>
+                    <input matInput #input maxlength="10" max="{{walletStakedRoundedNumber}}" type="number" placeholder="1" [formControl]="balanceControl" min="1" (change)="isApproved()">
+                    <mat-hint *ngIf="user.balance" align="end">{{user.balance}}</mat-hint>
+                    <button matSuffix mat-icon-button aria-label="Max" (click)="setMax(walletStakedRoundedNumber)">
+                        Max
+                    </button>
+                    <mat-error *ngIf="balanceControl.invalid">Error - invalid amount</mat-error>
+                </mat-form-field>
+            </form>
+        </div>
+    </div>
+    <div class="buttons">
+        <span *ngIf="isChecked == true">
+            <span [matTooltip]="approved == true ? 'Already approved for this amount' : ''">
+                <button 
+                    class="button" 
+                    [ngClass]="approved == false ? 'buyButton' : ''" 
+                    mat-raised-button color="primary" 
+                    [disabled]="loading || approved == true"
+                    type="button" 
+                    [style.background]="approved == false ? '#c2a336' : '#ff3f0fda'" 
+                    (click) = "approveToken()">
+                    <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
+                    <span *ngIf="!loading">Approve</span>
+                </button>
+            </span>
+
+            <span [matTooltip]="approved == false ? 'You must first approve the contract to stake your funds' : ''">
+                <button 
+                    class="button" 
+                    [ngClass]="approved == true ? 'buyButton' : ''" 
+                    mat-raised-button color="primary" 
+                    [disabled]="loading || approved == false"
+                    type="button" 
+                    [style.background]="approved == true ? '#c2a336' : '#ff3f0fda'" 
+                    (click) = "stake()">
+                    <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
+                    <span *ngIf="!loading">Stake</span>
+                </button>
+            </span>
+        </span>
+
+        <span *ngIf="isChecked == false" [matTooltip]="walletStakedRoundedNumber <= 0 ? 'Stake something first' : ''">
+            <button 
+                class="button" 
+                [ngClass]="walletStakedRoundedNumber > 0 ? 'buyButton' : ''" 
+                mat-raised-button color="primary" 
+                [disabled]="loading || walletStakedRoundedNumber == 0"
+                type="button" 
+                [style.background]="walletStakedRoundedNumber > 0 ? '#c2a336' : '#ff3f0fda'" 
+                (click) = "withdraw()">
+                <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
+                <span *ngIf="!loading">Withdraw</span>
+            </button>
+        </span>
+    </div>
+</div>
+

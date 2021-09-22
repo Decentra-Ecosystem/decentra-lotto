@@ -1,0 +1,25 @@
+<div class="container" *ngIf="displayDrawStats">
+    <div class="row">
+        <div class="column">
+            <h2>This Draw</h2>
+            <div *ngFor="let stat of displayDrawStats">
+                <div class="justifyCenter">
+                    <div class="title">{{stat.title}}: </div>
+                    <div class="value">{{stat.value}}</div>
+                </div>
+                <hr/>
+            </div>
+        </div>
+        
+        <div class="column">
+            <h2>All Draws</h2>
+            <div *ngFor="let stat of displayWalletStats">
+                <div class="justifyCenter" >
+                    <div class="title">{{stat.title}}: </div>
+                    <div class="value">{{stat.value}}</div>
+                </div>
+                <hr/>
+            </div>
+        </div>
+    </div>
+</div>

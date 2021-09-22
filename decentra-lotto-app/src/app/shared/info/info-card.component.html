@@ -1,0 +1,61 @@
+<div class="container">
+      <div class="row">
+          <div class="column">
+              <h2>Bulk Buy Discounts</h2>
+              <div *ngIf="discounts">
+                  <h4><mat-icon class="mat-icon" class="avatar-icon" style="margin:0px;">star_outline</mat-icon> 5 Tickets: {{discounts[0]}}% off</h4>
+                  <h4><mat-icon class="mat-icon" class="avatar-icon">star_half</mat-icon> 10 Tickets: {{discounts[1]}}% off</h4>
+                  <h4><mat-icon class="mat-icon" class="avatar-icon">star</mat-icon> 20 Tickets: {{discounts[2]}}% off</h4>
+              </div>
+          </div>
+          
+          <div class="column">
+                  <h2>How To</h2>
+                  <div class="howto">
+                        <h4>
+                              Use the "Enter Draw" panel above to buy a ticket to enter the current draw using BNB, BUSD, USDT or DAI. Draws last for one week.
+                        </h4>
+                        <h4>
+                              The number of winning tickets depends on the size of the pot - the bigger the pot, the more winners. 
+                              The minimum you can win is $10 (the price of a ticket). There is no maximum win amount.
+                        </h4>
+                        <h4>
+                              Once you buy a ticket, your total tickets, winning chance and other stats can be seen in the "Your Stats" panel.
+                        </h4>
+                  </div>
+          </div>
+      </div>
+</div>
+
+<!-- <div style="margin-top:50px; padding-left: 30px;">
+            <h2 class="neonText">
+                  Extra 40% off for 12hrs
+            </h2>
+      </div> -->
+<!-- <mat-card class="dashboard-card center">
+      <mat-card-header class="card-header">
+            <mat-card-title>
+                  <h4><mat-icon class="mat-icon" class="avatar-icon" style="margin:0px;">star_outline</mat-icon> 5 Tickets: 5% off</h4>
+                  <h4><mat-icon class="mat-icon" class="avatar-icon">star_half</mat-icon> 10 Tickets: 15% off</h4>
+                  <h4><mat-icon class="mat-icon" class="avatar-icon">star</mat-icon> 20 Tickets: 30% off</h4>
+            </mat-card-title>
+            
+      </mat-card-header>
+</mat-card>
+<mat-card class="dashboard-card">
+      <mat-card-header class="card-header">
+            <mat-card-title style="overflow: auto; height: 100px;">
+                  <h2 class="title-text">How To</h2>
+                  <h4>
+                        Use the "Enter Draw" panel above to buy a ticket to enter the current draw using BNB, BUSD, USDT or DAI. Draws last for one week.
+                  </h4>
+                  <h4>
+                        The number of winning tickets depends on the size of the pot - the bigger the pot, the more winners. 
+                        The minimum you can win is $10 (the price of a ticket). There is no maximum win amount.
+                  </h4>
+                  <h4>
+                        Once you buy a ticket, your total tickets, winning chance and other stats can be seen in the "Your Stats" panel.
+                  </h4>
+            </mat-card-title>
+      </mat-card-header>
+</mat-card> -->

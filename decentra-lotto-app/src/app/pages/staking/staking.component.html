@@ -1,0 +1,54 @@
+<div *ngIf="connectionError" class="outer-container">
+    <h1 class="white">Connect your wallet to continue...</h1>
+  </div>
+  <!--dash.component.html-->
+  <div *ngIf="!connectionError" class="outer-container">
+    <div class="grid-container">
+      <!-- <h1 class="mat-h1">Dashboard</h1> -->
+      <mat-grid-list cols="{{ ( cardLayout | async )?.columns }}" [rowHeight]="rowHeight">
+        <!-- Top Summary Cards Mobile -->
+        <div *ngIf="mobile()">
+          <mat-grid-tile *ngFor="let mc of miniCardTopData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+            [rowspan]="( cardLayout | async )?.miniCard?.rows">
+            <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+        </mat-grid-tile>
+        </div>
+        <!--Summary Cards Desktop-->
+        <span *ngIf="!mobile()">
+            <mat-grid-tile *ngFor="let mc of miniCardData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+                [rowspan]="( cardLayout | async )?.miniCard?.rows">
+                <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+            </mat-grid-tile>
+        </span>
+        <!-- Buy Panel -->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.stakeCard?.cols" [rowspan]="( cardLayout | async )?.stakeCard?.rows">
+          <app-card title="Stake">
+            <app-stake-card></app-stake-card>
+          </app-card>
+        </mat-grid-tile>
+
+        <!-- Harvest Panel -->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.harvestCard?.cols" [rowspan]="( cardLayout | async )?.harvestCard?.rows">
+            <app-card title="Harvest">
+              <app-harvest-card></app-harvest-card>
+            </app-card>
+        </mat-grid-tile>
+
+        <!--Summary Cards Mobile-->
+        <span *ngIf="mobile()">
+            <mat-grid-tile *ngFor="let mc of miniCardBottomData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+                [rowspan]="( cardLayout | async )?.miniCard?.rows">
+                <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+            </mat-grid-tile>
+        </span>
+
+        <!-- Info Panel -->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.info?.cols" [rowspan]="( cardLayout | async )?.info?.rows">
+          <app-card title="Information">
+            <app-staking-info title="Information"></app-staking-info>
+          </app-card>
+        </mat-grid-tile>
+
+      </mat-grid-list>
+    </div>
+  </div>

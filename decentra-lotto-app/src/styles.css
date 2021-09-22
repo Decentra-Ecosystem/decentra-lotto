@@ -1,0 +1,32 @@
+/* You can add global styles to this file, and also import other style files */
+/* @import '~@angular/material/theming';
+
+$custom-typography: mat-typography-config($font-family: '"LeagueSpartan", sans-serif;');
+@include mat-core($custom-typography); */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+* {
+font-family: 'LeagueSpartan', 'arial', sans-serif;
+}
+
+@font-face {
+    font-family: "LeagueSpartan";
+    src: local("LeagueSpartan"), url(./assets/fonts/LeagueSpartan/LeagueSpartan-Bold.otf) format("truetype");
+}
+
+.mat-dialog-container {
+    font-family: 'LeagueSpartan', 'arial', sans-serif;
+    background: rgb(110,48,180) !important;
+    background: linear-gradient(180deg, #381a74 0%, #4c225f 100%) !important;
+    color: white !important;
+    border-radius: 1.5rem !important;
+    border: 0.2rem solid #fff !important;
+    box-shadow: 0 0 .1rem #fff,
+                0 0 .1rem #fff,
+                0 0 1rem #bc13fe,
+                0 0 0.3rem #bc13fe,
+                0 0 0.8rem #bc13fe,
+                inset 0 0 0.7rem #bc13fe !important;
+}

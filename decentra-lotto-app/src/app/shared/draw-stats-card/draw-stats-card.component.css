@@ -1,0 +1,50 @@
+.container {
+    color: white;
+  }
+
+  .column {
+    float: left;
+    width: 50%;
+  }
+  
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+ .justifyCenter {
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+ }
+
+ h2{
+     color:#E0D740;
+     font-family: 'LeagueSpartan', 'arial', sans-serif;
+ }
+
+ hr {
+    border: 0;
+    clear:both;
+    display:block;
+    width: 96%;            
+    background-color:#E0D740;
+    height: 1px;
+  }
+
+ 
+@media only screen and (max-width : 1400px) {
+    .container{
+        font-size: small;
+    }
+     .column {
+        float: left;
+        width: 100%;
+      }
+}

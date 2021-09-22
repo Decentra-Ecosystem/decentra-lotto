@@ -1,0 +1,11 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.mat-table{    
+    border-radius: 8px;
+    overflow:hidden !important;
+}

@@ -1,0 +1,26 @@
+<div class="outer">
+    <div class="switch">
+        <span>Harvest DELO</span><img class="wallet_image" src="assets/images/logo/decentra-lotto-O_s.png">
+    </div>
+    <div class="container">
+        <div class="form-outer">
+            <h2>{{pendingRewardRounded}} DELO</h2>
+        </div>
+    </div>
+    <div class="buttons">
+        <span [matTooltip]="pendingRewardRounded == 0 ? 'You have nothing to harvest yet...' : ''">
+            <span [matTooltip]="canWithdraw() == false ? 'You cant withdraw in the same round as you staked. Please wait until the round has inreased.' : ''">
+                <button 
+                    [disabled]="canWithdraw() == false"
+                    [ngClass]="canWithdraw() == true ? 'buyButton' : ''" 
+                    [style.background]="canWithdraw() == true ? '#c2a336' : '#ff3f0fda'" 
+                    class="button" 
+                    mat-raised-button color="primary" 
+                    type="button" 
+                    (click) = "withdrawPendingRewards()">
+                    Harvest
+                </button>
+            </span>
+        </span>
+    </div>
+</div>

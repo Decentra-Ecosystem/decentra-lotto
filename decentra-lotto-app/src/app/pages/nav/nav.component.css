@@ -1,0 +1,140 @@
+.sidenav-container {
+  height: 100%;
+  background-image: linear-gradient(#010022, #5D078B );
+}
+
+.sidenav {
+  width: 200px;
+  background-color: #010022;
+}
+
+.toolbar{
+  padding: 0 5px;
+  height: 80px;
+  overflow: hidden;
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #010022;
+}
+
+.list {
+  padding-top: 20px; 
+}
+
+.link {
+  color: white;
+  border-width: 2px 0px 2px 0px;
+  border-style:solid;
+  border-radius: 3px;
+  box-shadow: 0 0 .1rem #fff,
+              0 0 .1rem #fff,
+              0 0 1rem #bc13fe,
+              0 0 0.4rem #bc13fe,
+              0 0 1.4rem #bc13fe,
+              inset 0 0 1.3rem #bc13fe;
+}
+
+.link:hover {
+  background-color: #c2a336;
+}
+
+.link.active-link {
+  background-color: #c2a336;
+}
+
+.flexExpand {
+  flex: 1 1 auto;
+}
+
+.white{
+  color: white;
+}
+
+.dashboard-card {
+  cursor:pointer;
+  background: linear-gradient(180deg, #381a748e 0%, #4c225f8f 100%);
+  font-size: 15px;
+  color: white;
+  height: 25%;
+  border-radius: 2rem;
+  padding: 0.4em;
+  margin-top: 15px;
+  margin-right: 10px;
+  border: 0.2rem solid #fff;
+  box-shadow: 0 0 .1rem #fff,
+              0 0 .1rem #fff,
+              0 0 1rem #bc13fe,
+              0 0 0.3rem #bc13fe,
+              0 0 0.8rem #bc13fe,
+              inset 0 0 0.7rem #bc13fe;
+}
+
+/* .dashboard-card:hover{
+  background-color: #c2a336;
+} */
+
+.outer-card{
+  background: rgba(110, 48, 180, 0);
+  padding-left: 0;
+}
+
+.wallet_image{
+  height: 25px;
+  margin-right: 5px;
+  border-radius: 50%;
+  box-shadow: 0 0 .1rem #fff,
+              0 0 .1rem #fff,
+              0 0 0.2rem #fee613,
+              0 0 0.1rem #fee613,
+              0 0 0.2rem #fee613,
+              inset 0 0 0.3rem #fee613
+}
+
+.bottomPanel{
+  position:absolute; 
+  bottom: 0; 
+  color: white;
+  width: 100%;
+  height: 100px;
+  padding: 8px;
+  padding-right: 0px;
+  border-top: 0.2rem solid #fff;
+  box-shadow: 0 0 .1rem #fff,
+              0 0 .1rem #fff,
+              0 0 1rem #bc13fe,
+              0 0 0.3rem #bc13fe,
+              0 0 0.8rem #bc13fe,
+              inset 0 0 0.7rem #bc13fe;
+}
+
+.bottom{
+  width: 95%;
+  position:absolute; 
+  bottom: 0; 
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+@media only screen and (max-width : 960px) {
+  .toolbar{
+    height: 65px;
+  }
+  .dashboard-card {
+    font-size: 11px;
+    margin-top: 10px;
+    padding: 0.3rem;
+    margin-right: 3px;
+  }
+  .wallet_image{
+    height: 20px;
+  }
+}

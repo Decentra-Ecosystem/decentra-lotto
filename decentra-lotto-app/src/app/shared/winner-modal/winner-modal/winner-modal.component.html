@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>Congratulations!</h2>
+<mat-dialog-content class="mat-typography">
+  <h3>You are a winner:</h3>
+  <p>Total amount won since last login: <img width="35px" src="assets/images/logo/decentra-lotto-O_s.png">{{data.amount}} DELO (${{data.amountUSD}})</p>
+  <table mat-table [dataSource]="data.position" class="mat-elevation-z8">
+
+    <!-- <p *ngFor="let x of data.position">
+      Position {{x+1}}
+    </p> -->
+
+    <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+  
+    <!-- ID Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef> Draw No. </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+  
+    <!-- Position Column -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef> Position </th>
+      <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+    </ng-container>
+  
+    <!-- Amount Column -->
+    <ng-container matColumnDef="amount">
+      <th mat-header-cell *matHeaderCellDef> Amount (DELO) </th>
+      <td mat-cell *matCellDef="let element"> {{element.amount}} </td>
+    </ng-container>
+
+    <!-- Amount USD Column -->
+    <ng-container matColumnDef="amountUSD">
+      <th mat-header-cell *matHeaderCellDef> Amount (USD) </th>
+      <td mat-cell *matCellDef="let element"> ~${{element.amountUSD}}</td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <p>You can hold your winnings and gain reflection yield, or stake them
+    <a class="link" mat-dialog-close mat-list-item [routerLink]="'/staking'"> 
+        here.
+    </a>
+  </p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

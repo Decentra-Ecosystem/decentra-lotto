@@ -1,0 +1,142 @@
+.dashboard-card {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    background: rgb(110,48,180);
+    background: linear-gradient(180deg, #381a74 0%, #4c225f 100%);
+    color: white;
+
+    
+    border-radius: 2rem;
+    padding: 0.4em;
+    border: 0.2rem solid #fff;
+    box-shadow: 0 0 .1rem #fff,
+                0 0 .1rem #fff,
+                0 0 1rem #bc13fe,
+                0 0 0.3rem #bc13fe,
+                0 0 0.8rem #bc13fe,
+                inset 0 0 0.7rem #bc13fe;
+}
+
+.value-symbol {
+    margin: 0;
+}
+
+.value-text {
+    margin-top: 20px;
+    font-family: 'LeagueSpartan', 'arial', sans-serif;
+}
+
+.title-text {
+    font-weight: 400;
+    margin: 0;
+    text-align: center;
+    color: rgb(255, 255, 255);
+    font-weight:200;
+    font-family: 'LeagueSpartan', 'arial', sans-serif;
+    text-shadow:
+    0 0 3px rgba(255, 255, 255, 0.24),
+    0 0 5px rgba(255, 255, 255, 0.24),
+    0 0 10px rgba(255, 255, 255, 0.24),
+    0 0 221px rgba(140, 0, 255, 0.24),
+    0 0 41px rgba(140, 0, 255, 0.24),
+    0 0 56px rgba(140, 0, 255, 0.24),
+    0 0 51px rgba(140, 0, 255, 0.24),
+    0 0 175px rgba(140, 0, 255, 0.24)
+}
+
+.avatar-icon {
+    margin: 15px;
+    transform: scale(1.7);
+}
+
+.duration {
+    color: grey;
+}
+
+.difference-text {
+    text-align: center;
+    margin-top: 10px ;
+}
+
+.card-icon {
+    width: 15%;
+    margin-right: 15px;
+}
+
+.card-header {
+    justify-content: center;
+    padding-top: 25px;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.green-text {
+    color: green;
+}
+
+.red-text {
+    color: red;
+}
+
+@media only screen and (max-width : 1700px) {
+    .value-text {
+        font-size: 16px;
+    }
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (max-width : 1600px) {
+    .value-text {
+        margin-top: 0px;
+        font-size:medium;
+        overflow: auto;
+        font-size: 16px;
+    }
+    .card-icon {
+        width: 25%;
+        margin-right: 0px;
+    }
+    .title-text {
+        font-size: smaller;
+    }
+    .avatar-icon {
+        transform: scale(1.1);
+        margin-top: 0px;
+    }
+}
+
+@media only screen and (max-width : 1400px) {
+    .avatar-icon {
+        transform: scale(1.7);
+        margin-top: 0px;
+    }
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (max-width : 1280px) {
+    .value-text {
+        margin-top: 0px;
+        font-size:small;
+        overflow: auto;
+    }
+    .card-icon {
+        width: 35%;
+        margin-right: 0px;
+    }
+    .title-text {
+        font-size: smaller;
+    }
+    .avatar-icon {
+        transform: scale(1.3);
+        margin-top: 0px;
+    }
+}
+/* 
+@media (max-aspect-ratio: 1/1) {
+
+} */

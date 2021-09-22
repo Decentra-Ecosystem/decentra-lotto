@@ -1,0 +1,113 @@
+<div *ngIf="!deadlinePassed()" class="outer">
+    <div class="container panel">
+        <div class="form-outer">
+            <form class="example-container">
+                <mat-form-field hintLabel="Tickets Owned:" appearance="fill">
+                    <mat-label>Number of Tickets:</mat-label>
+                    <input matInput #input maxlength="10" type="number" placeholder="1" [formControl]="numTicketsControl" min="1" (change)="selectToken()">
+                    <mat-hint *ngIf="walletStats" align="end">{{walletStats.numTickets}}</mat-hint>
+                    <mat-error *ngIf="numTicketsControl.invalid">Min Tickets: 1</mat-error>
+                </mat-form-field>
+            </form>
+        </div>
+        <div class="white center odds">
+            <h3 *ngIf="walletStats && newOdds>0 && !isMobile()">New Odds: <span *ngIf="price>-1">{{newOdds}}%</span> <span *ngIf="price==-1">0</span></h3>
+            <h2 *ngIf="isMobile()" class="bonus-text" [style.color]="tokenBalance < price ? 'red' : 'white'">
+                DELO Received ~ <span class="cost-amt-text" *ngIf="deloReceivedAmount>-1">{{deloReceivedAmount}} (${{usdReceivedAmount}}) </span>
+            </h2>
+        </div>
+        <div class="form-outer">
+            <form class="example-container">
+                <mat-form-field hintLabel="Balance:" appearance="outline">
+                    <mat-label>Currency</mat-label>
+                    <mat-select [formControl]="symbolControl">
+                    <mat-option (click)="selectToken()" value="BNB">BNB</mat-option>
+                    <mat-option (click)="selectToken()" value="BUSD">BUSD</mat-option>
+                    <mat-option (click)="selectToken()" value="USDT">USDT</mat-option>
+                    <mat-option (click)="selectToken()" value="DAI">DAI</mat-option>
+                    </mat-select>
+                    <mat-hint align="end">{{tokenBalance}}</mat-hint>
+                </mat-form-field>
+            </form>
+        </div>
+    </div>
+    <h5 *ngIf="symbolControl.value == 'BNB'" class="white" style="padding: 0px; margin:0px;">(estimated)</h5>
+    <div class="white" [style]="symbolControl.value == 'BNB' ? '' : {'padding-top':'30px'}">
+        <h2 class="cost-text">
+            Cost: 
+            <span class="cost-amt-text" *ngIf="price>-1">{{price}} </span> {{symbolControl.value}}
+            <span *ngIf="price==-1">0</span>
+            <span class="discount" [style]="getDiscount(numTicketsControl.value) == 0 ? {'color':'red'} : {'color':'#E0D740'}"> - {{getDiscount(numTicketsControl.value)}}% discount</span>
+        </h2>
+        <h2 *ngIf="!isMobile() && tokenBalance && price" class="bonus-text">
+            DELO Received ~ <span class="cost-amt-text" *ngIf="deloReceivedAmount>-1">{{deloReceivedAmount}} (${{usdReceivedAmount}}) </span>
+        </h2>
+    </div>
+
+    <div class="container">
+        <p style="color: red; font-size: 20px;" *ngIf="tokenBalance && price && tokenBalance < price || tokenBalance == 0">Not enough balance...</p>
+        <span *ngIf="tokenBalance && price && tokenBalance >= price">
+            <button 
+                class="button" 
+                [ngClass]="approved == false ? 'buyButton' : ''" 
+                mat-raised-button color="primary" 
+                *ngIf="symbolControl.value != 'BNB'" 
+                [disabled]="loading || approved == true"
+                type="button" 
+                [style.background]="(symbolControl.value != 'BNB' && approved == false) ? '#c2a336' : '#ff3f0fda'" 
+                (click) = "approveToken()">
+                <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
+                <span *ngIf="!loading">Approve {{symbolControl.value}}</span>
+            </button>
+            <button 
+                class="button"
+                [ngClass]="symbolControl.value != 'BNB' && approved == false ? '' : 'buyButton'" 
+                [style.background]="(symbolControl.value != 'BNB' && approved == false) ? '#ff3f0fda' : '#c2a336'" 
+                mat-raised-button 
+                color="primary" 
+                [disabled]="loading || (symbolControl.value != 'BNB' && approved == false)" 
+                type="button" 
+                (click) = "buyTickets()">
+                <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
+                <span *ngIf="!loading">Buy Tickets</span>
+            </button>
+            
+        </span>
+    </div>
+</div>
+
+<div *ngIf="deadlinePassed() && drawStats" class="outer">
+    <div style="padding-bottom: 40px;">
+        <h2 class="neonText">
+            Draw Deadline Passed. <br /><br />Click below to end the draw and see if you're a winner...
+        </h2>
+    </div>
+    <button 
+        class="button" 
+        [ngClass]="drawStats.stateString == 'Open' ? 'buyButton' : ''"
+        [style.background]="drawStats.stateString != 'Open' ? '#ff3f0fda' : '#c2a336'" 
+        mat-raised-button 
+        color="primary" 
+        [disabled]="drawStats.stateString != 'Open'" 
+        type="button" 
+        (click) = "endDraw()">
+        End Draw 
+    </button>
+    <button 
+        class="button" 
+        [ngClass]="drawStats.stateString == 'Ready' ? 'buyButton' : ''"
+        [style.background]="drawStats.stateString != 'Ready' ? '#ff3f0fda' : '#c2a336'" 
+        mat-raised-button 
+        color="primary" 
+        [disabled]="drawStats.stateString != 'Ready'" 
+        type="button" 
+        (click) = "drawWinners()">
+        Draw Winners
+    </button>
+    <div *ngIf="drawStats.stateString == 'Closed' && !hasRandom" class="randomLoader">
+        <mat-spinner>Getting Random</mat-spinner>
+        <div class="white randomText">
+            Randomising
+        </div>
+    </div>  
+</div>
