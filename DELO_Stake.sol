@@ -104,7 +104,7 @@ contract DELOStake is Owned {
     uint256 unstakingFee = 20; // 2% 
     uint256 public totalDividends = 0;
     uint256 private scaledRemainder = 0;
-    uint256 private scaling = uint256(10) ** 12;
+    uint256 private constant scaling = uint256(10) ** 12;
     uint public round = 1;
     
     struct USER{
@@ -156,16 +156,16 @@ contract DELOStake is Owned {
         emit STAKED(msg.sender, tokens.sub(_stakingFee), _stakingFee);
     }
 
-    function addDELO(address _DELO) public onlyOwner {
+    function addDELO(address _DELO) external onlyOwner {
         DELO = _DELO;  
     }
 
-    function addStakingfee(uint256 _stakingFee) public onlyOwner {
+    function addStakingfee(uint256 _stakingFee) external onlyOwner {
         require(_stakingFee <= 100, "Cannot set over 10% stakingFee");  
         stakingFee = _stakingFee;  
     }
 
-    function addUnStakingfee(uint256 _unstakingFee) public onlyOwner {
+    function addUnStakingfee(uint256 _unstakingFee) external onlyOwner {
         require(_unstakingFee <= 100, "Cannot set over 10% unstakingFee");
         unstakingFee = _unstakingFee;  
     }
@@ -187,7 +187,7 @@ contract DELOStake is Owned {
         round++;
     }
 
-    function CLAIMREWARD() public {
+    function CLAIMREWARD() external {
         if(totalDividends > stakers[msg.sender].fromTotalDividend){
             uint256 owing = pendingReward(msg.sender);
         
@@ -210,13 +210,13 @@ contract DELOStake is Owned {
         return amount;
     }
     
-    function getPendingReward(address staker) public view returns(uint256 _pendingReward) {
+    function getPendingReward(address staker) external view returns(uint256 _pendingReward) {
         uint256 amount =  ((totalDividends.sub(payouts[stakers[staker].round - 1])).mul(stakers[staker].stakedTokens)).div(scaling);
         amount += ((totalDividends.sub(payouts[stakers[staker].round - 1])).mul(stakers[staker].stakedTokens)) % scaling ;
         return (amount + stakers[staker].remainder);
     }
     
-   function WITHDRAW(uint256 tokens) external {
+    function WITHDRAW(uint256 tokens) external {
         
         require(stakers[msg.sender].stakedTokens >= tokens && tokens > 0, "Invalid token amount to withdraw");
         
