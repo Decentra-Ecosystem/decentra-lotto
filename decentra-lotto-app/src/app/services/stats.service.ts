@@ -74,6 +74,7 @@ export class StatsService implements OnDestroy {
     this.drawStats = new DrawModel(await this.lottery.getDrawStats(null));
     this.walletStats = new WalletStats(await this.lottery.getWalletStats(null));
     this.walletStats.walletChance = this.getChance(false, 0);
+    this.drawStats.oddsPerTicket = parseFloat(((this.drawStats.numWinners/this.drawStats.numTickets)*100).toFixed(2));
     var x = await this.lottery.getUserBalance();
     this.walletStats.walletDELOBalance = x[0];
     this.walletStats.walletDELOBalanceRaw = x[1];
@@ -228,7 +229,8 @@ export class StatsService implements OnDestroy {
         totalPot: this.drawStats.totalPot,
         state: this.drawStats.state,
         numWinners: this.drawStats.numWinners,
-        stateString: this.drawStats.stateString
+        stateString: this.drawStats.stateString,
+        oddsPerTicket: this.drawStats.oddsPerTicket
       }
     );
   }
@@ -269,11 +271,11 @@ export class StatsService implements OnDestroy {
     var statusColour = status != "Open" || this.drawStats.drawDeadline <= new Date() ? "warn" : "accent";
     var lock = status != "Open" || this.drawStats.drawDeadline <= new Date() ? "lock" : "lock_open";
     var statusText = status == "Open" && this.drawStats.drawDeadline <= new Date() ? "Deadline Passed" : status;
-    
+
     return of([
       { title: "Total Pot", value: Math.round(this.drawStats.totalPot).toString(), color: "accent", icon: "local_atm", isCurrency: true },
       { title: "Draw Deadline", value: this.countdown, color: "warn", icon: "timer", isCurrency: false },
-      { title: "Odds Per Ticket", value: this.getChance(false, 0).toString()+"%", color: "primary", icon: "casino", isCurrency: false },
+      { title: "Odds Per Ticket", value: this.drawStats.oddsPerTicket.toString()+"%", color: "primary", icon: "casino", isCurrency: false },
       { title: "Winning Tickets", value: this.drawStats.numWinners, color: "accent", icon: "emoji_events", isCurrency: false },
       { title: "Tickets Entered", value: this.drawStats.numTickets, color: "primary", icon: "payments", isCurrency: false },
       { title: "Status", value: statusText, color: statusColour, icon: lock, isCurrency: false }

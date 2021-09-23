@@ -15,6 +15,7 @@ class DrawModel {
     state: number;
     numWinners: number;
     stateString: string;
+    oddsPerTicket: number;
 
     constructor(
         obj: any

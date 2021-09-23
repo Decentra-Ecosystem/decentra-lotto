@@ -12,9 +12,9 @@
         </div>
         <div class="white center odds">
             <h3 *ngIf="walletStats && newOdds>0 && !isMobile()">New Odds: <span *ngIf="price>-1">{{newOdds}}%</span> <span *ngIf="price==-1">0</span></h3>
-            <h2 *ngIf="isMobile()" class="bonus-text" [style.color]="tokenBalance < price ? 'red' : 'white'">
-                DELO Received ~ <span class="cost-amt-text" *ngIf="deloReceivedAmount>-1">{{deloReceivedAmount}} (${{usdReceivedAmount}}) </span>
-            </h2>
+            <h3 *ngIf="isMobile()" class="bonus-text" [style.color]="tokenBalance < price ? 'red' : 'white'">
+                DELO Received ~ <span class="cost-amt-text" *ngIf="deloReceivedAmount>-1">{{deloReceivedAmount}}(${{usdReceivedAmount}}) </span>
+            </h3>
         </div>
         <div class="form-outer">
             <form class="example-container">
@@ -31,7 +31,7 @@
             </form>
         </div>
     </div>
-    <h5 *ngIf="symbolControl.value == 'BNB'" class="white" style="padding: 0px; margin:0px;">(estimated)</h5>
+    <h5 *ngIf="symbolControl.value == 'BNB'" class="white" style="padding: 0px; margin:0px; margin-top:2px;">(estimated)</h5>
     <div class="white" [style]="symbolControl.value == 'BNB' ? '' : {'padding-top':'30px'}">
         <h2 class="cost-text">
             Cost: 
