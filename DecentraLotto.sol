@@ -704,8 +704,8 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     uint public liquidityDivisor = 10;
     uint public marketingDivisor = 10;
     uint public hedgeDivisor = 10;
-    uint public stakingDivisor = 20;
-    uint public megadrawDivisor = 5;
+    uint public stakingDivisor = 5;
+    uint public megadrawDivisor = 20;
     bool public takeLiquidity = true;
     bool public takeMarketing = true;
     bool public takeHedge = true;
@@ -813,7 +813,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     }
     
     function setMarketingDivisor(uint256 _markdiv) external onlyOwner{
-        require(_markdiv <= 20, "Cannot set over 10% marketing allocation");
+        require(_markdiv >= 5, "Cannot set over 20% marketing allocation");
         marketingDivisor = _markdiv;
     }
     
