@@ -43,39 +43,9 @@
     color: rgb(72, 203, 255);
     animation: flicker 10s infinite alternate;
   }
-
-  @keyframes color-change {
-    0% { color: rgb(236, 208, 255); }
-    25% { color: rgb(252, 63, 227); }
-    50% { color: rgb(158, 233, 108); }
-    75% { color: rgb(236, 220, 74); }
-    100% { color: rgb(230, 102, 52); }
-  }
   
   h1 {
     font-size: 4.2rem;    
-  }
-  
-  /* Flickering animation */
-  @keyframes flicker {
-      
-    0%, 18%, 22%, 25%, 53%, 57%, 100% {
-  
-        text-shadow:
-        0 0 4px #fff,
-        0 0 11px #fff,
-        0 0 19px #fff,
-        0 0 30px rgb(255, 187, 0),
-        0 0 40px rgb(255, 187, 0),
-        0 0 45px rgb(255, 187, 0),
-        0 0 50px rgb(255, 187, 0),
-        0 0 100px rgb(255, 187, 0)
-    
-    }
-    
-    20%, 24%, 55% {        
-        text-shadow: none;
-    }    
   }
 
   .form-outer{
@@ -108,26 +78,6 @@
   .neonText {
     animation: flickerPink 1.5s infinite alternate;
     color: #fff;
-  }
-   /* Flickering animation */
-   @keyframes flickerPink {
-      
-    0%, 18%, 22%, 25%, 53%, 57%, 100% {
-  
-        text-shadow:
-        0 0 4px rgb(255, 249, 199),
-        0 0 11px rgb(244, 128, 255),
-        0 0 19px rgb(234, 0, 255),
-        0 0 30px rgb(234, 0, 255),
-        0 0 40px rgb(234, 0, 255),
-        0 0 45px rgb(234, 0, 255),
-        0 0 50px rgb(234, 0, 255),
-        0 0 100px rgb(234, 0, 255)    
-    }
-    
-    20%, 24%, 55% {        
-        text-shadow: none;
-    }    
   }
 
   .randomLoader{

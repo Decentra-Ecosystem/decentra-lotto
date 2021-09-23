@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-winner-modal',
@@ -11,7 +11,9 @@ export class WinnerModalComponent implements OnInit {
   displayedColumns: string[] = ['id', 'position', 'amount', 'amountUSD'];
   dataSource = [];
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<WinnerModalComponent>) { 
+    dialogRef.disableClose = true;
+  }
 
   ngOnInit(): void {
     this.dataSource = this.data.position;

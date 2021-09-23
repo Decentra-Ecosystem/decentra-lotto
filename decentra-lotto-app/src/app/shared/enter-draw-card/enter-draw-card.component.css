@@ -47,29 +47,6 @@
   h1 {
     font-size: 4.2rem;    
   }
-  
-  /* Flickering animation */
-  @keyframes flicker {
-      
-    0%, 18%, 22%, 25%, 53%, 57%, 100% {
-  
-        text-shadow:
-        0 0 4px #fff,
-        0 0 11px #fff,
-        0 0 19px #fff,
-        0 0 30px rgb(255, 187, 0),
-        0 0 40px rgb(255, 187, 0),
-        0 0 45px rgb(255, 187, 0),
-        0 0 50px rgb(255, 187, 0),
-        0 0 100px rgb(255, 187, 0)
-    
-    }
-    
-    20%, 24%, 55% {        
-        text-shadow: none;
-    }    
-  }
-
   .form-outer{
     background-color: rgb(255, 255, 255); 
     border-radius: 5px; 
@@ -100,27 +77,6 @@
     animation: flickerPink 1.5s infinite alternate;
     color: #fff;
   }
-   /* Flickering animation */
-   @keyframes flickerPink {
-      
-    0%, 18%, 22%, 25%, 53%, 57%, 100% {
-  
-        text-shadow:
-        0 0 4px rgb(255, 249, 199),
-        0 0 11px rgb(244, 128, 255),
-        0 0 19px rgb(234, 0, 255),
-        0 0 30px rgb(234, 0, 255),
-        0 0 40px rgb(234, 0, 255),
-        0 0 45px rgb(234, 0, 255),
-        0 0 50px rgb(234, 0, 255),
-        0 0 100px rgb(234, 0, 255)    
-    }
-    
-    20%, 24%, 55% {        
-        text-shadow: none;
-    }    
-  }
-
   .randomLoader{
     text-align: left;
     width: 32%; 

@@ -20,6 +20,7 @@ import Delo from "../../assets/json/delo.json";
 import DELOStaking from "../../assets/json/delo_stake.json"
 import Approve from "../../assets/json/approve.json";
 import { StakingStats } from '../models/stakingstats.model';
+import { timeout } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -36,6 +37,7 @@ export class LotteryService {
     deloContract: any;
     options: any;
     web3Modal: any;
+    ethereumDetected: boolean = false;
 
     private accountStatusSource = new Subject<any>();
     accountStatus$ = this.accountStatusSource.asObservable();
@@ -130,12 +132,39 @@ export class LotteryService {
         });
     }
 
+    handleEthereum() {
+        const { ethereum } = window;
+        if (ethereum && ethereum.isMetaMask) {
+            // Access the decentralized web!
+            this.ethereumDetected = true;
+        } else {
+            console.log('Please install MetaMask!');
+        }
+    }
+    
     async connectToMetaMask() {
+        if (window.ethereum) {
+            this.handleEthereum();
+        } else {
+            window.addEventListener('ethereum#initialized', this.handleEthereum, {
+                once: true,
+            });
+            // If the event is not dispatched by the end of the timeout,
+            // the user probably doesn't have MetaMask installed.
+            await timeout(3000);
+            this.handleEthereum();
+        }
+
+        if (this.ethereumDetected == false){
+            return false;
+        }
+
         try {
             this.provider = await this.web3Modal.connect(); // set provider
         } catch (error) {
             return false;
         }
+
         this.web3js = new Web3(this.provider); // create web3 instance
         var p = await this.web3js.eth.net.getId((err: any, network: any)=> {});
         if (p != this.options.chainId){
@@ -345,7 +374,7 @@ export class LotteryService {
         value = this.web3js.utils.toBN(value)
         try{
             success = await this.lottoContract
-                .methods.buyTicketsBNB(num)
+                .methods.buyTicketsBNB(num, this.accounts[0])
                 .send({ from: this.accounts[0], value: value });
         }catch(err){
             return false;
@@ -357,7 +386,7 @@ export class LotteryService {
         var success;
         try{
             success = await this.lottoContract
-                .methods.buyTicketsStable(address, num)
+                .methods.buyTicketsStable(address, num, this.accounts[0])
                 .send({ from: this.accounts[0] });
         }catch(err){
             return false;

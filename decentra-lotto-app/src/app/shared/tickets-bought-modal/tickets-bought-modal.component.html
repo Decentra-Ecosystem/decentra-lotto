@@ -1,12 +1,17 @@
 <h2 mat-dialog-title>Congratulations!</h2>
 <mat-dialog-content class="mat-typography">
   <h3>You just received ~ {{data.amount}} DELO<img width="35px" src="assets/images/logo/decentra-lotto-O_s.png"></h3>
-  <p>You can hold it and gain reflection yield, or stake it
+  <p>You can hold it and gain reflection yield, or stake it for additional potential earnings
     <a class="link" mat-dialog-close mat-list-item [routerLink]="'/staking'"> 
         here.
     </a>
   </p>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Close</button>
+  <button mat-raised-button mat-button mat-dialog-close class="stakeButton" routerLink="/staking">
+    Stake
+  </button>
+  <button mat-raised-button mat-button mat-dialog-close class="closeButton">
+    Don't Stake
+  </button>
 </mat-dialog-actions>

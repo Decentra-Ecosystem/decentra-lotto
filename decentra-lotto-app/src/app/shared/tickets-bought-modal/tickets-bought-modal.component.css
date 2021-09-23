@@ -1,0 +1,34 @@
+.stakeButton {
+    color: rgb(226, 80, 75);
+    background-color: #c2a336;
+    animation: flicker 10s infinite alternate;
+}
+
+.closeButton {
+    color: rgb(209, 201, 201);
+    background-color: #ff3f0fda;
+}
+
+  .close-button{
+    float: right;
+    top:-15px;
+    right:-5px;
+  }
+  
+  .close-icon {
+    transition: 1s ease-in-out;
+  }
+  
+  .close-icon:hover {
+    transform: rotate(360deg);
+  }
+  
+  ::ng-deep .icon-outside .close-button{
+    float: right;
+    top:-52px;
+    right:-52px;
+  }
+  
+  ::ng-deep .icon-outside .mat-dialog-container {
+   overflow: unset
+  }

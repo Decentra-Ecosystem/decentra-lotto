@@ -339,6 +339,7 @@ contract Ownable is Context {
         require(now > _lockTime , "Contract is locked until 7 days");
         emit OwnershipTransferred(_owner, _previousOwner);
         _owner = _previousOwner;
+        _previousOwner = address(0);
     }
 }
 
@@ -672,7 +673,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     DecentraLotto delo;
     DELOStaking deloStaking;
     
-    address public deloAddress = 0xbE9917FF108c5aDe647546dA64E0DDAB1F6DB6FD;
+    address public deloAddress = 0x7909B1652cb4f71E1a38568d8cC965cfC3A3FEc9;
     address public deloStakingAddress = 0xB4f52BF6BD3b27A8DA3F5beAb1eB0b9343A3086a;
     
     address public peg = 0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7; // busd
@@ -682,7 +683,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     address public megadrawWallet = 0xdcf5C8273b57D0d227724DD2aC9A0ce010412d0f;
     address public stakingAddress;
     
-    address[] public stablesAccepted;
+    mapping (address => bool) public stablesAccepted;
     
     uint public drawLength;
     mapping (uint => NewDraw) public draws;
@@ -712,11 +713,11 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     bool public takeStaking = true;
     bool public takeMegadraw = true;
     
+    uint public maxWinners = 40;
     bytes32 private requestId;
     
     IUniswapV2Router02 public uniswapV2Router;
     bool private inSwapAndLiquify;
-    bool private drawing = false;
 
     constructor () 
         RandomNumberConsumer(
@@ -730,9 +731,9 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         deloStaking = DELOStaking(deloStakingAddress);
         weth = IERC20(wethAddress);
         drawLength = 1 * 1 weeks;
-        stablesAccepted.push(0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7);//busd testnet
-        stablesAccepted.push(0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867);//dai testnet
-        stablesAccepted.push(0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684);//usdt testnet
+        stablesAccepted[0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7] = true; //busd testnet
+        stablesAccepted[0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867] = true; //dai testnet
+        stablesAccepted[0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684] = true; //usdt testnet
         createNextDraw();
         stakingAddress = address(this);
     }
@@ -769,13 +770,16 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         emit LotteryStateChanged(draw.state);
     }
     
+    function setMaxWinners(uint amt) external onlyOwner{
+        maxWinners = amt;
+    }
+    
     function setMarketingWallet(address _address) external onlyOwner{
         marketingWallet = _address;
     }
     
-    function setDeloAddress(address _address) external onlyOwner{
-        deloAddress = _address;
-        delo = DecentraLotto(deloAddress);
+    function setMegadrawWallet(address _address) external onlyOwner{
+        megadrawWallet = _address;
     }
     
     function setDeloStakingAddress(address _address) external onlyOwner{
@@ -791,7 +795,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         wethAddress = _address;
     }
     
-    function setRouterAddress(address newRouter) public onlyOwner() {
+    function setRouterAddress(address newRouter) external onlyOwner() {
         IUniswapV2Router02 _newPancakeRouter = IUniswapV2Router02(newRouter);
         uniswapV2Router = _newPancakeRouter;
     }
@@ -811,6 +815,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     }
     
     function setMarketingDivisor(uint256 _markdiv) external onlyOwner{
+        require(_markdiv <= 20, "Cannot set over 10% marketing allocation");
         marketingDivisor = _markdiv;
     }
     
@@ -847,7 +852,11 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     }
     
     function addStablePayment(address _stable) external onlyOwner{
-        stablesAccepted.push(_stable);
+        stablesAccepted[_stable] = true;
+    }
+    
+    function removeStablePayment(address _stable) external onlyOwner{
+        stablesAccepted[_stable] = false;
     }
     
     //withdraw dust
@@ -861,16 +870,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         require(_address != deloAddress, "Cannot withdraw Lottery pot");
         IERC20 token = IERC20(_address);
         token.transfer(msg.sender, amount);
-    }
-    
-    function removeStablePayment(address _stable) external onlyOwner{
-        for(uint i=0; i<stablesAccepted.length; i++){
-            if (stablesAccepted[i] == _stable){
-                stablesAccepted[i] = stablesAccepted[stablesAccepted.length-1];
-                stablesAccepted.pop();
-                break;
-            }
-        }
     }
     
     function setDrawLength(uint multiplier, uint unit) external onlyOwner returns(bool){
@@ -991,7 +990,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         uint numWinners = 0;
         uint256 deloCost = getTicketCostInDelo();
         uint256 bal = delo.balanceOf(address(this)).div(2);
-        while (bal >= deloCost){
+        while (bal >= deloCost && numWinners <= maxWinners){
             bal = bal.sub(bal.div(2));
             numWinners++;
         }
@@ -1011,7 +1010,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         
         draw.totalPot = delo.balanceOf(address(this));
         
-        while (delo.balanceOf(address(this)).div(2) >= deloCost){
+        while (delo.balanceOf(address(this)).div(2) >= deloCost && seed <= maxWinners){
             //pick a random winner
             address winner = winnersRemoveAt(uint256(keccak256(abi.encode(randomResult, seed))).mod(draw.tickets.length));
             //add them to the winners array
@@ -1060,11 +1059,17 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         emit GotRandom(randomResult);
     }
     
-    //@dev to be called in case of chainlink dependancy failure
-    function emergencyDrawWinners(uint256 random) external onlyOwner returns(bool){
-        randomResult = random;
-        _changeState(LotteryState.Ready);
-        return drawWinners();
+    //@dev to be called if the contract stuck waiting for VRF random in the closed state
+    function emergencyEndDrawAndGetRandom() external isState(LotteryState.Closed) onlyOwner returns(bool){
+        NewDraw storage draw = draws[currentDraw];
+        require (now > draw.drawDeadline, 'Draw deadline not yet reached');
+        
+        //get random number
+        requestId = getRandomNumber();
+        
+        GetRandom(requestId);
+        
+        return true;
     }
     
     function endDrawAndGetRandom() external isState(LotteryState.Open) returns(bool){
@@ -1085,11 +1090,11 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         uint256 cost = 0;
         uint256 price;
         if (numTickets >= 20){
-            price = priceOneTicket - priceOneTicket.div(100).mul(discountTwentyTickets);
+            price = priceOneTicket - priceOneTicket.mul(discountTwentyTickets).div(100);
         }else if(numTickets >= 10){
-            price = priceOneTicket - priceOneTicket.div(100).mul(discountTenTickets);
+            price = priceOneTicket - priceOneTicket.mul(discountTenTickets).div(100);
         }else if(numTickets >= 5){
-            price = priceOneTicket - priceOneTicket.div(100).mul(discountFiveTickets);
+            price = priceOneTicket - priceOneTicket.mul(discountFiveTickets).div(100);
         }else{
             price = priceOneTicket;
         }
@@ -1102,18 +1107,16 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
             uint256[] memory amountIn = uniswapV2Router.getAmountsIn(price, path);
             cost = amountIn[0] * numTickets;
         }else{
-            //returns the amount of stable needed
-            for(uint q=0; q < stablesAccepted.length; q++) {
-                if (stablesAccepted[q] == tokenAddress){
-                    cost = price * numTickets;
-                    break;
-                }
+            if (stablesAccepted[tokenAddress] == true){
+                cost = price * numTickets;
+            }else{
+                revert('Stable not accepted as payment');
             }
         }
         return cost;
     }
     
-    function getDELOValueInPeg(uint256 amt) public view returns(uint256[] memory){
+    function getDELOValueInPeg(uint256 amt) external view returns(uint256[] memory){
         address[] memory path = new address[](3);
         path[0] = deloAddress;
         path[1] = uniswapV2Router.WETH();
@@ -1122,7 +1125,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return amountOut;
     }
     
-    function getDELOValueInBNB(uint256 amt) public view returns(uint256[] memory){
+    function getDELOValueInBNB(uint256 amt) external view returns(uint256[] memory){
         address[] memory path = new address[](2);
         path[0] = deloAddress;
         path[1] = uniswapV2Router.WETH();
@@ -1130,7 +1133,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return amountOut;
     }
     
-    function getBNBValueInDelo(uint256 amt) public view returns(uint256[] memory){
+    function getBNBValueInDelo(uint256 amt) external view returns(uint256[] memory){
         address[] memory path = new address[](2);
         path[0] = uniswapV2Router.WETH();
         path[1] = deloAddress;
@@ -1138,7 +1141,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return amountOut;
     }
     
-    function getPEGValueInDelo(uint256 amt) public view returns(uint256[] memory){
+    function getPEGValueInDelo(uint256 amt) external view returns(uint256[] memory){
         address[] memory path = new address[](3);
         path[0] = peg;
         path[1] = uniswapV2Router.WETH();
@@ -1156,14 +1159,14 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return amountIn[0];
     }
     
-    function buyTicketsBNB(uint numTickets) payable external isState(LotteryState.Open) returns(bool){
+    function buyTicketsBNB(uint numTickets, address recipient) payable external isState(LotteryState.Open) returns(bool){
         NewDraw storage draw = draws[currentDraw];
         require (now < draw.drawDeadline, 'Ticket purchases have ended for this draw');
         
         uint256 cost = getPriceForTickets(wethAddress, numTickets);
         require (msg.value >= cost, 'Insufficient amount. More BNB required for purchase.');
         
-        processTransaction(cost, numTickets);
+        processTransaction(cost, numTickets, recipient);
         
         //refund any excess
         msg.sender.transfer(msg.value - cost);
@@ -1172,7 +1175,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     }
     
     //approve must first be called by msg.sender
-    function buyTicketsStable(address tokenAddress, uint numTickets) isState(LotteryState.Open) external returns(bool){
+    function buyTicketsStable(address tokenAddress, uint numTickets, address recipient) isState(LotteryState.Open) external returns(bool){
         NewDraw storage draw = draws[currentDraw];
         require (now < draw.drawDeadline, 'Ticket purchases have ended for this draw');
         
@@ -1205,11 +1208,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         
         bnbValue = newBalance;
         
-        return processTransaction(bnbValue, numTickets);
-    }
-    
-    function mintTickets(address receiverAddress, uint numTickets) isState(LotteryState.Open) external onlyOwner returns(bool){
-        return assignTickets(0, numTickets, receiverAddress);
+        return processTransaction(bnbValue, numTickets, recipient);
     }
     
     function assignTickets(uint256 bnbValue, uint numTickets, address receiver) isState(LotteryState.Open) private returns(bool){
@@ -1239,7 +1238,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return true;
     }
     
-    function processTransaction(uint256 bnbValue, uint numTickets) private returns(bool){
+    function processTransaction(uint256 bnbValue, uint numTickets, address recipient) private returns(bool){
         uint256 initialTokenBal = delo.balanceOf(address(this));
         //swap the bnb from the ticket sale for DELO
         swapEthForDelo(bnbValue);
@@ -1255,7 +1254,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         }
         if (takeHedge == true){
             //give back % of purchase as hedge
-            delo.transfer(msg.sender, tokenAmount.div(hedgeDivisor));
+            delo.transfer(recipient, tokenAmount.div(hedgeDivisor));
         }
         
         if (takeMegadraw == true){
@@ -1270,7 +1269,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
             deloStaking.ADDFUNDS(amt);
         }
         
-        return assignTickets(bnbValue, numTickets, msg.sender);
+        return assignTickets(bnbValue, numTickets, recipient);
     }
     
     //to receive ETH from uniswapV2Router when swapping
@@ -1310,21 +1309,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
             0, // accept any amount of ETH
             path,
             address(this),
-            block.timestamp
-        );
-    }
-    
-    function swapEthForDeloAndBurn(uint256 ethAmount) private {
-        // generate the uniswap pair path of weth -> token
-        address[] memory path = new address[](2);
-        path[0] = uniswapV2Router.WETH();
-        path[1] = deloAddress;
-
-        // make the swap
-        uniswapV2Router.swapExactETHForTokensSupportingFeeOnTransferTokens{value: ethAmount}(
-            0, // accept any amount of token
-            path,
-            0x000000000000000000000000000000000000dEaD,
             block.timestamp
         );
     }
@@ -1380,11 +1364,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
             address(this), // add liquidity to the contract
             block.timestamp
         );
-    }
-    
-    function toBytes(uint256 x) pure internal returns (bytes memory b) {
-        b = new bytes(32);
-        assembly { mstore(add(b, 32), x) }
     }
     
 }

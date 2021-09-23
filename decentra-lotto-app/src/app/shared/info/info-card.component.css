@@ -103,28 +103,6 @@ h4{
     0 0 175px rgba(140, 0, 255, 0.24)
 }
 
-  /* Flickering animation */
-  @keyframes flicker {
-      
-    0%, 18%, 22%, 25%, 53%, 57%, 100% {
-  
-        text-shadow:
-        0 0 4px #fff,
-        0 0 11px #fff,
-        0 0 19px #fff,
-        0 0 30px rgb(255, 187, 0),
-        0 0 40px rgb(255, 187, 0),
-        0 0 45px rgb(255, 187, 0),
-        0 0 50px rgb(255, 187, 0),
-        0 0 100px rgb(255, 187, 0)
-    
-    }
-    
-    20%, 24%, 55% {        
-        text-shadow: none;
-    }    
-  }
-
   /* width */
 ::-webkit-scrollbar {
   width: 20px;

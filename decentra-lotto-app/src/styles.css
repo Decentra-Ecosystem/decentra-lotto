@@ -21,6 +21,14 @@ font-family: 'LeagueSpartan', 'arial', sans-serif;
     src: local("AquireBold"), url(./assets/fonts/aquire-font/AquireBold-8Ma60.otf) format("truetype");
 }
 
+.gold{
+    background-color: #c2a336;
+}
+
+.red{
+    background-color: #ff3f0fda;
+}
+
 .mat-dialog-container {
     font-family: 'LeagueSpartan', 'arial', sans-serif;
     background: rgb(110,48,180) !important;
@@ -35,3 +43,100 @@ font-family: 'LeagueSpartan', 'arial', sans-serif;
                 0 0 0.8rem #bc13fe,
                 inset 0 0 0.7rem #bc13fe !important;
 }
+
+/* Animations */
+@keyframes color-change {
+    0% { color: rgb(236, 208, 255); }
+    25% { color: rgb(252, 63, 227); }
+    50% { color: rgb(158, 233, 108); }
+    75% { color: rgb(236, 220, 74); }
+    100% { color: rgb(230, 102, 52); }
+    }
+
+@keyframes flicker {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+        text-shadow:
+        0 0 4px #fff,
+        0 0 11px #fff,
+        0 0 19px #fff,
+        0 0 30px rgb(255, 187, 0),
+        0 0 40px rgb(255, 187, 0),
+        0 0 45px rgb(255, 187, 0),
+        0 0 50px rgb(255, 187, 0),
+        0 0 100px rgb(255, 187, 0)
+    }
+    20%, 24%, 55% {        
+        text-shadow: none;
+    }    
+}
+
+@keyframes flickerPink {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+        text-shadow:
+        0 0 4px rgb(255, 249, 199),
+        0 0 11px rgb(244, 128, 255),
+        0 0 19px rgb(234, 0, 255),
+        0 0 30px rgb(234, 0, 255),
+        0 0 40px rgb(234, 0, 255),
+        0 0 45px rgb(234, 0, 255),
+        0 0 50px rgb(234, 0, 255),
+        0 0 100px rgb(234, 0, 255)    
+    }
+    20%, 24%, 55% {        
+        text-shadow: none;
+    }    
+  }
+
+@keyframes subtleFlicker {
+    100% {
+      /* Larger blur radius */
+      text-shadow:
+        0 0 4px rgb(248, 168, 64),
+        0 0 11px rgb(248, 168, 64),
+        0 0 19px rgb(248, 168, 64),
+        0 0 40px rgb(255, 208, 0),
+        0 0 80px rgb(255, 208, 0),
+        0 0 90px rgb(255, 208, 0),
+        0 0 100px rgb(255, 208, 0),
+        0 0 150px rgb(255, 208, 0)
+    }
+   0% {
+      /* A slightly smaller blur radius */
+      text-shadow:
+        0 0 4px rgb(248, 168, 64),
+        0 0 10px rgb(248, 168, 64),
+        0 0 18px rgb(248, 168, 64),
+        0 0 38px rgb(255, 208, 0),
+        0 0 73px rgb(255, 208, 0),
+        0 0 80px rgb(255, 208, 0),
+        0 0 94px rgb(255, 208, 0),
+        0 0 140px rgb(255, 208, 0)
+    }
+  }
+ 
+  @keyframes pulsate {
+    100% {
+      /* Larger blur radius */
+      text-shadow:
+        0 0 2px #fff,
+        0 0 5px #fff,
+        0 0 9px #fff,
+        0 0 20px #0fa,
+        0 0 40px #0fa,
+        0 0 45px #0fa,
+        0 0 50px #0fa,
+        0 0 75px #0fa;
+    }
+    0% {
+      /* Smaller blur radius */
+      text-shadow:
+        0 0 1px #fff,
+        0 0 2px #fff,
+        0 0 3px #fff,
+        0 0 5px #0fa,
+        0 0 22px #0fa,
+        0 0 27px #0fa,
+        0 0 35px #0fa,
+        0 0 40px #0fa;
+    }
+  }

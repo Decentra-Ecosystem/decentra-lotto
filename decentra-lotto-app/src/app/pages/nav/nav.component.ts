@@ -90,11 +90,16 @@ export class NavComponent implements OnInit, OnDestroy {
 
   async connect(){
     this.metaConnection = await this.lotteryService.connectToMetaMask();
-    if (this.metaConnection == false){
+    console.log(this.metaConnection)
+    if (!this.metaConnection || this.metaConnection == false){
       //error
       this.user.address = "Error";
       this.connectionError = true;
+      console.log(this.user.address)
     }else{
+      if (this.user.address == "Error"){
+        window.location.reload();
+      }
       await this.statsService.init();
       this.getData();
       this.pollPrice();

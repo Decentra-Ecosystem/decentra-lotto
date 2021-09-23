@@ -65,7 +65,7 @@
         <img src="assets/images/logo/decentra-lotto_m.png" alt="DELO">
       </span>
       <span *ngIf="isMobile()" class="white">
-        <img src="assets/images/logo/decentra-lotto-O_m.png" alt="DELO">
+        <img src="assets/images/logo/decentra-lotto-O_s.png" alt="DELO">
       </span>
       <span class="flexExpand white"></span>
       <div>
@@ -74,17 +74,17 @@
               <mat-card-title>
                 <button *ngIf="!(!user || connectionError)" class="dashboard-card">
                   <span *ngIf="user && !connectionError">
-                    <img class="wallet_image" src="assets/images/logo/decentra-lotto-O_m.png"> {{user.balance}}
+                    <img class="wallet_image" src="assets/images/logo/decentra-lotto-O_s.png"> {{user.balance}}
                   </span>
                 </button>
-                <button (click)="connect()" class="dashboard-card">
+                <button class="dashboard-card">
                   <span *ngIf="!isMobile() && user && !connectionError">
                     <img class="wallet_image" [src]="chain_image"> {{user.truncatedAddress}} 
                   </span>
                   <span *ngIf="isMobile() && user && !connectionError">
                     <img class="wallet_image" [src]="chain_image"> {{user.superTruncatedAddress}}
                   </span>
-                  <span *ngIf="!user || connectionError">
+                  <span (click)="connect()" *ngIf="!user || connectionError">
                     Connect
                   </span>
                 </button>
