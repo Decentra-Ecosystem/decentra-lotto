@@ -701,11 +701,11 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     uint256 public discountTenTickets = 10;
     uint256 public discountTwentyTickets = 20;
     
-    uint public liquidityDivisor = 10;
-    uint public marketingDivisor = 10;
-    uint public hedgeDivisor = 10;
-    uint public stakingDivisor = 5;
-    uint public megadrawDivisor = 20;
+    uint public liquidityDivisor = 10; //10%
+    uint public marketingDivisor = 10; //10%
+    uint public hedgeDivisor = 10; //10%
+    uint public stakingDivisor = 5; //20%
+    uint public megadrawDivisor = 20; //5%
     bool public takeLiquidity = true;
     bool public takeMarketing = true;
     bool public takeHedge = true;
@@ -733,6 +733,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         stablesAccepted[0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7] = true; //busd testnet
         stablesAccepted[0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867] = true; //dai testnet
         stablesAccepted[0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684] = true; //usdt testnet
+        stablesAccepted[0x9780881Bf45B83Ee028c4c1De7e0C168dF8e9eEF] = true; //usdc testnet
         createNextDraw();
     }
     
@@ -847,10 +848,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     
     function toggleTakeMegadraw(bool _takeMegadraw) external onlyOwner{
         takeMegadraw = _takeMegadraw;
-    }
-    
-    function addStablePayment(address _stable) external onlyOwner{
-        stablesAccepted[_stable] = true;
     }
     
     function removeStablePayment(address _stable) external onlyOwner{
