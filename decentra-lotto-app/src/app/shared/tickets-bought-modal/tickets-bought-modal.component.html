@@ -1,3 +1,8 @@
+<button mat-icon-button class="close-button" [mat-dialog-close]="true">
+  <a href="https://twitter.com/intent/tweet?text=I%20bought%20a%20ticket%20for%20the%20Decentra-Lotto%20Jackpot!%0A%0AJoin%20the%20next%20draw%20here%20to%20be%20in%20with%20a%20chance%20of%20winning:%20https://app.decentralotto.com/lottery%0A%0A@Decentra_Lotto%0A$DELO%20%23DecentraLotto%20%23cryptolottery%20%23bsc%0Ahttps://t.co/uaotfZhvCf" target="_blank">
+    <img class="close-icon" src="../../../assets/images/twitter_icon_button_l.png">
+  </a>
+</button>
 <h2 mat-dialog-title>Congratulations!</h2>
 <mat-dialog-content class="mat-typography">
   <h3>You just received ~ {{data.amount}} DELO<img width="35px" src="assets/images/logo/decentra-lotto-O_s.png"></h3>
@@ -7,11 +12,18 @@
     </a>
   </p>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-raised-button mat-button mat-dialog-close class="stakeButton" routerLink="/staking">
-    Stake
-  </button>
-  <button mat-raised-button mat-button mat-dialog-close class="closeButton">
-    Don't Stake
-  </button>
+<mat-dialog-actions class="flexAlign">
+  <span>
+    <button mat-raised-button mat-button class="tweetButton" onclick="window.open('https://twitter.com/intent/tweet?text=I%20bought%20a%20ticket%20for%20the%20Decentra-Lotto%20Jackpot!%0A%0AJoin%20the%20next%20draw%20here%20to%20be%20in%20with%20a%20chance%20of%20winning:%20https://app.decentralotto.com/lottery%0A%0A@Decentra_Lotto%0A$DELO%20%23DecentraLotto%20%23cryptolottery%20%23bsc%0Ahttps://t.co/uaotfZhvCf', '_blank'); return false;">
+      Tweet!
+    </button>
+  </span>
+  <span>
+    <button mat-raised-button mat-button mat-dialog-close class="stakeButton" routerLink="/staking">
+      Stake
+    </button>
+    <button mat-raised-button mat-button mat-dialog-close class="closeButton">
+      Close
+    </button>
+  </span>
 </mat-dialog-actions>

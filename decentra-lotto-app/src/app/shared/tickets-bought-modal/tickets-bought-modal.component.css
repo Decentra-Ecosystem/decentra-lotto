@@ -1,3 +1,9 @@
+
+.tweetButton{
+    color: white;
+    background-color: #42A5F5;
+}
+
 .stakeButton {
     color: rgb(226, 80, 75);
     background-color: #c2a336;
@@ -7,6 +13,10 @@
 .closeButton {
     color: rgb(209, 201, 201);
     background-color: #ff3f0fda;
+}
+
+.flexAlign{
+    justify-content: space-between;
 }
 
   .close-button{
@@ -32,3 +42,9 @@
   ::ng-deep .icon-outside .mat-dialog-container {
    overflow: unset
   }
+
+  @media only screen and (max-width : 400px) {
+    button{
+        font-size: 10px;
+    }
+}

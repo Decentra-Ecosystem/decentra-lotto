@@ -29,6 +29,10 @@ font-family: 'LeagueSpartan', 'arial', sans-serif;
     background-color: #ff3f0fda;
 }
 
+.blue{
+    background-color: #42A5F5;
+}
+
 .mat-dialog-container {
     font-family: 'LeagueSpartan', 'arial', sans-serif;
     background: rgb(110,48,180) !important;

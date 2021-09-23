@@ -44,7 +44,8 @@ export class EnterDrawCardComponent implements OnInit, OnDestroy {
     BNB: {address: '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd', decimals: BNB_DECIMALS},
     BUSD: {address: '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7', decimals: BNB_DECIMALS},
     USDT: {address: '0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684', decimals: BNB_DECIMALS},
-    DAI: {address: '0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867', decimals: BNB_DECIMALS}
+    DAI: {address: '0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867', decimals: BNB_DECIMALS},
+    USDC: {address: '0x9780881Bf45B83Ee028c4c1De7e0C168dF8e9eEF', decimals: BNB_DECIMALS}
   }
 
   constructor(
@@ -197,7 +198,7 @@ export class EnterDrawCardComponent implements OnInit, OnDestroy {
     var x = await this.lotteryService.getPriceForTicketsRaw(this.symbols[this.symbolControl.value], this.numTicketsControl.value);
     var success = false;
     if (this.symbols[this.symbolControl.value] == this.symbols.BNB){
-      success = await this.lotteryService.buyTicketsBNB(this.numTicketsControl.value, x*1.01); //1% extra for slippage
+      success = await this.lotteryService.buyTicketsBNB(this.numTicketsControl.value, x*1.005); //0.05% extra for slippage
     }else{
       success = await this.lotteryService.buyTicketsStable(this.symbols[this.symbolControl.value].address, this.numTicketsControl.value);
     }

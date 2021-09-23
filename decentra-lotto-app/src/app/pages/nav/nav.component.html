@@ -7,12 +7,40 @@
     <mat-toolbar class="linkText" style="color: white;">Menu</mat-toolbar>
     <mat-nav-list class="list">
       <span *ngFor="let item of menuItems">
+        <!-- simple rouer link -->
+        <span *ngIf="item.url == '' && item.pages.length == 0">
+          <a class="link" mat-list-item [routerLink]="'/'+item.name" routerLinkActive="active-link"> 
+              <span class="linkText">{{item.name | titlecase}}</span> <img *ngIf="item.enabled == false" src="../../../assets/images/coming_soon.png">
+          </a>
+        </span>
+
+        <!-- dropdown -->
+        <span *ngIf="item.url == '' && item.pages.length > 0">
+          <a class="link" mat-list-item routerLinkActive="active-link" (click)="item.collapsed = !item.collapsed"> 
+              <span class="linkText">{{item.name | titlecase}}<mat-icon class="material-icons">arrow_drop_down</mat-icon></span>
+          </a>
+          <span *ngFor="let subitem of item.pages">
+            <span *ngIf="subitem.url == ''">
+              <a [ngClass]="item.collapsed == true ? 'accordion' : 'link'" mat-list-item [routerLink]="'/'+subitem.name" routerLinkActive="active-link"> 
+                <span class="linkTextDD">{{subitem.name | titlecase}}</span> <img *ngIf="subitem.enabled == false" src="../../../assets/images/coming_soon.png">
+            </a>
+            </span>
+            <span *ngIf="subitem.url != ''">
+              <a [ngClass]="item.collapsed == true ? 'accordion' : 'link'" mat-list-item href="{{subitem.url}}"target="_blank"> 
+                <span class="linkTextDD">{{subitem.name | titlecase}}</span> <img *ngIf="subitem.enabled == false" src="../../../assets/images/coming_soon.png">
+              </a>
+            </span>
+          </span>
+        </span>
+      </span>
+
+
+      <!-- <span *ngFor="let item of menuItems">
         <span *ngIf="item.url == ''">
           <a class="link" 
           mat-list-item 
           [routerLink]="'/'+item.name" 
-          routerLinkActive="active-link"
-          > 
+          routerLinkActive="active-link"> 
               <span class="linkText">{{item.name | titlecase}}</span> <img *ngIf="item.enabled == false" src="../../../assets/images/coming_soon.png">
           </a>
         </span>
@@ -25,7 +53,7 @@
           <span class="linkText">{{item.name | titlecase}}</span> <img *ngIf="item.enabled == false" src="../../../assets/images/coming_soon.png">
           </a>
         </span>
-      </span>
+      </span> -->
       
     </mat-nav-list>
     <button 
@@ -42,7 +70,7 @@
       <div class="bottom">
         <a style="padding:8px;" href="https://t.me/decentra-lotto" target="_blank"><img src="../../../assets/images/tg_icon.png"></a>
         <a style="padding:8px;" href="https://twitter.com/DecetraLotto" target="_blank"><img src="../../../assets/images/twitter_icon.png"></a>
-        <button mat-button [matMenuTriggerFor]="languageMenu"><mat-icon aria-hidden="false" aria-label="language selector">language</mat-icon></button>
+        <button mat-button [matMenuTriggerFor]="languageMenu"><mat-icon aria-hidden="false" aria-label="language selector" style="color: #2CA4D7;">language</mat-icon></button>
       </div>
     </div>
     <mat-menu #languageMenu="matMenu" yPosition="above">

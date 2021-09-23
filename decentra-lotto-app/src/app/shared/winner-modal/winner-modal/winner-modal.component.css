@@ -18,6 +18,15 @@ tr{
     overflow:hidden !important;
 }
 
+.flexAlign{
+    justify-content: space-between;
+}
+
+.tweetButton{
+    color: white;
+    background-color: #42A5F5;
+}
+
 .stakeButton {
     color: rgb(226, 80, 75);
     background-color: #c2a336;
@@ -27,6 +36,10 @@ tr{
 .closeButton {
     color: rgb(209, 201, 201);
     background-color: #ff3f0fda;
+}
+
+.center{
+    text-align: center;
 }
 
   .close-button{
@@ -73,6 +86,9 @@ tr{
     }
     
     tr{
+        font-size: 10px;
+    }
+    button{
         font-size: 10px;
     }
 }

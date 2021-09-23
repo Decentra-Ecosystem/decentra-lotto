@@ -22,8 +22,9 @@
                     <mat-label>Currency</mat-label>
                     <mat-select [formControl]="symbolControl">
                     <mat-option (click)="selectToken()" value="BNB">BNB</mat-option>
-                    <mat-option (click)="selectToken()" value="BUSD">BUSD</mat-option>
                     <mat-option (click)="selectToken()" value="USDT">USDT</mat-option>
+                    <mat-option (click)="selectToken()" value="USDC">USDC</mat-option>
+                    <mat-option (click)="selectToken()" value="BUSD">BUSD</mat-option>
                     <mat-option (click)="selectToken()" value="DAI">DAI</mat-option>
                     </mat-select>
                     <mat-hint align="end">{{tokenBalance}}</mat-hint>

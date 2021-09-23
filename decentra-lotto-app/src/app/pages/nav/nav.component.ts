@@ -20,15 +20,25 @@ import { Router } from '@angular/router';
 })
 export class NavComponent implements OnInit, OnDestroy {
   menuItems = [
-    {name: 'lottery', enabled:true, url:''}, 
-    {name:'staking', enabled:true, url:''}, 
-    {name:'vote', enabled:false, url:''}, 
-    {name:'buy', enabled:true, url:''}, 
-    {name:'chart', enabled:true, url:''}, 
-    {name:'docs', enabled:true, url:'https://docs.decentralotto.com/'},
-    {name:'audits', enabled:true, url:''},
-    {name:'github', enabled:true, url: 'https://github.com/CeltyCrypto/decentra-lotto'},
-    {name:'medium', enabled:true, url:''}
+    {name: 'lottery', enabled:true, url:'', pages: []}, 
+    {name:'staking', enabled:true, url:'', pages: []},
+    {name:'pools', enabled:false, url:'', pages: []}, 
+    {name:'vote', enabled:false, url:'', pages: []}, 
+    {name:'trade', enabled:true, url:'', collapsed: true, pages: [
+      {name:'buy', enabled:true, url:'https://pancakeswap.finance/swap?outputCurrency=0xca71ddb30ddc906048bcec5df305683f289c8c40'},
+      {name:'dextools', enabled:true, url: 'https://www.dextools.io/app/bsc/pair-explorer/0xb9e111e1346f0a7410bce59e1a9422aec38cefce'},
+      {name:'poocoin', enabled:true, url: 'https://poocoin.app/tokens/0xca71ddb30ddc906048bcec5df305683f289c8c40'}
+    ]}, 
+    {name:'docs', enabled:true, url:'https://docs.decentralotto.com/', pages: []},
+    {name:'audits', enabled:true, url:'', collapsed: true, pages: [
+      {name:'delo contract', enabled:true, url:'https://solidity.finance/'},
+      {name:'lotto contract', enabled:true, url: 'https://solidity.finance/'},
+      {name:'staking contract', enabled:true, url: 'https://solidity.finance/'}
+    ]},
+    {name:'more', enabled:true, url: '', collapsed: true, pages: [
+      {name:'github', enabled:true, url: 'https://github.com/CeltyCrypto/decentra-lotto'},
+      {name:'medium', enabled:true, url:''}
+    ]}
   ];
 
   private ngUnsubscribe = new Subject();

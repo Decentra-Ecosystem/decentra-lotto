@@ -12,6 +12,12 @@
   font-family: 'AquireBold', 'arial', sans-serif;
 }
 
+.linkTextDD{
+  font-family: 'AquireBold', 'arial', sans-serif;
+  font-size: 13px;
+  padding-left: 20px;
+}
+
 .toolbar{
   padding: 0 5px;
   height: 80px;
@@ -27,6 +33,15 @@
   top: 0;
   z-index: 2;
   background-color: #010022;
+}
+
+.material-icons {
+  vertical-align: -5px; /*Change this to adjust the icon*/
+}
+
+.accordion{
+  max-height: 0;
+  overflow: hidden;
 }
 
 .list {
@@ -103,6 +118,7 @@
 }
 
 .bottomPanel{
+  background-color: #010022;
   position:absolute; 
   bottom: 0; 
   color: white;
