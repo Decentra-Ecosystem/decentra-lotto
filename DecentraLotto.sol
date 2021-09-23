@@ -1057,19 +1057,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         emit GotRandom(randomResult);
     }
     
-    //@dev to be called if the contract stuck waiting for VRF random in the closed state
-    function emergencyEndDrawAndGetRandom() external isState(LotteryState.Closed) onlyOwner returns(bool){
-        NewDraw storage draw = draws[currentDraw];
-        require (now > draw.drawDeadline, 'Draw deadline not yet reached');
-        
-        //get random number
-        requestId = getRandomNumber();
-        
-        GetRandom(requestId);
-        
-        return true;
-    }
-    
     function endDrawAndGetRandom() external isState(LotteryState.Open) returns(bool){
         NewDraw storage draw = draws[currentDraw];
         require (now > draw.drawDeadline, 'Draw deadline not yet reached');
