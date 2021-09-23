@@ -681,7 +681,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     
     address public marketingWallet = 0xdcf5C8273b57D0d227724DD2aC9A0ce010412d0f;
     address public megadrawWallet = 0xdcf5C8273b57D0d227724DD2aC9A0ce010412d0f;
-    address public stakingAddress;
     
     mapping (address => bool) public stablesAccepted;
     
@@ -735,7 +734,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         stablesAccepted[0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867] = true; //dai testnet
         stablesAccepted[0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684] = true; //usdt testnet
         createNextDraw();
-        stakingAddress = address(this);
     }
     
     event LotteryStateChanged(LotteryState newState);
@@ -1162,6 +1160,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     function buyTicketsBNB(uint numTickets, address recipient) payable external isState(LotteryState.Open) returns(bool){
         NewDraw storage draw = draws[currentDraw];
         require (now < draw.drawDeadline, 'Ticket purchases have ended for this draw');
+        require (recipient != address(0), 'Cannot buy a ticket for null address');
         
         uint256 cost = getPriceForTickets(wethAddress, numTickets);
         require (msg.value >= cost, 'Insufficient amount. More BNB required for purchase.');
@@ -1178,6 +1177,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     function buyTicketsStable(address tokenAddress, uint numTickets, address recipient) isState(LotteryState.Open) external returns(bool){
         NewDraw storage draw = draws[currentDraw];
         require (now < draw.drawDeadline, 'Ticket purchases have ended for this draw');
+        require (recipient != address(0), 'Cannot buy a ticket for null address');
         
         uint256 price = getPriceForTickets(tokenAddress, numTickets);
         
