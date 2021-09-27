@@ -67,7 +67,7 @@ tr{
   }
 
   
-  @media only screen and (max-width : 600px) {
+@media only screen and (max-width : 600px) {
     th{
         font-size: 12px;
     }
@@ -75,24 +75,17 @@ tr{
     tr{
         font-size: 16px;
     }
-
-    td{
-        font-size: 16px;
-    }
 }
 
 @media only screen and (max-width : 400px) {
     table{
-        margin-left: -2%;
+        margin-left: -7%;
     }
     th{
         font-size: 10px;
     }
     
     tr{
-        font-size: 10px;
-    }
-    td{
         font-size: 10px;
     }
     button{

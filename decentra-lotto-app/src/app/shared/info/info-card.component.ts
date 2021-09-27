@@ -1,3 +1,4 @@
+import { isPlatformBrowser } from '@angular/common';
 import { AfterViewInit, Component } from '@angular/core';
 import { LotteryService } from 'src/app/services/lottery.service';
 
@@ -25,4 +26,8 @@ export class InfoCardComponent implements AfterViewInit {
   async getDiscounts() {
     this.discounts = await this.lotteryService.getDiscountForTickets();
   }
+
+  async viewPreviouswinners(){
+
+  }  
 }

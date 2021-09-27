@@ -13,7 +13,7 @@ tr{
     font-size: 24px;
 }
 
-.mat-table{   
+.mat-table{
     border-radius: 8px;
     overflow:hidden !important;
 }
@@ -47,31 +47,53 @@ tr{
     top:-15px;
     right:-5px;
   }
-  
+
   .close-icon {
     transition: 1s ease-in-out;
   }
-  
+
   .close-icon:hover {
     transform: rotate(360deg);
   }
-  
+
   ::ng-deep .icon-outside .close-button{
     float: right;
     top:-52px;
     right:-52px;
   }
-  
+
   ::ng-deep .icon-outside .mat-dialog-container {
    overflow: unset
   }
 
-  
-  @media only screen and (max-width : 600px) {
+/* label style */
+::ng-deep .mat-tab-label{
+    background: white;
+    color:#42A5F5;
+    min-width: 33.33% !important;
+}
+  /* focus style */
+::ng-deep .mat-tab-group.mat-primary .mat-tab-label:not(.mat-tab-disabled):focus, .mat-tab-group.mat-primary .mat-tab-link:not(.mat-tab-disabled):focus, .mat-tab-nav-bar.mat-primary .mat-tab-label:not(.mat-tab-disabled):focus, .mat-tab-nav-bar.mat-primary .mat-tab-link:not(.mat-tab-disabled):focus{
+    color:rgb(156, 44, 40);
+    background: #c2a336;
+}
+  /* ink bar style */
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar{
+    background: yellow;
+    height: 5px;
+} 
+
+/* @media only screen and (max-width : 1005px) {
+    ::ng-deep .mat-tab-label{
+        min-width: 240px !important;
+    }
+} */
+
+@media only screen and (max-width : 600px) {
     th{
         font-size: 12px;
     }
-    
+
     tr{
         font-size: 16px;
     }
@@ -83,12 +105,12 @@ tr{
 
 @media only screen and (max-width : 400px) {
     table{
-        margin-left: -2%;
+        margin-left: -7%;
     }
     th{
         font-size: 10px;
     }
-    
+
     tr{
         font-size: 10px;
     }

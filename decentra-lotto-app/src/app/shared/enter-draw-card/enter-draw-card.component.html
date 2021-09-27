@@ -92,7 +92,8 @@
         [disabled]="drawStats.stateString != 'Open'" 
         type="button" 
         (click) = "endDraw()">
-        End Draw 
+        <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
+        <span *ngIf="!loading">End Draw </span>
     </button>
     <button 
         class="button" 
@@ -103,7 +104,8 @@
         [disabled]="drawStats.stateString != 'Ready'" 
         type="button" 
         (click) = "drawWinners()">
-        Draw Winners
+        <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
+        <span *ngIf="!loading"> Draw Winners </span>
     </button>
     <div *ngIf="drawStats.stateString == 'Closed' && !hasRandom" class="randomLoader">
         <mat-spinner>Getting Random</mat-spinner>

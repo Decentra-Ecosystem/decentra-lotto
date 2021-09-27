@@ -239,14 +239,17 @@ export class EnterDrawCardComponent implements OnInit, OnDestroy {
   }
 
   async endDraw(){
+    this.loading = true;
     var success = await this.lotteryService.endDraw();
     this.getData();
   }
 
   async drawWinners(){
+    this.loading = true;
     // var x = await this.statsService.getDrawStats();
     if (this.drawStats.state  == State.Ready){
       var success = await this.lotteryService.drawWinners();
+      this.loading = false;
       window.location.reload();
     }
   }

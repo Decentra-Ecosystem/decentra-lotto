@@ -143,8 +143,48 @@ export class StatsService implements OnDestroy {
       }
   }
 
-  async checkWinner(address){
-    var last = this.getLastCheck(address);
+  async viewPreviousWinners(id:number=null){
+    var r = [];
+    var draws = [];
+    if (id == null){
+      id = this.drawStats.id-1;
+    }
+
+    if(id-1 > 0){
+      var prev = new DrawModel(await this.lottery.getDrawStats(id-1));
+      draws.push({id: prev.id, date: prev.drawDeadline});
+    }
+
+    var draw = new DrawModel(await this.lottery.getDrawStats(id));
+    draws.push({id: id, date: draw.drawDeadline});
+
+    if(id+1 < this.drawStats.id){
+      var next = new DrawModel(await this.lottery.getDrawStats(id+1));
+      draws.push({id: next.id, date: next.drawDeadline});
+    }
+
+    for (var i=0; i<draw.winners.length; i++){
+      var amt = await this.lottery.getWalletWinAmountForDraw(draw.id, draw.winners[i]);
+      var usdAmt = await this.lottery.getDELOValueInPeg(amt[0]);
+      var q = {positions: [i+1], address: draw.winners[i], deloAmount: amt[1], usdAmount: usdAmt}
+      //add the win if address has more than 1 win
+      if (r.filter(e => e.address === draw.winners[i]).length > 0) {
+        r.filter(e => e.address === draw.winners[i])[0].positions.push(i+1);
+      }
+
+      //push the win if there is no other win for this address
+      if (r.filter(e => e.address === draw.winners[i]).length == 0) {
+        r.push(q);
+      }
+    }
+    return [draws, r];
+  }
+
+  async checkWinner(address, sinceLast=true){
+    var last = 0;
+    if (sinceLast == true){
+      last = this.getLastCheck(address);
+    }
     var position = [];
 
     //start at the last checked draw + 1 (the next unchecked draw)
@@ -160,12 +200,23 @@ export class StatsService implements OnDestroy {
         }
         if (draw.winners.includes(address) == true){
           if (totalWinnings == -1) totalWinnings = 0;
+          var positions = '';
+          for(var q=0; q < draw.winners.length; q++){
+            if (draw.winners[q] == address){
+              var h = q+1;
+              if (q == 0){
+                positions = h+'';
+              }else{
+                positions += ', '+h;
+              }
+            }
+          }
           var amt = await this.lottery.getWalletWinAmountForDraw(draw.id, address);
           var usdAmt = await this.lottery.getDELOValueInPeg(amt[0]);
 
-          var x = {id: 0, position: 0, amount: 0, amountUSD: 0};
+          var x = {id: 0, position: '', amount: 0, amountUSD: 0};
           x.id = draw.id;
-          x.position = draw.winners.indexOf(address)+1;
+          x.position = positions;
           x.amount = amt[1];
           x.amountUSD = usdAmt;
           position.push(x);
@@ -176,7 +227,8 @@ export class StatsService implements OnDestroy {
       }
     }
 
-    this.setCheck(address, this.drawStats.id-1);
+    totalWinningsUSD = parseFloat(totalWinningsUSD.toFixed(2));
+    if (sinceLast == true) this.setCheck(address, this.drawStats.id-1);
     return [totalWinnings, position, totalWinningsUSD];
   }
 

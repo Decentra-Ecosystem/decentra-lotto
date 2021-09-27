@@ -22,7 +22,7 @@ export class NavComponent implements OnInit, OnDestroy {
   menuItems = [
     {name: 'lottery', enabled:true, url:'', pages: []}, 
     {name:'staking', enabled:true, url:'', pages: []},
-    {name:'pools', enabled:false, url:'', pages: []}, 
+    {name:'syndicates', enabled:false, url:'', pages: []}, 
     {name:'vote', enabled:false, url:'', pages: []}, 
     {name:'trade', enabled:true, url:'', collapsed: true, pages: [
       {name:'buy', enabled:true, url:'https://pancakeswap.finance/swap?outputCurrency=0xca71ddb30ddc906048bcec5df305683f289c8c40'},

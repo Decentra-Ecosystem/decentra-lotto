@@ -30,6 +30,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { HttpClientModule } from '@angular/common/http';
 import { MatTableModule } from '@angular/material/table'  
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { StatsService } from './services/stats.service';
 import { MiniCardComponent } from './shared/mini-card/mini-card.component';
@@ -44,6 +45,9 @@ import { StakeCardComponent } from './shared/stake-card/stake-card.component';
 import { HarvestCardComponent } from './shared/harvest-card/harvest-card.component';
 import { TicketsBoughtModalComponent } from './shared/tickets-bought-modal/tickets-bought-modal.component';
 import { StakingInfoComponent } from './shared/staking-info/staking-info.component';
+import { MyWinsModalComponent } from './shared/my-wins-modal/my-wins-modal.component';
+import { PreviousWinnersModalComponent } from './shared/previous-winners-modal/previous-winners-modal.component';
+import { ConnectionModalComponent } from './shared/connection-modal/connection-modal.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +65,10 @@ import { StakingInfoComponent } from './shared/staking-info/staking-info.compone
     StakeCardComponent,
     HarvestCardComponent,
     TicketsBoughtModalComponent,
-    StakingInfoComponent
+    StakingInfoComponent,
+    MyWinsModalComponent,
+    PreviousWinnersModalComponent,
+    ConnectionModalComponent
   ],
   imports: [
     BrowserModule,
@@ -90,7 +97,8 @@ import { StakingInfoComponent } from './shared/staking-info/staking-info.compone
     MatTooltipModule,
     MatExpansionModule,
     HttpClientModule,
-    MatTableModule
+    MatTableModule,
+    MatTabsModule
   ],
   providers: [
     StatsService,

@@ -22,4 +22,14 @@
             </div>
         </div>
     </div>
+    <div class="justifyCenter">
+        <button mat-raised-button mat-button class="winsButton" (click)="viewPreviousWinners()" [disabled]="loading">
+            <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
+            <span *ngIf="!loading">Previous Wins</span>
+        </button>
+        <button mat-raised-button mat-button class="winsButton" (click)="viewMyWins()" [disabled]="loading">
+            <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
+            <span *ngIf="!loading">My Wins</span>
+        </button>
+    </div>
 </div>

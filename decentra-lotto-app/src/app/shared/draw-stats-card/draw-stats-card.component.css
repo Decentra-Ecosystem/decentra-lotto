@@ -38,6 +38,11 @@
     height: 1px;
   }
 
+  .winsButton {
+    color: rgb(156, 44, 40);
+    background-color: #c2a336;
+  }
+
  
 @media only screen and (max-width : 1400px) {
     .container{
@@ -46,5 +51,8 @@
      .column {
         float: left;
         width: 100%;
+      }
+      .winsButton{
+        font-size: 10px;
       }
 }
