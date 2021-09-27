@@ -67,7 +67,7 @@ export class DashComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit() {
-    this.connectionError = false;
+    this.connectionError = true;
     this.user = {address: '', balance: ''};
   } 
 
@@ -85,6 +85,7 @@ export class DashComponent implements OnInit, OnDestroy {
     if (this.user.address == false){
       this.connectionError = true;
     }else{
+      this.connectionError = false;
       await this.Update();
     }
   }

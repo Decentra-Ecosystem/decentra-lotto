@@ -95,8 +95,11 @@ export class LotteryService {
         await this.web3Modal.clearCachedProvider();
     }
 
-    disconnect(){
-        this.provider.disconnect();
+    async disconnect(){
+        console.log("Killing the wallet connection", this.provider);
+        await this.web3Modal.clearCachedProvider();
+        this.provider = null;
+        window.location.reload();
     }
 
     async getChain(){

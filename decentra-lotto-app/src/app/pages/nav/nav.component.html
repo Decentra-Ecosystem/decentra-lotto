@@ -101,15 +101,15 @@
           <mat-card-header>
               <mat-card-title>
                 <button *ngIf="!(!user || connectionError)" class="dashboard-card">
-                  <span *ngIf="user && !connectionError">
+                  <span (click)="connection()" *ngIf="user && !connectionError">
                     <img class="wallet_image" src="assets/images/logo/decentra-lotto-O_s.png"> {{user.balance}}
                   </span>
                 </button>
                 <button class="dashboard-card">
-                  <span *ngIf="!isMobile() && user && !connectionError">
+                  <span (click)="connection()" *ngIf="!isMobile() && user && !connectionError">
                     <img class="wallet_image" [src]="chain_image"> {{user.truncatedAddress}} 
                   </span>
-                  <span *ngIf="isMobile() && user && !connectionError">
+                  <span (click)="connection()" *ngIf="isMobile() && user && !connectionError">
                     <img class="wallet_image" [src]="chain_image"> {{user.superTruncatedAddress}}
                   </span>
                   <span (click)="connect()" *ngIf="!user || connectionError">

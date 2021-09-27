@@ -1,1 +1,23 @@
-<p>connection-modal works!</p>
+<h2 mat-dialog-title>Connection Details</h2>
+<mat-dialog-content class="mat-typography center">
+    <h3>Connected Network</h3>
+    <p><img width="25px" [src]="data.chain_image">&nbsp;&nbsp;{{data.chain_name}}</p>
+    <hr />
+
+    <h3>Account Address</h3>
+    <p><a href="{{'https://bscscan.com/address/' + data.address}}" target="_blank"><img width="22px" src="https://bscscan.com/images/brandassets/BscScan-logo-circle.png">&nbsp;&nbsp;{{data.addressTrunc}}</a></p>
+    <hr />
+
+    <h3>DELO Balance</h3>
+    <p><img width="30px" src="assets/images/logo/decentra-lotto-O_s.png">&nbsp;&nbsp;{{data.balance}}</p>
+    <hr />
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button mat-button mat-dialog-close (click)="disconnect()" class="closeButton">
+        Disconnect
+    </button>
+    <button mat-raised-button mat-button mat-dialog-close class="closeButton">
+        Close
+    </button>
+</mat-dialog-actions>

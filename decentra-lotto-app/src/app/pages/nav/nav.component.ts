@@ -12,6 +12,8 @@ import {
   IS_LIVE
 } from 'src/app/models/meta-mask.dictionary';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { ConnectionModalComponent } from 'src/app/shared/connection-modal/connection-modal.component';
 
 @Component({
   selector: 'app-nav',
@@ -45,6 +47,7 @@ export class NavComponent implements OnInit, OnDestroy {
   user: any; 
   connectionError: boolean
   chain_image: string;
+  chain_name: string;
   metaConnection: any;
   deloUSDPrice: any;
   pollingTimer: any;
@@ -68,6 +71,7 @@ export class NavComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private statsService: StatsService,
     private router: Router,
+    public dialog: MatDialog
     ) 
     {
       this.requestOptions = {                                                                                                                                                                                 
@@ -79,6 +83,7 @@ export class NavComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit() {
+    this.connectionError = true;
     this.user = {address: '', truncatedAddress: '', superTruncatedAddress: '', balance: ''};
     this.connect();
   } 
@@ -105,6 +110,7 @@ export class NavComponent implements OnInit, OnDestroy {
       this.user.address = "Error";
       this.connectionError = true;
     }else{
+      this.connectionError = false;
       if (this.user.address == "Error"){
         window.location.reload();
       }
@@ -132,13 +138,17 @@ export class NavComponent implements OnInit, OnDestroy {
     this.user.superTruncatedAddress = this.metaConnection.substr(0, 2) + "\u2026" + this.metaConnection.substr(this.metaConnection.length-4);
 
     if (chain == 137 || chain == 80001){
-      this.chain_image = "../../../assets/images/polygon.png"
+      this.chain_image = "../../../assets/images/polygon.png";
+      this.chain_name = "Polygon";
     }else if(chain == 56 || chain == 97){
-      this.chain_image = "../../../assets/images/bsc.png"
+      this.chain_image = "../../../assets/images/bsc.png";
+      this.chain_name = "Binance Smart Chain";
     }else if (chain == 1){
-      this.chain_image = "../../../assets/images/eth.png"
+      this.chain_image = "../../../assets/images/eth.png";
+      this.chain_name = "Ethereum";
     }else{
-      this.chain_image = "../../../assets/images/meta_wallet.png"
+      this.chain_image = "../../../assets/images/meta_wallet.png";
+      this.chain_name = "Unknown";
     }
     this.statsService.walletStatsSub
     .pipe(takeUntil(this.ngUnsubscribe))
@@ -154,8 +164,20 @@ export class NavComponent implements OnInit, OnDestroy {
     //return this.http.get("https://deep-index.moralis.io/api/v2/erc20/"+DELO_CONTRACT_ADDRESS_MAIN_NET+"/price?chain=bsc", this.requestOptions);
   }
 
-  disconnect(){
-    this.lotteryService.disconnect();
+  connection(){
+    this.openConnectionDialog();
+  }
+
+  openConnectionDialog() {
+    this.dialog.open(ConnectionModalComponent, {
+      data: {
+        address: this.user.address,
+        addressTrunc: this.user.truncatedAddress,
+        balance: this.user.balance,
+        chain_image: this.chain_image,
+        chain_name: this.chain_name
+      }
+    });
   }
 
   async setDeadline(){

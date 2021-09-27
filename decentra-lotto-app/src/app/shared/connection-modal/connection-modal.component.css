@@ -1,0 +1,26 @@
+.closeButton {
+    color: rgb(209, 201, 201);
+    background-color: #ff3f0fda;
+}
+
+hr {
+    border: 0;
+    clear:both;
+    display:block;
+    width: 96%;            
+    background-color:#E0D740;
+    height: 1px;
+  }
+
+.center{
+    text-align: center;
+}
+
+h3{
+    color:#E0D740;
+    font-family: 'LeagueSpartan', 'arial', sans-serif;
+}
+
+a {
+    color: white;
+}
