@@ -33,13 +33,13 @@ export class NavComponent implements OnInit, OnDestroy {
     ]}, 
     {name:'docs', enabled:true, url:'https://docs.decentralotto.com/', pages: []},
     {name:'audits', enabled:true, url:'', collapsed: true, pages: [
-      {name:'delo contract', enabled:true, url:'https://solidity.finance/'},
-      {name:'lotto contract', enabled:true, url: 'https://solidity.finance/'},
-      {name:'staking contract', enabled:true, url: 'https://solidity.finance/'}
+      {name:'delo contract', enabled:true, url:'https://solidity.finance/audits/DecentraLotto/'},
+      {name:'lotto contract', enabled:true, url: 'https://solidity.finance/audits/DecentraLotto/'},
+      {name:'staking contract', enabled:true, url: 'https://solidity.finance/audits/DecentraLotto/'}
     ]},
     {name:'more', enabled:true, url: '', collapsed: true, pages: [
       {name:'github', enabled:true, url: 'https://github.com/CeltyCrypto/decentra-lotto'},
-      {name:'medium', enabled:true, url:''}
+      {name:'medium', enabled:true, url:'https://decentra-lotto.medium.com'}
     ]}
   ];
 
