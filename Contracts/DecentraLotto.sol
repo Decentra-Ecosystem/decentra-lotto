@@ -704,9 +704,9 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     uint public marketingDivisor = 10; //10%
     uint public hedgeDivisor = 10; //10%
     uint public stakingDivisor = 5; //20%
-    uint public megadrawDivisor = 20; //5%
+    uint public megadrawDivisor = 10; //10%
     bool public takeLiquidity = true;
-    bool public takeMarketing = true;
+    bool public takeMarketing = false;
     bool public takeHedge = true;
     bool public takeStaking = true;
     bool public takeMegadraw = true;
