@@ -674,12 +674,11 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     DELOStaking deloStaking;
     
     address public deloAddress = 0x7909B1652cb4f71E1a38568d8cC965cfC3A3FEc9;
-    address public deloStakingAddress = 0xB4f52BF6BD3b27A8DA3F5beAb1eB0b9343A3086a;
+    address public deloStakingAddress = 0xBF1B38b7eCbEDd2236fA8922e632f8a7f662D120;
     
     address public peg = 0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7; // busd
     address public wethAddress = 0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd; //wbnb
     
-    address public marketingWallet = 0xdcf5C8273b57D0d227724DD2aC9A0ce010412d0f;
     address public megadrawWallet = 0xdcf5C8273b57D0d227724DD2aC9A0ce010412d0f;
     
     mapping (address => bool) public stablesAccepted;
@@ -771,10 +770,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     
     function setMaxWinners(uint amt) external onlyOwner{
         maxWinners = amt;
-    }
-    
-    function setMarketingWallet(address _address) external onlyOwner{
-        marketingWallet = _address;
     }
     
     function setMegadrawWallet(address _address) external onlyOwner{
@@ -1224,6 +1219,12 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     
     function processTransaction(uint256 bnbValue, uint numTickets, address recipient) private returns(bool){
         uint256 initialTokenBal = delo.balanceOf(address(this));
+        
+        //take the marketing amount in bnb
+        if (takeMarketing == true){
+            bnbValue = bnbValue.sub(bnbValue.div(marketingDivisor));
+        }
+        
         //swap the bnb from the ticket sale for DELO
         swapEthForDelo(bnbValue);
         uint256 tokenAmount = delo.balanceOf(address(this)).sub(initialTokenBal);
@@ -1232,10 +1233,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
             //% to liquidity
             swapAndLiquify(tokenAmount.div(liquidityDivisor));
         }
-        if (takeMarketing == true){
-            //% to marketing wallet
-            delo.transfer(marketingWallet, tokenAmount.div(marketingDivisor));
-        }
+        
         if (takeHedge == true){
             //give back % of purchase as hedge
             delo.transfer(recipient, tokenAmount.div(hedgeDivisor));
