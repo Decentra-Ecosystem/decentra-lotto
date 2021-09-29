@@ -1,4 +1,4 @@
-// https://www.decentralotto.com/
+// https://www.decentra-lotto.com/
 
 pragma solidity ^0.6.12;
 
@@ -688,6 +688,8 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
     using SafeMath for uint256;
     using Address for address;
 
+    address payable public marketingAddress = payable(0xdcf5C8273b57D0d227724DD2aC9A0ce010412d0f); // Marketing Address
+
     mapping (address => uint256) private _rOwned;
     mapping (address => uint256) private _tOwned;
     mapping (address => mapping (address => uint256)) private _allowances;
@@ -703,23 +705,26 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
     uint256 private _tFeeTotal;
     uint256 public  _tBurnTotal;
 
-    string private constant _name = "DecentraLotto";
+    string private constant _name = "Decentra-Lotto";
     string private constant _symbol = "DELO";
     uint8 private constant _decimals = 9;
     
-    uint256 public _taxFee = 2;
+    uint256 public _taxFee = 1;
     uint256 private _previousTaxFee = _taxFee;
     
     uint256 public _burnFee = 1;
     uint256 private _previousBurnFee = _burnFee;
     
-    uint256 public _liquidityFee = 1;
-    uint256 private _previousLiquidityFee = _liquidityFee;
+    uint256 public _marketingFee = 3;
+    uint256 private _previousMarketingFee = _marketingFee;
     
-    uint256 public _lottoFee = 5;
+    uint256 public _lottoFee = 8;
     uint256 public _previousLottoFee = _lottoFee;
+    
     uint256 public totalToLotto = 0;
     address public LOTTO_ADDRESS;
+    
+    uint256 private minimumTokensBeforeSwap = 1 * 10**9; 
 
     IUniswapV2Router02 public uniswapV2Router;
     address public uniswapV2Pair;
@@ -733,7 +738,7 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
     // Using struct for tValues to avoid Stack too deep error
     struct TValuesStruct {
         uint256 tFee;
-        uint256 tLiquidity;
+        uint256 tMarketing;
         uint256 tLotto;
         uint256 tBurn;
         uint256 tTransferAmount;
@@ -746,6 +751,10 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         uint256 ethReceived,
         uint256 tokensIntoLiquidity
     );
+    event SwapTokensForETH(
+        uint256 amountIn,
+        address[] path
+    );
     
     modifier lockTheSwap {
         inSwapAndLiquify = true;
@@ -757,9 +766,9 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         _rOwned[_msgSender()] = _rTotal;
         
         //pancake live router V2
-        //IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x10ED43C718714eb63d5aA57B78B54704E256024E);
+        IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x10ED43C718714eb63d5aA57B78B54704E256024E);
         //test router
-        IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3);
+        //IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3);
         
          // Create a uniswap pair for this new token
         uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory())
@@ -772,7 +781,7 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         _isExcludedFromFee[owner()] = true;
         _isExcludedFromFee[address(this)] = true;
         
-        LOTTO_ADDRESS= msg.sender;
+        LOTTO_ADDRESS = msg.sender;
         
         emit Transfer(address(0), _msgSender(), _tTotal);
     }
@@ -902,7 +911,7 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _tOwned[recipient] = _tOwned[recipient].add(tValues.tTransferAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);        
-        _takeLiquidity(tValues.tLiquidity);
+        _takeMarketing(tValues.tMarketing);
         _takeLotto(tValues.tLotto);
         _reflectFee(rFee, rBurn, tValues.tFee, tValues.tBurn);
         emit Transfer(sender, recipient, tValues.tTransferAmount);
@@ -928,14 +937,23 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         _lottoFee = lottoFee;
     }
     
-    function setLiquidityFeePercent(uint256 liquidityFee) external onlyOwner() {
-        _liquidityFee = liquidityFee;
+    function setMarketingFeePercent(uint256 marketingFee) external onlyOwner() {
+        require(marketingFee < 5, "Marketin fee can never be more than 5%");
+        _marketingFee = marketingFee;
+    }
+    
+    function setMarketingAddress(address _marketingAddress) external onlyOwner() {
+        marketingAddress = payable(_marketingAddress);
     }
    
     function setMaxTxPercent(uint256 maxTxPercent) external onlyOwner() {
         _maxTxAmount = _tTotal.mul(maxTxPercent).div(
             10**2
         );
+    }
+    
+    function setNumTokensSellToAddToMarketing(uint256 _minimumTokensBeforeSwap) external onlyOwner() {
+        minimumTokensBeforeSwap = _minimumTokensBeforeSwap;
     }
 
     function setSwapAndLiquifyEnabled(bool _enabled) external onlyOwner {
@@ -964,13 +982,13 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
          TValuesStruct memory tValues = TValuesStruct(
              {
                  tFee:calculateTaxFee(tAmount),
-                 tLiquidity: calculateLiquidityFee(tAmount),
+                 tMarketing: calculateMarketingFee(tAmount),
                  tLotto: calculateLottoFee(tAmount),
                  tBurn: calculateBurnFee(tAmount),
                  tTransferAmount: tAmount
              }   
         );
-        tValues.tTransferAmount = tValues.tTransferAmount.sub(tValues.tFee).sub(tValues.tLiquidity);
+        tValues.tTransferAmount = tValues.tTransferAmount.sub(tValues.tFee).sub(tValues.tMarketing);
         tValues.tTransferAmount = tValues.tTransferAmount.sub(tValues.tLotto).sub(tValues.tBurn);
         
         return tValues;
@@ -979,10 +997,10 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
     function _getRValues(uint256 tAmount, TValuesStruct memory tValues, uint256 currentRate) private pure returns (uint256, uint256, uint256) {
         uint256 rAmount = tAmount.mul(currentRate);
         uint256 rFee = tValues.tFee.mul(currentRate);
-        uint256 rLiquidity = tValues.tLiquidity.mul(currentRate);
+        uint256 rMarketing = tValues.tMarketing.mul(currentRate);
         uint256 rLotto = tValues.tLotto.mul(currentRate);
         uint256 rBurn = tValues.tBurn.mul(currentRate);
-        uint256 rTransferAmount = rAmount.sub(rFee).sub(rLiquidity).sub(rLotto).sub(rBurn);
+        uint256 rTransferAmount = rAmount.sub(rFee).sub(rMarketing).sub(rLotto).sub(rBurn);
         return (rAmount, rTransferAmount, rFee);
     }
 
@@ -1003,12 +1021,12 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         return (rSupply, tSupply);
     }
     
-    function _takeLiquidity(uint256 tLiquidity) private {
+    function _takeMarketing(uint256 tMarketing) private {
         uint256 currentRate =  _getRate();
-        uint256 rLiquidity = tLiquidity.mul(currentRate);
-        _rOwned[address(this)] = _rOwned[address(this)].add(rLiquidity);
+        uint256 rMarketing = tMarketing.mul(currentRate);
+        _rOwned[address(this)] = _rOwned[address(this)].add(rMarketing);
         if(_isExcluded[address(this)])
-            _tOwned[address(this)] = _tOwned[address(this)].add(tLiquidity);
+            _tOwned[address(this)] = _tOwned[address(this)].add(tMarketing);
     }
     
     function _takeLotto(uint256 tLotto) private {
@@ -1038,29 +1056,29 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         );
     }
 
-    function calculateLiquidityFee(uint256 _amount) private view returns (uint256) {
-        return _amount.mul(_liquidityFee).div(
+    function calculateMarketingFee(uint256 _amount) private view returns (uint256) {
+        return _amount.mul(_marketingFee).div(
             10**2
         );
     }
     
     function removeAllFee() private {
-        if(_taxFee == 0 && _liquidityFee == 0 && _lottoFee == 0 && _burnFee == 0) return;
+        if(_taxFee == 0 && _marketingFee == 0 && _lottoFee == 0 && _burnFee == 0) return;
         
         _previousTaxFee = _taxFee;
-        _previousLiquidityFee = _liquidityFee;
+        _previousMarketingFee = _marketingFee;
         _previousLottoFee = _lottoFee;
         _previousBurnFee = _burnFee;
         
         _taxFee = 0;
-        _liquidityFee = 0;
+        _marketingFee = 0;
         _lottoFee = 0;
         _burnFee = 0;
     }
     
     function restoreAllFee() private {
         _taxFee = _previousTaxFee;
-        _liquidityFee = _previousLiquidityFee;
+        _marketingFee = _previousMarketingFee;
         _lottoFee = _previousLottoFee;
         _burnFee = _previousBurnFee;
     }
@@ -1088,27 +1106,14 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         if(from != owner() && to != owner())
             require(amount <= _maxTxAmount, "Transfer amount exceeds the maxTxAmount.");
 
-        // is the token balance of this contract address over the min number of
-        // tokens that we need to initiate a swap + liquidity lock?
-        // also, don't get caught in a circular liquidity event.
-        // also, don't swap & liquify if sender is uniswap pair.
         uint256 contractTokenBalance = balanceOf(address(this));
+        bool overMinimumTokenBalance = contractTokenBalance >= minimumTokensBeforeSwap;
         
-        if(contractTokenBalance >= _maxTxAmount)
-        {
-            contractTokenBalance = _maxTxAmount;
-        }
-        
-        bool overMinTokenBalance = contractTokenBalance >= numTokensSellToAddToLiquidity;
-        if (
-            overMinTokenBalance &&
-            !inSwapAndLiquify &&
-            from != uniswapV2Pair &&
-            swapAndLiquifyEnabled
-        ) {
-            contractTokenBalance = numTokensSellToAddToLiquidity;
-            //add liquidity
-            swapAndLiquify(contractTokenBalance);
+        if (!inSwapAndLiquify && swapAndLiquifyEnabled && from != uniswapV2Pair) {
+            if (overMinimumTokenBalance) {
+                contractTokenBalance = minimumTokensBeforeSwap;
+                swapTokens(contractTokenBalance);    
+            }
         }
         
         //indicates if fee should be deducted from transfer
@@ -1119,8 +1124,18 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
             takeFee = false;
         }
         
-        //transfer amount, it will take tax, burn, liquidity fee
+        //transfer amount, it will take tax, burn, marketing fee
         _tokenTransfer(from,to,amount,takeFee);
+    }
+    
+    function swapTokens(uint256 contractTokenBalance) private lockTheSwap {
+       
+        uint256 initialBalance = address(this).balance;
+        swapTokensForEth(contractTokenBalance);
+        uint256 transferredBalance = address(this).balance.sub(initialBalance);
+
+        //Send to Marketing address
+        transferToAddressETH(marketingAddress, transferredBalance.div(_marketingFee));
     }
 
     function swapAndLiquify(uint256 contractTokenBalance) private lockTheSwap {
@@ -1159,9 +1174,11 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
             tokenAmount,
             0, // accept any amount of ETH
             path,
-            address(this),
+            address(this), // The contract
             block.timestamp
         );
+        
+        emit SwapTokensForETH(tokenAmount, path);
     }
 
     function swapEthForTokens(uint256 ethAmount) private {
@@ -1219,7 +1236,7 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         uint256 rBurn =  tValues.tBurn.mul(currentRate);
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
-        _takeLiquidity(tValues.tLiquidity);
+        _takeMarketing(tValues.tMarketing);
         _reflectFee(rFee, rBurn, tValues.tFee, tValues.tBurn);
         _takeLotto(tValues.tLotto);
         emit Transfer(sender, recipient, tValues.tTransferAmount);
@@ -1232,7 +1249,7 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _tOwned[recipient] = _tOwned[recipient].add(tValues.tTransferAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);           
-        _takeLiquidity(tValues.tLiquidity);
+        _takeMarketing(tValues.tMarketing);
         _takeLotto(tValues.tLotto);
         _reflectFee(rFee, rBurn, tValues.tFee, tValues.tBurn);
         emit Transfer(sender, recipient, tValues.tTransferAmount);
@@ -1245,13 +1262,13 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         _tOwned[sender] = _tOwned[sender].sub(tAmount);
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);   
-        _takeLiquidity(tValues.tLiquidity);
+        _takeMarketing(tValues.tMarketing);
         _takeLotto(tValues.tLotto);
         _reflectFee(rFee, rBurn, tValues.tFee, tValues.tBurn);
         emit Transfer(sender, recipient, tValues.tTransferAmount);
     }
 
-
-    
-
+    function transferToAddressETH(address payable recipient, uint256 amount) private {
+        recipient.transfer(amount);
+    }
 }
