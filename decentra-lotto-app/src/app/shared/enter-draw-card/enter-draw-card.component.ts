@@ -218,7 +218,9 @@ export class EnterDrawCardComponent implements OnInit, OnDestroy {
     if (success != false){
       this.dialog.open(TicketsBoughtModalComponent, {
         data: {
-          amount: this.deloReceivedAmount
+          amount: this.deloReceivedAmount,
+          numTickets: this.numTicketsControl.value,
+          giftingAddress: address
         }
       });
       this.getData();
