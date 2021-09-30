@@ -72,6 +72,18 @@
                 <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
                 <span *ngIf="!loading">Buy Tickets</span>
             </button>
+            <button 
+                class="button"
+                [ngClass]="symbolControl.value != 'BNB' && approved == false ? '' : 'buyButton'" 
+                [style.background]="(symbolControl.value != 'BNB' && approved == false) ? '#ff3f0fda' : '#c2a336'" 
+                mat-raised-button 
+                color="primary" 
+                [disabled]="loading || (symbolControl.value != 'BNB' && approved == false)" 
+                type="button" 
+                (click) = "giftTickets()">
+                <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
+                <span *ngIf="!loading">Gift Tickets</span>
+            </button>
             
         </span>
     </div>

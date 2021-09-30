@@ -17,6 +17,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { TicketsBoughtModalComponent } from '../tickets-bought-modal/tickets-bought-modal.component';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { GiftModalComponent } from '../gift-modal/gift-modal.component';
 
 @Component({
   selector: 'app-enter-draw-card',
@@ -39,6 +40,7 @@ export class EnterDrawCardComponent implements OnInit, OnDestroy {
   hasRandom: boolean;
   loading: boolean = true;
   private ngUnsubscribe = new Subject();
+  giftDialogueRef: any;
 
   symbols = {
     BNB: {address: '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd', decimals: BNB_DECIMALS},
@@ -193,14 +195,25 @@ export class EnterDrawCardComponent implements OnInit, OnDestroy {
     }
   }
 
-  async buyTickets(){
+  giftTickets(){
+    this.giftDialogueRef = this.dialog.open(GiftModalComponent, {
+    });
+
+    this.giftDialogueRef.afterClosed().subscribe(res => {
+      // received data from dialog-component
+      if (res.data != false)
+        this.buyTickets(res.data);
+    })
+  }
+
+  async buyTickets(address:any = null){
     this.loading = true;
     var x = await this.lotteryService.getPriceForTicketsRaw(this.symbols[this.symbolControl.value], this.numTicketsControl.value);
     var success = false;
     if (this.symbols[this.symbolControl.value] == this.symbols.BNB){
-      success = await this.lotteryService.buyTicketsBNB(this.numTicketsControl.value, x*1.005); //0.05% extra for slippage
+      success = await this.lotteryService.buyTicketsBNB(this.numTicketsControl.value, x*1.005, address); //0.05% extra for slippage
     }else{
-      success = await this.lotteryService.buyTicketsStable(this.symbols[this.symbolControl.value].address, this.numTicketsControl.value);
+      success = await this.lotteryService.buyTicketsStable(this.symbols[this.symbolControl.value].address, this.numTicketsControl.value, address);
     }
     if (success != false){
       this.dialog.open(TicketsBoughtModalComponent, {

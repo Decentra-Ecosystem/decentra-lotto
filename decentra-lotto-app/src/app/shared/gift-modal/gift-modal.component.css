@@ -1,0 +1,66 @@
+.stakeButton {
+    color: rgb(226, 80, 75);
+    background-color: #c2a336;
+    animation: flicker 10s infinite alternate;
+}
+
+.closeButton {
+    color: rgb(209, 201, 201);
+    background-color: #ff3f0fda;
+}
+
+mat-label{
+    color: #c2a336;
+    font-size: 14px;
+}
+
+mat-form-field {
+    color: white;
+    width: 430px;
+}
+
+input{
+    height: 30px;
+}
+
+.ng-valid[required], .ng-valid.required  {
+    background-color: transparent;
+    border-left: 5px solid #42A948; /* green */
+    padding-left: 2px;
+  }
+  
+  .ng-invalid:not(form)  {
+    border-left: 5px solid #a94442; /* red */
+    padding-left: 2px;
+  }
+  
+  .alert div {
+    background-color: #fed3d3;
+    color: #820000;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: .5rem;
+  }
+  
+  select {
+    width: 100%;
+    padding: .5rem;
+  }
+
+@media only screen and (max-width : 430px) {
+    mat-form-field {
+        width: 265px;
+        font-size: 14px;
+    }
+    .container{
+        margin-left: -30px;
+    }
+}
