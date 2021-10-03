@@ -75,6 +75,7 @@ export class StatsService implements OnDestroy {
     this.walletStats = new WalletStats(await this.lottery.getWalletStats(null));
     this.walletStats.walletChance = this.getChance(false, 0);
     this.drawStats.oddsPerTicket = parseFloat(((this.drawStats.numWinners/this.drawStats.numTickets)*100).toFixed(2));
+    this.drawStats.totalPotUSD = await this.lottery.getDELOValueInPeg(this.drawStats.totalPotRaw);
     var x = await this.lottery.getUserBalance();
     this.walletStats.walletDELOBalance = x[0];
     this.walletStats.walletDELOBalanceRaw = x[1];
@@ -282,7 +283,9 @@ export class StatsService implements OnDestroy {
         state: this.drawStats.state,
         numWinners: this.drawStats.numWinners,
         stateString: this.drawStats.stateString,
-        oddsPerTicket: this.drawStats.oddsPerTicket
+        oddsPerTicket: this.drawStats.oddsPerTicket,
+        totalPotRaw: this.drawStats.totalPotRaw,
+        totalPotUSD: this.drawStats.totalPotUSD
       }
     );
   }
@@ -325,7 +328,7 @@ export class StatsService implements OnDestroy {
     var statusText = status == "Open" && this.drawStats.drawDeadline <= new Date() ? "Deadline Passed" : status;
 
     return of([
-      { title: "Total Pot", value: Math.round(this.drawStats.totalPot).toString(), color: "accent", icon: "local_atm", isCurrency: true },
+      { title: "Total Pot", value: Math.round(this.drawStats.totalPot).toString() + ' ($' + this.drawStats.totalPotUSD.toString() + ')', color: "accent", icon: "local_atm", isCurrency: true },
       { title: "Draw Deadline", value: this.countdown, color: "warn", icon: "timer", isCurrency: false },
       { title: "Odds Per Ticket", value: this.drawStats.oddsPerTicket.toString()+"%", color: "primary", icon: "casino", isCurrency: false },
       { title: "Winning Tickets", value: this.drawStats.numWinners, color: "accent", icon: "emoji_events", isCurrency: false },
