@@ -705,8 +705,8 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
     uint256 private _tFeeTotal;
     uint256 public  _tBurnTotal;
 
-    string private constant _name = "Decentra-Lotto";
-    string private constant _symbol = "DELO";
+    string private constant _name = "veardgadfbaf";
+    string private constant _symbol = "DELIS";
     uint8 private constant _decimals = 9;
     
     uint256 public _taxFee = 1;
@@ -767,8 +767,6 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         
         //pancake live router V2
         IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x10ED43C718714eb63d5aA57B78B54704E256024E);
-        //test router
-        //IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3);
         
          // Create a uniswap pair for this new token
         uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory())
@@ -938,7 +936,7 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
     }
     
     function setMarketingFeePercent(uint256 marketingFee) external onlyOwner() {
-        require(marketingFee < 5, "Marketin fee can never be more than 5%");
+        require(marketingFee < 5, "Marketing fee can never be more than 5%");
         _marketingFee = marketingFee;
     }
     
@@ -1135,30 +1133,7 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
         uint256 transferredBalance = address(this).balance.sub(initialBalance);
 
         //Send to Marketing address
-        transferToAddressETH(marketingAddress, transferredBalance.div(_marketingFee));
-    }
-
-    function swapAndLiquify(uint256 contractTokenBalance) private lockTheSwap {
-        // split the contract balance into halves
-        uint256 half = contractTokenBalance.div(2);
-        uint256 otherHalf = contractTokenBalance.sub(half);
-
-        // capture the contract's current ETH balance.
-        // this is so that we can capture exactly the amount of ETH that the
-        // swap creates, and not make the liquidity event include any ETH that
-        // has been manually sent to the contract
-        uint256 initialBalance = address(this).balance;
-
-        // swap tokens for ETH
-        swapTokensForEth(half); // <- this breaks the ETH -> HATE swap when swap+liquify is triggered
-
-        // how much ETH did we just swap into?
-        uint256 newBalance = address(this).balance.sub(initialBalance);
-
-        // add liquidity to uniswap
-        addLiquidity(otherHalf, newBalance);
-        
-        emit SwapAndLiquify(half, newBalance, otherHalf);
+        transferToAddressETH(marketingAddress, transferredBalance);
     }
 
     function swapTokensForEth(uint256 tokenAmount) private {
@@ -1192,21 +1167,6 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
             0, // accept any amount of token
             path,
             0x000000000000000000000000000000000000dEaD,
-            block.timestamp
-        );
-    }
-
-    function addLiquidity(uint256 tokenAmount, uint256 ethAmount) private {
-        // approve token transfer to cover all possible scenarios
-        _approve(address(this), address(uniswapV2Router), tokenAmount);
-
-        // add the liquidity
-        uniswapV2Router.addLiquidityETH{value: ethAmount}(
-            address(this),
-            tokenAmount,
-            0, // slippage is unavoidable
-            0, // slippage is unavoidable
-            address(this), // add liquidity to the contract
             block.timestamp
         );
     }
