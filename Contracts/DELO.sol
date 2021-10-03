@@ -705,8 +705,8 @@ contract DecentraLottoToken is Context, IERC20, Ownable {
     uint256 private _tFeeTotal;
     uint256 public  _tBurnTotal;
 
-    string private constant _name = "veardgadfbaf";
-    string private constant _symbol = "DELIS";
+    string private constant _name = "Decentra-Lotto";
+    string private constant _symbol = "DELO";
     uint8 private constant _decimals = 9;
     
     uint256 public _taxFee = 1;
