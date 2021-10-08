@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Gift a Lottery Ticket</h2>
+<div class="container">
+    <mat-form-field appearance="fill">
+      <mat-label>Recipient wallet address:</mat-label>
+      <input matInput placeholder="0x3191A321cDDD7aA804ceF342582d5e7ec2801DC3" [formControl]="address" required>
+      <mat-error *ngIf="address.invalid">Invalid Address</mat-error>
+    </mat-form-field>
+</div>
+<mat-dialog-actions align="end">
+    <button [disabled] = "!address.valid" mat-raised-button mat-button (click)="confirm()" class="stakeButton">
+        Gift
+    </button>
+    <button mat-raised-button mat-button (click)="cancel()" class="closeButton">
+        Cancel
+    </button>
+</mat-dialog-actions>

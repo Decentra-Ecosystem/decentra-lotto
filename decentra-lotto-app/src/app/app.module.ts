@@ -48,6 +48,7 @@ import { StakingInfoComponent } from './shared/staking-info/staking-info.compone
 import { MyWinsModalComponent } from './shared/my-wins-modal/my-wins-modal.component';
 import { PreviousWinnersModalComponent } from './shared/previous-winners-modal/previous-winners-modal.component';
 import { ConnectionModalComponent } from './shared/connection-modal/connection-modal.component';
+import { GiftModalComponent } from './shared/gift-modal/gift-modal.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +69,8 @@ import { ConnectionModalComponent } from './shared/connection-modal/connection-m
     StakingInfoComponent,
     MyWinsModalComponent,
     PreviousWinnersModalComponent,
-    ConnectionModalComponent
+    ConnectionModalComponent,
+    GiftModalComponent
   ],
   imports: [
     BrowserModule,

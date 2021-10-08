@@ -29,6 +29,8 @@
 .value-text {
     margin-top: 20px;
     font-family: 'LeagueSpartan', 'arial', sans-serif;
+    word-wrap: normal;
+    white-space: normal;
 }
 
 .title-text {

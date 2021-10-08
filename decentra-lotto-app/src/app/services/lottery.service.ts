@@ -372,12 +372,13 @@ export class LotteryService {
         return price;
     }
 
-    async buyTicketsBNB(num: any, value: any) {
+    async buyTicketsBNB(num: any, value: any, recipient: any = null) {
         var success;
+        var r = recipient != null ? recipient : this.accounts[0];
         value = this.web3js.utils.toBN(value)
         try{
             success = await this.lottoContract
-                .methods.buyTicketsBNB(num, this.accounts[0])
+                .methods.buyTicketsBNB(num, r)
                 .send({ from: this.accounts[0], value: value });
         }catch(err){
             return false;
@@ -385,11 +386,12 @@ export class LotteryService {
         return success;
     }
 
-    async buyTicketsStable(address: any, num: any) {
+    async buyTicketsStable(address: any, num: any, recipient: any = null) {
         var success;
+        var r = recipient != null ? recipient : this.accounts[0];
         try{
             success = await this.lottoContract
-                .methods.buyTicketsStable(address, num, this.accounts[0])
+                .methods.buyTicketsStable(address, num, r)
                 .send({ from: this.accounts[0] });
         }catch(err){
             return false;
