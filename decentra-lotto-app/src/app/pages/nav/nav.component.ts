@@ -27,9 +27,9 @@ export class NavComponent implements OnInit, OnDestroy {
     {name:'syndicates', enabled:false, url:'', pages: []}, 
     {name:'vote', enabled:false, url:'', pages: []}, 
     {name:'trade', enabled:true, url:'', collapsed: true, pages: [
-      {name:'buy', enabled:true, url:'https://pancakeswap.finance/swap?outputCurrency=0xca71ddb30ddc906048bcec5df305683f289c8c40'},
-      {name:'dextools', enabled:true, url: 'https://www.dextools.io/app/bsc/pair-explorer/0xb9e111e1346f0a7410bce59e1a9422aec38cefce'},
-      {name:'poocoin', enabled:true, url: 'https://poocoin.app/tokens/0xca71ddb30ddc906048bcec5df305683f289c8c40'}
+      {name:'buy', enabled:true, url:'https://pancakeswap.finance/swap?outputCurrency=0xC91B4AA7e5C247CB506e112E7FEDF6af7077b90A'},
+      {name:'dextools', enabled:true, url: 'https://www.dextools.io/app/bsc/pair-explorer/0xc989c0e5d5035e689c129868944db9e091690875'},
+      {name:'poocoin', enabled:true, url: 'https://poocoin.app/tokens/0xC91B4AA7e5C247CB506e112E7FEDF6af7077b90A'}
     ]}, 
     {name:'docs', enabled:true, url:'https://docs.decentralotto.com/', pages: []},
     {name:'audits', enabled:true, url:'', collapsed: true, pages: [
@@ -39,7 +39,8 @@ export class NavComponent implements OnInit, OnDestroy {
     ]},
     {name:'more', enabled:true, url: '', collapsed: true, pages: [
       {name:'github', enabled:true, url: 'https://github.com/CeltyCrypto/decentra-lotto'},
-      {name:'medium', enabled:true, url:'https://decentra-lotto.medium.com'}
+      {name:'medium', enabled:true, url:'https://decentra-lotto.medium.com'},
+      {name:'whtepaper', enabled:false, url:''}
     ]}
   ];
 

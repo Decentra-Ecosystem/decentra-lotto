@@ -144,18 +144,57 @@ export class LotteryService {
             console.log('Please install MetaMask!');
         }
     }
+
+    detectEthereumProvider({ mustBeMetaMask = false, silent = false, timeout = 3000, } = {}) {
+        _validateInputs();
+        let handled = false;
+        return new Promise((resolve) => {
+            if (window.ethereum) {
+                handleEthereum();
+            }
+            else {
+                window.addEventListener('ethereum#initialized', handleEthereum, { once: true });
+                setTimeout(() => {
+                    handleEthereum();
+                }, timeout);
+            }
+            function handleEthereum() {
+                if (handled) {
+                    return;
+                }
+                handled = true;
+                window.removeEventListener('ethereum#initialized', handleEthereum);
+                const { ethereum } = window;
+                if (ethereum && (!mustBeMetaMask || ethereum.isMetaMask)) {
+                    resolve(ethereum);
+                }
+                else {
+                    const message = mustBeMetaMask && ethereum
+                        ? 'Non-MetaMask window.ethereum detected.'
+                        : 'Unable to detect window.ethereum.';
+                    !silent && console.error('@metamask/detect-provider:', message);
+                    resolve(null);
+                }
+            }
+        });
+        function _validateInputs() {
+            if (typeof mustBeMetaMask !== 'boolean') {
+                throw new Error(`@metamask/detect-provider: Expected option 'mustBeMetaMask' to be a boolean.`);
+            }
+            if (typeof silent !== 'boolean') {
+                throw new Error(`@metamask/detect-provider: Expected option 'silent' to be a boolean.`);
+            }
+            if (typeof timeout !== 'number') {
+                throw new Error(`@metamask/detect-provider: Expected option 'timeout' to be a number.`);
+            }
+        }
+    }
     
     async connectToMetaMask() {
-        if (window.ethereum) {
-            this.handleEthereum();
-        } else {
-            window.addEventListener('ethereum#initialized', this.handleEthereum, {
-                once: true,
-            });
-            // If the event is not dispatched by the end of the timeout,
-            // the user probably doesn't have MetaMask installed.
-            await timeout(3000);
-            this.handleEthereum();
+        const provider = await this.detectEthereumProvider();
+
+        if (provider){
+            this.ethereumDetected = true;
         }
 
         if (this.ethereumDetected == false){
