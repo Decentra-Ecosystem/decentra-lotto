@@ -53,6 +53,7 @@ import { CharityComponent } from './pages/charity/charity.component';
 import { RedpandaInfoCardComponent } from './shared/redpanda-info-card/redpanda-info-card.component';
 import { VideoComponent } from './shared/video/video.component';
 import { NgxTweetModule } from "ngx-tweet";
+import { CharityExplainerCardComponent } from './shared/charity-explainer-card/charity-explainer-card.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { NgxTweetModule } from "ngx-tweet";
     GiftModalComponent,
     CharityComponent,
     RedpandaInfoCardComponent,
-    VideoComponent
+    VideoComponent,
+    CharityExplainerCardComponent
   ],
   imports: [
     BrowserModule,

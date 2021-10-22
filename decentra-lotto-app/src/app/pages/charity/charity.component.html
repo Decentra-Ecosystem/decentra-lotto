@@ -15,31 +15,19 @@
           </app-card>
         </mat-grid-tile>
 
-        <!-- Mobile -->
-        <div *ngIf="mobile()">
-          <!-- Red Panda Panel -->
-          <mat-grid-tile [colspan]="( cardLayout | async )?.explainer?.cols" [rowspan]="( cardLayout | async )?.explainer?.rows">
-            <app-card title="About Red Panda" logo="assets/images/redpanda/gradientlogoSMALL.png" size="s">
-              <app-redpanda-info-card title="About Red Panda"></app-redpanda-info-card>
-            </app-card>
-          </mat-grid-tile>
-        </div>
-
         <!--Stats Panel-->
         <mat-grid-tile [colspan]="( cardLayout | async )?.stats?.cols" [rowspan]="( cardLayout | async )?.stats?.rows">
-            <app-card title="Red Panda Statistics" logo="assets/images/redpanda/gradientlogoSMALL.png" size="s">
-              <app-draw-stats-card [displayDrawStats]="displayDrawStats" [displayWalletStats]="displayWalletStats" (update)="Update()"></app-draw-stats-card>
+            <app-card title="Donate Airdrop" logo="assets/images/redpanda/gradientlogoSMALL.png" size="s">
+              <app-charity-explainer-card></app-charity-explainer-card>
             </app-card>
         </mat-grid-tile>
         
-        <div *ngIf="!mobile()">
-          <!-- Red Panda Panel -->
-          <mat-grid-tile [colspan]="( cardLayout | async )?.explainer?.cols" [rowspan]="( cardLayout | async )?.explainer?.rows">
-            <app-card title="About Red Panda" logo="assets/images/redpanda/gradientlogoSMALL.png" size="s">
-              <app-redpanda-info-card title="About Red Panda"></app-redpanda-info-card>
-            </app-card>
-          </mat-grid-tile>
-        </div>
+        <!-- Red Panda Panel -->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.explainer?.cols" [rowspan]="( cardLayout | async )?.explainer?.rows">
+          <app-card title="Information">
+            <app-redpanda-info-card title="Information"></app-redpanda-info-card>
+          </app-card>
+        </mat-grid-tile>
 
         <!--Video Panel-->
         <mat-grid-tile [colspan]="( cardLayout | async )?.video?.cols" [rowspan]="( cardLayout | async )?.video?.rows">

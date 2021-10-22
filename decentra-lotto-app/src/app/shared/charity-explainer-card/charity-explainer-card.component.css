@@ -72,10 +72,3 @@
   font-family: 'LeagueSpartan', 'arial', sans-serif;
   }
 
-  @media only screen and (max-width : 684px) {
-    img{
-        height: 50px;
-        width: 50px;
-    }
-  }
-

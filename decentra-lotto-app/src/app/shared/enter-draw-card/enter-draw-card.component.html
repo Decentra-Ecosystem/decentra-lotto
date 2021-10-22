@@ -11,7 +11,13 @@
             </form>
         </div>
         <div class="white center odds">
-            <h3 *ngIf="walletStats && newOdds>0 && !isMobile()">New Odds: <span *ngIf="price>-1">{{newOdds}}%</span> <span *ngIf="price==-1">0</span></h3>
+            <span *ngIf="charity != null && !isMobile()">
+                <h3>Enter Draw & Donate Airdrop</h3>
+            </span>
+            <span *ngIf="charity == null">
+                <h3 *ngIf="walletStats && newOdds>0 && !isMobile()">New Odds: <span *ngIf="price>-1">{{newOdds}}%</span> <span *ngIf="price==-1">0</span></h3>   
+            </span>
+            
             <h3 *ngIf="isMobile()" class="bonus-text" [style.color]="tokenBalance < price ? 'red' : 'white'">
                 DELO
                 <span *ngIf="charity != null">
@@ -85,12 +91,7 @@
                 (click) = "buyTickets()">
                 <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
                 <span *ngIf="!loading">
-                    <span *ngIf="charity != null">
-                        Donate
-                    </span>
-                    <span *ngIf="charity == null">
-                        Buy Tickets
-                    </span>
+                    Buy Tickets
                 </span>
             </button>
             <button 

@@ -38,7 +38,7 @@ export class CharityComponent implements OnInit {
           columns: 2,
           miniCard: { cols: 1, rows: 1 },
           buy: { cols: 2, rows: 3 },
-          explainer: { cols: 2, rows: 3 },
+          explainer: { cols: 2, rows: 4 },
           video: { cols: 2, rows: 3 },
           stats: { cols: 2, rows: 4 },
         };
