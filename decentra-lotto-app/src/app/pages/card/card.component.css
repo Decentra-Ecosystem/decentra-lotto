@@ -3,6 +3,22 @@
     top: 5px;
     right: 10px;
  }
+
+ .logo {
+   position: absolute;
+   top: 5px;
+   right: 10px;
+ }
+
+ .small{
+    width: 35px;
+    height: 35px;
+ }
+
+ .large{
+   width: 65px;
+   height: 65px;
+}
  
  .dashboard-card {
     position: absolute;

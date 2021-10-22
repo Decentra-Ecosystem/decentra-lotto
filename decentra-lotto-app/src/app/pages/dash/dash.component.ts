@@ -11,7 +11,6 @@ import { LoserModalComponent } from '../../shared/winner-modal/loser-modal/loser
 import { Detailed } from 'src/app/models/stats-detailed.model';
 import { isMobile } from 'web3modal';
 import { Subject } from 'rxjs';
-import { createOfflineCompileUrlResolver } from '@angular/compiler';
 
 @Component({
   selector: 'app-dash',

@@ -3,6 +3,10 @@
     <mat-card-header>
         <mat-card-title class="title">
             {{title}}
+            <span *ngIf="logo != null">
+                <img [src]="logo" class="logo" [ngClass]="size=='l' ? 'large' : 'small'">
+                
+            </span>
             <!-- <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
                 <mat-icon>more_vert</mat-icon>
             </button>

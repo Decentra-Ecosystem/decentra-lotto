@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, OnDestroy, HostListener, Input } from '@angular/core';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 import {LotteryService} from '../../services/lottery.service'
@@ -25,6 +25,7 @@ import { GiftModalComponent } from '../gift-modal/gift-modal.component';
   styleUrls: ['./enter-draw-card.component.css']
 })
 export class EnterDrawCardComponent implements OnInit, OnDestroy {
+  @Input() charity: string;
   price: number;
   numTicketsControl = new FormControl(5, Validators.min(1));
   symbolControl = new FormControl('BNB');

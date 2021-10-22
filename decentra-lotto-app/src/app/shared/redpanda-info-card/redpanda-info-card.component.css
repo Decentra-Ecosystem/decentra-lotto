@@ -1,0 +1,163 @@
+.container {
+    color: white;
+    width: 100%;
+  }
+  
+  .row{
+    padding-bottom: 10px;
+  }
+  
+  .column1 {
+    float: left;
+    width: 40%;
+  }
+  
+  .column2 {
+    float: left;
+    width: 60%;
+  }
+  
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  .justifyCenter {
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  h2{
+     color:#E0D740;
+     font-family: 'LeagueSpartan', 'arial', sans-serif;
+  }
+  
+  hr {
+    border: 0;
+    clear:both;
+    display:block;
+    width: 96%;            
+    background-color:#E0D740;
+    height: 1px;
+  }
+  
+  .howto{
+    overflow: auto; 
+    height: 220px;
+  }
+  
+  .dashboard-card {
+    background-color: rgba(67, 0, 105, 0);
+    color: white;
+    text-align: center;
+    width: fit-content;
+  }
+  
+  .center {
+  margin: 0 auto;
+  }
+  
+  h4{
+  font-family: 'LeagueSpartan', 'arial', sans-serif;
+  }
+  
+  .neonText {
+    animation: flicker 1.5s infinite alternate;
+    color: #fff;
+  }
+  
+  .value-text {
+    margin-top: 20px;
+    font-family: 'LeagueSpartan', 'arial', sans-serif;
+  }
+  
+  .title-text {
+    font-weight: 400;
+    margin: 0;
+    text-align: center;
+    color: rgb(255, 255, 255);
+    font-weight:200;
+    font-family: 'LeagueSpartan', 'arial', sans-serif;
+    text-shadow:
+    0 0 3px rgba(255, 255, 255, 0.24),
+    0 0 5px rgba(255, 255, 255, 0.24),
+    0 0 10px rgba(255, 255, 255, 0.24),
+    0 0 221px rgba(140, 0, 255, 0.24),
+    0 0 41px rgba(140, 0, 255, 0.24),
+    0 0 56px rgba(140, 0, 255, 0.24),
+    0 0 51px rgba(140, 0, 255, 0.24),
+    0 0 175px rgba(140, 0, 255, 0.24)
+  }
+  
+  /* width */
+  ::-webkit-scrollbar {
+  width: 20px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+  box-shadow: 0 0 .1rem #fff,
+              0 0 .1rem #fff,
+              0 0 1rem #bc13fe,
+              0 0 0.3rem #bc13fe,
+              0 0 0.5rem #bc13fe,
+              inset 0 0 0.4rem #bc13fe;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+  background: #c2a336;
+  border-radius: 10px;
+  }
+  
+  .winsButton {
+    color: rgb(226, 80, 75);
+    background-color: #c2a336;
+  }
+  
+  @media only screen and (max-width : 1400px) {
+    .container{
+        font-size: small;
+    }
+    .column1 {
+      float: left;
+      width: 40%;
+    }
+    
+    .column2 {
+      float: left;
+      width: 60%;
+    }
+  
+    .howto{
+      height: 140px;
+    }
+  }
+  
+  @media only screen and (max-width : 992px) {
+    .column1 {
+      float: left;
+      width: 100%;
+    }
+    
+    .column2 {
+      float: left;
+      width: 100%;
+    }
+  
+    .howto{
+      height: 130px;
+    }
+  
+    .winsButton {
+      float:right;
+    }
+  }

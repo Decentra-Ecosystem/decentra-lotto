@@ -24,6 +24,7 @@ export class NavComponent implements OnInit, OnDestroy {
   menuItems = [
     {name: 'lottery', enabled:true, url:'', pages: []}, 
     {name:'staking', enabled:true, url:'', pages: []},
+    {name:'charity', enabled:true, url:'', pages: []}, 
     {name:'syndicates', enabled:false, url:'', pages: []}, 
     {name:'vote', enabled:false, url:'', pages: []}, 
     {name:'trade', enabled:true, url:'', collapsed: true, pages: [

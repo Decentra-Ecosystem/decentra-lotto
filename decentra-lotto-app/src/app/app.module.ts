@@ -49,6 +49,10 @@ import { MyWinsModalComponent } from './shared/my-wins-modal/my-wins-modal.compo
 import { PreviousWinnersModalComponent } from './shared/previous-winners-modal/previous-winners-modal.component';
 import { ConnectionModalComponent } from './shared/connection-modal/connection-modal.component';
 import { GiftModalComponent } from './shared/gift-modal/gift-modal.component';
+import { CharityComponent } from './pages/charity/charity.component';
+import { RedpandaInfoCardComponent } from './shared/redpanda-info-card/redpanda-info-card.component';
+import { VideoComponent } from './shared/video/video.component';
+import { NgxTweetModule } from "ngx-tweet";
 
 @NgModule({
   declarations: [
@@ -70,7 +74,10 @@ import { GiftModalComponent } from './shared/gift-modal/gift-modal.component';
     MyWinsModalComponent,
     PreviousWinnersModalComponent,
     ConnectionModalComponent,
-    GiftModalComponent
+    GiftModalComponent,
+    CharityComponent,
+    RedpandaInfoCardComponent,
+    VideoComponent
   ],
   imports: [
     BrowserModule,
@@ -100,7 +107,8 @@ import { GiftModalComponent } from './shared/gift-modal/gift-modal.component';
     MatExpansionModule,
     HttpClientModule,
     MatTableModule,
-    MatTabsModule
+    MatTabsModule,
+    NgxTweetModule
   ],
   providers: [
     StatsService,

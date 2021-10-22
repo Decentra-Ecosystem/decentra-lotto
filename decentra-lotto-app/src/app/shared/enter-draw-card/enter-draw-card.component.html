@@ -13,7 +13,14 @@
         <div class="white center odds">
             <h3 *ngIf="walletStats && newOdds>0 && !isMobile()">New Odds: <span *ngIf="price>-1">{{newOdds}}%</span> <span *ngIf="price==-1">0</span></h3>
             <h3 *ngIf="isMobile()" class="bonus-text" [style.color]="tokenBalance < price ? 'red' : 'white'">
-                DELO Received ~ <span class="cost-amt-text" *ngIf="deloReceivedAmount>-1">{{deloReceivedAmount}}(${{usdReceivedAmount}}) </span>
+                DELO
+                <span *ngIf="charity != null">
+                    Donated
+                </span>
+                <span *ngIf="charity == null">
+                    Received
+                </span>
+                ~ <span class="cost-amt-text" *ngIf="deloReceivedAmount>-1">{{deloReceivedAmount}}(${{usdReceivedAmount}}) </span>
             </h3>
         </div>
         <div class="form-outer">
@@ -41,7 +48,14 @@
             <span class="discount" [style]="getDiscount(numTicketsControl.value) == 0 ? {'color':'red'} : {'color':'#E0D740'}"> - {{getDiscount(numTicketsControl.value)}}% discount</span>
         </h2>
         <h2 *ngIf="!isMobile() && tokenBalance && price" class="bonus-text">
-            DELO Received ~ <span class="cost-amt-text" *ngIf="deloReceivedAmount>-1">{{deloReceivedAmount}} (${{usdReceivedAmount}}) </span>
+            DELO 
+            <span *ngIf="charity != null">
+                Donated to {{charity}}
+            </span>
+            <span *ngIf="charity == null">
+                Received
+            </span>
+            ~ <span class="cost-amt-text" *ngIf="deloReceivedAmount>-1">{{deloReceivedAmount}} (${{usdReceivedAmount}}) </span>
         </h2>
     </div>
 
@@ -70,9 +84,17 @@
                 type="button" 
                 (click) = "buyTickets()">
                 <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
-                <span *ngIf="!loading">Buy Tickets</span>
+                <span *ngIf="!loading">
+                    <span *ngIf="charity != null">
+                        Donate
+                    </span>
+                    <span *ngIf="charity == null">
+                        Buy Tickets
+                    </span>
+                </span>
             </button>
             <button 
+                *ngIf="charity == null"
                 class="button"
                 [ngClass]="symbolControl.value != 'BNB' && approved == false ? '' : 'buyButton'" 
                 [style.background]="(symbolControl.value != 'BNB' && approved == false) ? '#ff3f0fda' : '#c2a336'" 
