@@ -948,27 +948,43 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         );
     }
     
-    function getDrawWalletStats(uint _id) external view returns (uint, uint, uint256, uint256, uint256, uint256){
+    function getWalletDrawCharityStats(uint _id, address _address) external view returns(uint256){
+        NewDraw storage draw = draws[_id];
+        return draw.walletCharityTickets[_address];
+    }
+    
+    function getWalletDrawCharityStats(address _address) external view returns(uint256){
+        NewDraw storage draw = draws[currentDraw];
+        return draw.walletCharityTickets[_address];
+    }
+    
+    function getDrawWalletStats(uint _id) external view returns (uint, uint, uint, uint256, uint256, uint256, uint256, uint256, uint256){
         NewDraw storage draw = draws[_id];
         return (
             draw.walletSpendBNB[msg.sender], 
             draw.walletNumTickets[msg.sender],
+            draw.walletCharityTickets[msg.sender],
             walletTotalSpendBNB[msg.sender],
             walletTotalTicketsPurchased[msg.sender],
             walletTotalWins[msg.sender],
-            walletTotalWinValueDelo[msg.sender]
+            walletTotalWinValueDelo[msg.sender],
+            walletTotalCharityTickets[msg.sender],
+            totalAirdropsReceived[msg.sender]
         );
     }
     
-    function getDrawWalletStats() external view returns (uint, uint, uint256, uint256, uint256, uint256){
+    function getDrawWalletStats() external view returns (uint, uint, uint, uint256, uint256, uint256, uint256, uint256, uint256){
         NewDraw storage draw = draws[currentDraw];
         return (
             draw.walletSpendBNB[msg.sender], 
             draw.walletNumTickets[msg.sender],
+            draw.walletCharityTickets[msg.sender],
             walletTotalSpendBNB[msg.sender],
             walletTotalTicketsPurchased[msg.sender],
             walletTotalWins[msg.sender],
-            walletTotalWinValueDelo[msg.sender]
+            walletTotalWinValueDelo[msg.sender],
+            walletTotalCharityTickets[msg.sender],
+            totalAirdropsReceived[msg.sender]
         );
     }
     
