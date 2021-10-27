@@ -11,22 +11,28 @@ class WalletStats {
     numTickets: number;
     walletTotalSpendBNB: number;
     walletTotalTicketsPurchased: number;
+    walletCharityTickets: number;
     walletTotalWins: number;
     walletTotalWinValueLep: number;
     walletChance: number;
     walletDELOBalance: number;
     walletDELOBalanceRaw: number;
     stakingStats: StakingStats;
+    walletTotalCharityTickets: number;
+    totalAirdropsReceived: number;
 
     constructor(
         obj: any
     ) {
         this.walletDrawSpendBNB = parseFloat(WalletStats.round(obj[0], BNB_DECIMALS, 5).toFixed(2));
         this.numTickets = obj[1];
-        this.walletTotalSpendBNB = parseFloat(WalletStats.round(obj[2], BNB_DECIMALS, 5).toFixed(2));
-        this.walletTotalTicketsPurchased = obj[3];
-        this.walletTotalWins = obj[4];
-        this.walletTotalWinValueLep = parseFloat(WalletStats.round(obj[5], TOKEN_DECIMALS, 5).toFixed(2));
+        this.walletCharityTickets = obj[2];
+        this.walletTotalSpendBNB = parseFloat(WalletStats.round(obj[3], BNB_DECIMALS, 5).toFixed(2));
+        this.walletTotalTicketsPurchased = obj[4];
+        this.walletTotalWins = obj[5];
+        this.walletTotalWinValueLep = parseFloat(WalletStats.round(obj[6], TOKEN_DECIMALS, 5).toFixed(2));
+        this.walletTotalCharityTickets = obj[7];
+        this.totalAirdropsReceived = parseFloat(WalletStats.round(obj[8], TOKEN_DECIMALS, 5).toFixed(2));
     }
 }
 

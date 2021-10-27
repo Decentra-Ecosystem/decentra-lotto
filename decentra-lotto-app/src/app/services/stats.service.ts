@@ -296,6 +296,7 @@ export class StatsService implements OnDestroy {
       {
         walletDrawSpendBNB: this.walletStats.walletDrawSpendBNB,
         numTickets: this.walletStats.numTickets,
+        walletCharityTickets: this.walletStats.walletCharityTickets,
         walletTotalSpendBNB: this.walletStats.walletTotalSpendBNB,
         walletTotalTicketsPurchased: this.walletStats.walletTotalTicketsPurchased,
         walletTotalWins: this.walletStats.walletTotalWins,
@@ -303,7 +304,9 @@ export class StatsService implements OnDestroy {
         walletChance: this.walletStats.walletChance,
         walletDELOBalance: this.walletStats.walletDELOBalance,
         walletDELOBalanceRaw: this.walletStats.walletDELOBalanceRaw,
-        stakingStats: this.walletStats.stakingStats
+        stakingStats: this.walletStats.stakingStats,
+        walletTotalCharityTickets: this.walletStats.walletTotalCharityTickets,
+        totalAirdropsReceived: this.walletStats.totalAirdropsReceived
       }
     );
   }

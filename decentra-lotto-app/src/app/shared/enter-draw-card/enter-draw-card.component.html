@@ -2,8 +2,8 @@
     <div class="container panel">
         <div class="form-outer">
             <form class="example-container">
-                <mat-form-field hintLabel="Tickets Owned:" appearance="fill">
-                    <mat-label>Number of Tickets:</mat-label>
+                <mat-form-field hintLabel="Your Tickets:" appearance="fill">
+                    <mat-label>Buy Tickets:</mat-label>
                     <input matInput #input maxlength="10" type="number" placeholder="1" [formControl]="numTicketsControl" min="1" (change)="selectToken()">
                     <mat-hint *ngIf="walletStats" align="end">{{walletStats.numTickets}}</mat-hint>
                     <mat-error *ngIf="numTicketsControl.invalid">Min Tickets: 1</mat-error>

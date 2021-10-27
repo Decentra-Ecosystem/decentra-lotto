@@ -26,6 +26,7 @@ import { GiftModalComponent } from '../gift-modal/gift-modal.component';
 })
 export class EnterDrawCardComponent implements OnInit, OnDestroy {
   @Input() charity: string;
+  @Input() charityAddress: string;
   price: number;
   numTicketsControl = new FormControl(5, Validators.min(1));
   symbolControl = new FormControl('BNB');
@@ -211,10 +212,11 @@ export class EnterDrawCardComponent implements OnInit, OnDestroy {
     this.loading = true;
     var x = await this.lotteryService.getPriceForTicketsRaw(this.symbols[this.symbolControl.value], this.numTicketsControl.value);
     var success = false;
+    console.log(this.charityAddress);
     if (this.symbols[this.symbolControl.value] == this.symbols.BNB){
-      success = await this.lotteryService.buyTicketsBNB(this.numTicketsControl.value, x*1.005, address); //0.05% extra for slippage
+      success = await this.lotteryService.buyTicketsBNB(this.numTicketsControl.value, x*1.005, address, this.charityAddress); //0.05% extra for slippage
     }else{
-      success = await this.lotteryService.buyTicketsStable(this.symbols[this.symbolControl.value].address, this.numTicketsControl.value, address);
+      success = await this.lotteryService.buyTicketsStable(this.symbols[this.symbolControl.value].address, this.numTicketsControl.value, address, this.charityAddress);
     }
     if (success != false){
       this.dialog.open(TicketsBoughtModalComponent, {

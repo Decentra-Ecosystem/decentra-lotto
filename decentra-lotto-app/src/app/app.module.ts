@@ -49,11 +49,11 @@ import { MyWinsModalComponent } from './shared/my-wins-modal/my-wins-modal.compo
 import { PreviousWinnersModalComponent } from './shared/previous-winners-modal/previous-winners-modal.component';
 import { ConnectionModalComponent } from './shared/connection-modal/connection-modal.component';
 import { GiftModalComponent } from './shared/gift-modal/gift-modal.component';
-import { CharityComponent } from './pages/charity/charity.component';
+import { RedPandaComponent } from './pages/redpanda/redpanda.component';
 import { RedpandaInfoCardComponent } from './shared/redpanda-info-card/redpanda-info-card.component';
-import { VideoComponent } from './shared/video/video.component';
+import { RedPandaVideoComponent } from './shared/redpanda-video/redpanda-video.component';
 import { NgxTweetModule } from "ngx-tweet";
-import { CharityExplainerCardComponent } from './shared/charity-explainer-card/charity-explainer-card.component';
+import { RedPandaExplainerCardComponent } from './shared/redpanda-explainer-card/redpanda-explainer-card.component';
 
 @NgModule({
   declarations: [
@@ -76,10 +76,10 @@ import { CharityExplainerCardComponent } from './shared/charity-explainer-card/c
     PreviousWinnersModalComponent,
     ConnectionModalComponent,
     GiftModalComponent,
-    CharityComponent,
+    RedPandaComponent,
     RedpandaInfoCardComponent,
-    VideoComponent,
-    CharityExplainerCardComponent
+    RedPandaVideoComponent,
+    RedPandaExplainerCardComponent
   ],
   imports: [
     BrowserModule,

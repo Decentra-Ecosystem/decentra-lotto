@@ -411,26 +411,29 @@ export class LotteryService {
         return price;
     }
 
-    async buyTicketsBNB(num: any, value: any, recipient: any = null) {
+    async buyTicketsBNB(num: any, value: any, ticketRecipient: any = null, airdropRecipient: any = null) {
         var success;
-        var r = recipient != null ? recipient : this.accounts[0];
+        var r = ticketRecipient != null ? ticketRecipient : this.accounts[0];
         value = this.web3js.utils.toBN(value)
+        var airdrop = airdropRecipient != null ? airdropRecipient : r;
         try{
             success = await this.lottoContract
-                .methods.buyTicketsBNB(num, r)
+                .methods.buyTicketsBNB(num, r, airdrop)
                 .send({ from: this.accounts[0], value: value });
         }catch(err){
+            console.log(err)
             return false;
         }
         return success;
     }
 
-    async buyTicketsStable(address: any, num: any, recipient: any = null) {
+    async buyTicketsStable(address: any, num: any, ticketRecipient: any = null, airdropRecipient: any = null) {
         var success;
-        var r = recipient != null ? recipient : this.accounts[0];
+        var r = ticketRecipient != null ? ticketRecipient : this.accounts[0];
+        var airdrop = airdropRecipient != null ? airdropRecipient : r;
         try{
             success = await this.lottoContract
-                .methods.buyTicketsStable(address, num, r)
+                .methods.buyTicketsStable(address, num, r, airdrop)
                 .send({ from: this.accounts[0] });
         }catch(err){
             return false;
@@ -635,6 +638,7 @@ export class LotteryService {
     }
 
     async getDELOValueInPeg(amountIn){
+        if (amountIn == 0) return 0;
         var r;
         try{
             r = await this.lottoContract

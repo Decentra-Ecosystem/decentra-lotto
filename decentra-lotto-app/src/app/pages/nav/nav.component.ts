@@ -24,7 +24,9 @@ export class NavComponent implements OnInit, OnDestroy {
   menuItems = [
     {name: 'lottery', enabled:true, url:'', pages: []}, 
     {name:'staking', enabled:true, url:'', pages: []},
-    {name:'charity', enabled:true, url:'', pages: []}, 
+    {name:'charity', enabled:true, url:'', collapsed: true, pages: [
+      {name:'redpanda earth', enabled:true, url:''},
+    ]}, 
     {name:'syndicates', enabled:false, url:'', pages: []}, 
     {name:'vote', enabled:false, url:'', pages: []}, 
     {name:'trade', enabled:true, url:'', collapsed: true, pages: [
@@ -41,7 +43,7 @@ export class NavComponent implements OnInit, OnDestroy {
     {name:'more', enabled:true, url: '', collapsed: true, pages: [
       {name:'github', enabled:true, url: 'https://github.com/CeltyCrypto/decentra-lotto'},
       {name:'medium', enabled:true, url:'https://decentra-lotto.medium.com'},
-      {name:'whtepaper', enabled:false, url:''}
+      {name:'whitepaper', enabled:false, url:''}
     ]}
   ];
 

@@ -10,15 +10,15 @@
       <mat-grid-list cols="{{ ( cardLayout | async )?.columns }}" [rowHeight]="rowHeight">
         <!-- Buy Panel -->
         <mat-grid-tile [colspan]="( cardLayout | async )?.buy?.cols" [rowspan]="( cardLayout | async )?.buy?.rows">
-          <app-card title="Red Panda Donate" logo="assets/images/redpanda/gradientlogoSMALL.png" size="s">
-            <app-enter-draw-card [charity]="'Red Panda'"></app-enter-draw-card>
+          <app-card title="RedPanda Donate" logo="assets/images/redpanda/gradientlogoSMALL.png" size="s">
+            <app-enter-draw-card [charity]="'RedPanda'" [charityAddress]="charityAddress"></app-enter-draw-card>
           </app-card>
         </mat-grid-tile>
 
         <!--Stats Panel-->
         <mat-grid-tile [colspan]="( cardLayout | async )?.stats?.cols" [rowspan]="( cardLayout | async )?.stats?.rows">
             <app-card title="Donate Airdrop" logo="assets/images/redpanda/gradientlogoSMALL.png" size="s">
-              <app-charity-explainer-card></app-charity-explainer-card>
+              <app-redpanda-explainer-card></app-redpanda-explainer-card>
             </app-card>
         </mat-grid-tile>
         
@@ -32,7 +32,7 @@
         <!--Video Panel-->
         <mat-grid-tile [colspan]="( cardLayout | async )?.video?.cols" [rowspan]="( cardLayout | async )?.video?.rows">
           <app-card title="Watch" logo="assets/images/redpanda/gradientlogoSMALL.png" size="s">
-            <app-video></app-video>
+            <app-redpanda-video></app-redpanda-video>
           </app-card>
       </mat-grid-tile>
         

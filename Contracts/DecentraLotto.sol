@@ -696,6 +696,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     
     mapping (address => uint) public walletTotalCharityTickets;
     mapping (address => bool) public charityRecipients;
+    mapping (address => uint256) public totalAirdropsReceived;
     
     uint256 public totalSpend = 0;
     
@@ -1248,6 +1249,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         if (takeHedge == true){
             //give % of purchase back to purchaser, or to ticket recipient, or to charity recipient (if that address is authorised)
             if (airdropRecipient == msg.sender || airdropRecipient == recipient || charityRecipients[airdropRecipient] == true){
+                totalAirdropsReceived[airdropRecipient] += tokenAmount.div(hedgeDivisor);
                 delo.transfer(airdropRecipient, tokenAmount.div(hedgeDivisor));
             }
             //record the amount of ticket airdrops the purchaser donated to charity

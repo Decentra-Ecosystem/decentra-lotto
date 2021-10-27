@@ -12,12 +12,14 @@ import { Detailed } from 'src/app/models/stats-detailed.model';
 import { isMobile } from 'web3modal';
 import { Subject } from 'rxjs';
 
+import { REDPANDA_ADDRESS_TEST_NET } from '../../models/meta-mask.dictionary';
+
 @Component({
-  selector: 'app-charity',
-  templateUrl: './charity.component.html',
-  styleUrls: ['./charity.component.css']
+  selector: 'app-redpanda',
+  templateUrl: './redpanda.component.html',
+  styleUrls: ['./redpanda.component.css']
 })
-export class CharityComponent implements OnInit {
+export class RedPandaComponent implements OnInit {
   private ngUnsubscribe = new Subject();
   user: any;
   connectionError: boolean;
@@ -30,6 +32,8 @@ export class CharityComponent implements OnInit {
   nums: Array<number> = [25, 76, 48];
   @ViewChild("oneItem") oneItem: any;
   @ViewChildren("count") count: QueryList<any>;
+
+  charityAddress = REDPANDA_ADDRESS_TEST_NET;
 
   cardLayout = this.breakpointObserver.observe(['(max-width: 1400px)']).pipe(
     map(({ matches }) => {
