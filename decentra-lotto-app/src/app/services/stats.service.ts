@@ -342,7 +342,7 @@ export class StatsService implements OnDestroy {
       { title: "Winning Tickets", value: this.drawStats.numWinners, color: "accent", icon: "emoji_events", isCurrency: false },
       { title: "Tickets Entered", value: this.drawStats.numTickets, color: "primary", icon: "payments", isCurrency: false },
       { title: "Status", value: statusText, color: statusColour, icon: lock, isCurrency: false },
-      { title: "Total Donated", value:  totalDonated.toString() + ' ($' + totalDonatedUSD.toString() + ')', color: statusColour, icon: lock, isCurrency: false }
+      { title: "Total Donated", value:  totalDonated.toString() + ' ($' + totalDonatedUSD.toString() + ')', color: "accent", icon: "sentiment_very_satisfied", isCurrency: false }
     ]);
   }
 

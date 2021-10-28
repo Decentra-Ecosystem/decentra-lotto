@@ -6,14 +6,6 @@
   <!--dash.component.html-->
   <div *ngIf="!connectionError" class="outer-container">
     <div class="grid-container">
-      <!-- Top Summary Cards -->
-      <div *ngIf="mobile()">
-        <mat-grid-tile *ngFor="let mc of miniCardTopData" [colspan]="( cardLayout | async )?.miniCard?.cols"
-          [rowspan]="( cardLayout | async )?.miniCard?.rows">
-          <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
-        </mat-grid-tile>
-      </div>
-
       <!-- <h1 class="mat-h1">Dashboard</h1> -->
       <mat-grid-list cols="{{ ( cardLayout | async )?.columns }}" [rowHeight]="rowHeight">
         <!-- Buy Panel -->
@@ -24,18 +16,10 @@
         </mat-grid-tile>
 
         <!--Summary Cards-->
-      <div *ngIf="mobile()">
-        <mat-grid-tile *ngFor="let mc of miniCardBottomData" [colspan]="( cardLayout | async )?.miniCard?.cols"
-          [rowspan]="( cardLayout | async )?.miniCard?.rows">
-          <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
-        </mat-grid-tile>
-      </div>
-      <div *ngIf="!mobile()">
         <mat-grid-tile *ngFor="let mc of miniCardData" [colspan]="( cardLayout | async )?.miniCard?.cols"
-          [rowspan]="( cardLayout | async )?.miniCard?.rows">
-          <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
-        </mat-grid-tile>
-      </div>
+        [rowspan]="( cardLayout | async )?.miniCard?.rows">
+        <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+      </mat-grid-tile>
 
         <!--Stats Panel-->
         <mat-grid-tile [colspan]="( cardLayout | async )?.stats?.cols" [rowspan]="( cardLayout | async )?.stats?.rows">

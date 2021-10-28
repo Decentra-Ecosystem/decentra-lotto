@@ -136,8 +136,8 @@ export class RedPandaComponent implements OnInit {
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: summaryData => {
-            this.miniCardTopData = [summaryData[0], summaryData[1]];
-            this.miniCardBottomData = [summaryData[2], summaryData[3], summaryData[4], summaryData[5]];
+            this.miniCardTopData = [summaryData[0], summaryData[6]];
+            this.miniCardBottomData = [summaryData[1], summaryData[2], summaryData[3], summaryData[4]];
             this.miniCardData = [summaryData[0], summaryData[6], summaryData[1], summaryData[2], summaryData[3], summaryData[4]];
           }
         });
