@@ -8,7 +8,6 @@ import { WinnerModalComponent } from '../winner-modal/winner-modal/winner-modal.
   styleUrls: ['./tickets-bought-modal.component.css']
 })
 export class TicketsBoughtModalComponent implements OnInit {
-
   @Input() amount:any;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<WinnerModalComponent>) {

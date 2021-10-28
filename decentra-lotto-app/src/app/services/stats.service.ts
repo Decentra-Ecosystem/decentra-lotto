@@ -8,6 +8,7 @@ import { DrawModel, State } from '../models/draw.model';
 import { WalletStats } from '../models/walletstats.model';
 import { StakingStats } from '../models/stakingstats.model';
 import { isMobile } from 'web3modal';
+import { TOKEN_DECIMALS } from '../models/meta-mask.dictionary';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class StatsService implements OnDestroy {
   walletStats: WalletStats;
   countdown: string;
   stakingStats: StakingStats;
+  //totalDonated: any;
 
   dataSubscription: Subscription;
   pollingTimer: any;
@@ -329,6 +331,9 @@ export class StatsService implements OnDestroy {
     var statusColour = status != "Open" || this.drawStats.drawDeadline <= new Date() ? "warn" : "accent";
     var lock = status != "Open" || this.drawStats.drawDeadline <= new Date() ? "lock" : "lock_open";
     var statusText = status == "Open" && this.drawStats.drawDeadline <= new Date() ? "Deadline Passed" : status;
+    var totalDonated = await this.lottery.getTotalDonated('0xc44ff08425375097e4337b48151499280c25268c');
+    var totalDonatedUSD = await this.lottery.getDELOValueInPeg(totalDonated);
+    totalDonated = WalletStats.round(totalDonated, TOKEN_DECIMALS, 4);
 
     return of([
       { title: "Total Pot", value: Math.round(this.drawStats.totalPot).toString() + ' ($' + this.drawStats.totalPotUSD.toString() + ')', color: "accent", icon: "local_atm", isCurrency: true },
@@ -336,7 +341,8 @@ export class StatsService implements OnDestroy {
       { title: "Odds Per Ticket", value: this.drawStats.oddsPerTicket.toString()+"%", color: "primary", icon: "casino", isCurrency: false },
       { title: "Winning Tickets", value: this.drawStats.numWinners, color: "accent", icon: "emoji_events", isCurrency: false },
       { title: "Tickets Entered", value: this.drawStats.numTickets, color: "primary", icon: "payments", isCurrency: false },
-      { title: "Status", value: statusText, color: statusColour, icon: lock, isCurrency: false }
+      { title: "Status", value: statusText, color: statusColour, icon: lock, isCurrency: false },
+      { title: "Total Donated", value:  totalDonated.toString() + ' ($' + totalDonatedUSD.toString() + ')', color: statusColour, icon: lock, isCurrency: false }
     ]);
   }
 

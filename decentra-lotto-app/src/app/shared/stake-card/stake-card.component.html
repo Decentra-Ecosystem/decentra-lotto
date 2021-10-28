@@ -14,7 +14,7 @@
             <form class="example-container">
                 <mat-form-field *ngIf="isChecked == true" hintLabel="Staked:" appearance="fill">
                     <mat-label *ngIf="user.balance != null" style="font-size: 16px;">Balance: {{user.balance}}</mat-label>
-                    <input matInput #input maxlength="10" max="{{user.balance}}" type="number" placeholder="1" [formControl]="balanceControl" min="1" (change)="isApproved()">
+                    <input matInput #input maxlength="10" max="{{user.balance}}" type="number" placeholder="1" [formControl]="balanceControl" min="0" (change)="isApproved()">
                     <mat-hint *ngIf="walletStakedRounded" align="end">{{walletStakedRounded}}</mat-hint>
                     <button matSuffix mat-icon-button aria-label="Max" (click)="setMax(user.balance)">
                         Max
@@ -24,7 +24,7 @@
 
                 <mat-form-field *ngIf="isChecked == false" hintLabel="Balance:" appearance="fill">
                     <mat-label *ngIf="walletStakedRounded" style="font-size: 16px;">Staked: {{walletStakedRounded}}</mat-label>
-                    <input matInput #input maxlength="10" max="{{walletStakedRoundedNumber}}" type="number" placeholder="1" [formControl]="balanceControl" min="1" (change)="isApproved()">
+                    <input matInput #input maxlength="10" max="{{walletStakedRoundedNumber}}" type="number" placeholder="1" [formControl]="balanceControl" min="0" (change)="isApproved()">
                     <mat-hint *ngIf="user.balance" align="end">{{user.balance}}</mat-hint>
                     <button matSuffix mat-icon-button aria-label="Max" (click)="setMax(walletStakedRoundedNumber)">
                         Max

@@ -6,6 +6,14 @@
   <!--dash.component.html-->
   <div *ngIf="!connectionError" class="outer-container">
     <div class="grid-container">
+      <!-- Top Summary Cards -->
+      <div *ngIf="mobile()">
+        <mat-grid-tile *ngFor="let mc of miniCardTopData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+          [rowspan]="( cardLayout | async )?.miniCard?.rows">
+          <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+        </mat-grid-tile>
+      </div>
+
       <!-- <h1 class="mat-h1">Dashboard</h1> -->
       <mat-grid-list cols="{{ ( cardLayout | async )?.columns }}" [rowHeight]="rowHeight">
         <!-- Buy Panel -->
@@ -14,6 +22,20 @@
             <app-enter-draw-card [charity]="'RedPanda'" [charityAddress]="charityAddress"></app-enter-draw-card>
           </app-card>
         </mat-grid-tile>
+
+        <!--Summary Cards-->
+      <div *ngIf="mobile()">
+        <mat-grid-tile *ngFor="let mc of miniCardBottomData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+          [rowspan]="( cardLayout | async )?.miniCard?.rows">
+          <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+        </mat-grid-tile>
+      </div>
+      <div *ngIf="!mobile()">
+        <mat-grid-tile *ngFor="let mc of miniCardData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+          [rowspan]="( cardLayout | async )?.miniCard?.rows">
+          <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+        </mat-grid-tile>
+      </div>
 
         <!--Stats Panel-->
         <mat-grid-tile [colspan]="( cardLayout | async )?.stats?.cols" [rowspan]="( cardLayout | async )?.stats?.rows">
@@ -24,8 +46,8 @@
         
         <!-- Red Panda Panel -->
         <mat-grid-tile [colspan]="( cardLayout | async )?.explainer?.cols" [rowspan]="( cardLayout | async )?.explainer?.rows">
-          <app-card title="Information">
-            <app-redpanda-info-card title="Information"></app-redpanda-info-card>
+          <app-card title="About">
+            <app-redpanda-info-card title="About"></app-redpanda-info-card>
           </app-card>
         </mat-grid-tile>
 

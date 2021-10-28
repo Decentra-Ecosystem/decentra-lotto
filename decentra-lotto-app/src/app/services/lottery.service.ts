@@ -650,6 +650,18 @@ export class LotteryService {
         return this.roundPEG(r[2], 1);
     }
 
+    async getTotalDonated(address) {
+        var r;
+        try{
+            r = await this.lottoContract
+                .methods.totalAirdropsReceived(address)
+                .call({ from: this.accounts[0] });
+        }catch(err){
+            return -1;
+        }
+        return r;
+    }
+
     public roundPEG(amt, accuracy){
         return StakingStats.round(amt, BNB_DECIMALS, accuracy);
     }

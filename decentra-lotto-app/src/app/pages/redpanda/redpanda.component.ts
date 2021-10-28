@@ -52,9 +52,9 @@ export class RedPandaComponent implements OnInit {
         columns: 6,
         miniCard: { cols: 1, rows: 1 },
         buy: { cols: 3, rows: 2 },
-        explainer: { cols: 3, rows: 2 },
-        video: { cols: 3, rows: 2 },
-        stats: { cols: 3, rows: 2 },
+        explainer: { cols: 2, rows: 2 },
+        video: { cols: 2, rows: 2 },
+        stats: { cols: 2, rows: 2 },
       };
     })
   );
@@ -138,7 +138,7 @@ export class RedPandaComponent implements OnInit {
           next: summaryData => {
             this.miniCardTopData = [summaryData[0], summaryData[1]];
             this.miniCardBottomData = [summaryData[2], summaryData[3], summaryData[4], summaryData[5]];
-            this.miniCardData = summaryData;
+            this.miniCardData = [summaryData[0], summaryData[6], summaryData[1], summaryData[2], summaryData[3], summaryData[4]];
           }
         });
       }

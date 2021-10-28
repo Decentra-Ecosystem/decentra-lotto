@@ -212,7 +212,6 @@ export class EnterDrawCardComponent implements OnInit, OnDestroy {
     this.loading = true;
     var x = await this.lotteryService.getPriceForTicketsRaw(this.symbols[this.symbolControl.value], this.numTicketsControl.value);
     var success = false;
-    console.log(this.charityAddress);
     if (this.symbols[this.symbolControl.value] == this.symbols.BNB){
       success = await this.lotteryService.buyTicketsBNB(this.numTicketsControl.value, x*1.005, address, this.charityAddress); //0.05% extra for slippage
     }else{
@@ -223,7 +222,8 @@ export class EnterDrawCardComponent implements OnInit, OnDestroy {
         data: {
           amount: this.deloReceivedAmount,
           numTickets: this.numTicketsControl.value,
-          giftingAddress: address
+          giftingAddress: address,
+          charity: this.charity
         }
       });
       this.getData();

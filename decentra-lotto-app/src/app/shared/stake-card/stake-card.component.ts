@@ -23,7 +23,7 @@ import { StatsService } from 'src/app/services/stats.service';
 export class StakeCardComponent implements OnInit, OnDestroy {
 
   isChecked = true;
-  balanceControl = new FormControl(1, Validators.min(0));
+  balanceControl = new FormControl(0, Validators.min(0));
   user:any;
   walletStats: WalletStats;
   tokenBalance: number;
