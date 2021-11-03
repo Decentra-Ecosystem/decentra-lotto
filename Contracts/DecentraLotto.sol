@@ -700,12 +700,13 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     
     uint256 public totalSpend = 0;
     
+    uint public maxTicketsPerTxn = 60;
     uint256 public priceOneTicket = 10 *10**18;
     uint256 public discountFiveTickets = 5;
     uint256 public discountTenTickets = 10;
     uint256 public discountTwentyTickets = 20;
     
-    uint public liquidityDivisor = 10; //10%
+    uint public liquidityDivisor = 20; //5%
     uint public marketingDivisor = 10; //10%
     uint public hedgeDivisor = 10; //10%
     uint public stakingDivisor = 5; //20%
@@ -771,6 +772,10 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         NewDraw storage draw = draws[currentDraw];
         draw.state = _newState;
         emit LotteryStateChanged(draw.state);
+    }
+    
+    function setMaxTicketsPerTxn(uint _maxTicketsPerTxn) external onlyOwner{
+        maxTicketsPerTxn = _maxTicketsPerTxn;
     }
     
     function setMaxWinners(uint amt) external onlyOwner{
@@ -990,7 +995,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     
     function getCurrentPot() external view returns(uint256){
         uint256 deloBal = delo.balanceOf(address(this));
-        return deloBal - deloBal.div(liquidityDivisor) - deloBal.div(marketingDivisor);
+        return deloBal - deloBal.div(liquidityDivisor);
     }
     
     function createNextDraw() private returns(bool){
@@ -1084,6 +1089,13 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         
         _changeState(LotteryState.Closed);
         
+        //take liquidityDivisor of the total jackpot and add it to liquidity of the DELO token
+        uint256 jackpotTotal = delo.balanceOf(address(this));
+        if (takeLiquidity == true && inSwapAndLiquify == false){
+            //% to liquidity
+            swapAndLiquify(jackpotTotal.div(liquidityDivisor));
+        }
+        
         //get random number
         requestId = getRandomNumber();
         
@@ -1169,6 +1181,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         NewDraw storage draw = draws[currentDraw];
         require (now < draw.drawDeadline, 'Ticket purchases have ended for this draw');
         require (recipient != address(0), 'Cannot buy a ticket for null address');
+        require (numTickets <= maxTicketsPerTxn, 'You are trying to buy too many tickets in this TXN');
         
         uint256 cost = getPriceForTickets(wethAddress, numTickets);
         require (msg.value >= cost, 'Insufficient amount. More BNB required for purchase.');
@@ -1186,6 +1199,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         NewDraw storage draw = draws[currentDraw];
         require (now < draw.drawDeadline, 'Ticket purchases have ended for this draw');
         require (recipient != address(0), 'Cannot buy a ticket for null address');
+        require (numTickets <= maxTicketsPerTxn, 'You are trying to buy too many tickets in this TXN');
         
         uint256 price = getPriceForTickets(tokenAddress, numTickets);
         
@@ -1256,11 +1270,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         //swap the bnb from the ticket sale for DELO
         swapEthForDelo(bnbValue);
         uint256 tokenAmount = delo.balanceOf(address(this)).sub(initialTokenBal);
-        
-        if (takeLiquidity == true && inSwapAndLiquify == false){
-            //% to liquidity
-            swapAndLiquify(tokenAmount.div(liquidityDivisor));
-        }
         
         if (takeHedge == true){
             //give % of purchase back to purchaser, or to ticket recipient, or to charity recipient (if that address is authorised)
