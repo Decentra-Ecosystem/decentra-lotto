@@ -11,6 +11,7 @@ import { LoserModalComponent } from '../../shared/winner-modal/loser-modal/loser
 import { Detailed } from 'src/app/models/stats-detailed.model';
 import { isMobile } from 'web3modal';
 import { Subject } from 'rxjs';
+import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 
 @Component({
   selector: 'app-dash',
@@ -130,9 +131,10 @@ export class DashComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: summaryData => {
+            console.log(summaryData)
             this.miniCardTopData = [summaryData[0], summaryData[1]];
             this.miniCardBottomData = [summaryData[2], summaryData[3], summaryData[4], summaryData[5]];
-            this.miniCardData = summaryData;
+            this.miniCardData = [summaryData[0], summaryData[1], summaryData[2], summaryData[3], summaryData[4], summaryData[5]];
           }
         });
       }
