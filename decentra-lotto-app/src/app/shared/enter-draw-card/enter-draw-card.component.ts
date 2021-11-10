@@ -11,7 +11,18 @@ import { PlatformCheckerService } from 'src/app/services/platform.service';
 import {FormControl, Validators} from '@angular/forms';
 import {
   TOKEN_DECIMALS,  
-  BNB_DECIMALS
+  BNB_DECIMALS,
+  IS_LIVE,
+  BNB_TESTNET,
+  BUSD_TESTNET,
+  USDT_TESTNET,
+  DAI_TESTNET,
+  USDC_TESTNET,
+  BNB_MAINNET,
+  BUSD_MAINNET,
+  USDT_MAINNET,
+  DAI_MAINNET,
+  USDC_MAINNET
 } from '../../models/meta-mask.dictionary';
 import { MatDialog } from '@angular/material/dialog';
 import { TicketsBoughtModalComponent } from '../tickets-bought-modal/tickets-bought-modal.component';
@@ -44,12 +55,13 @@ export class EnterDrawCardComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject();
   giftDialogueRef: any;
 
+
   symbols = {
-    BNB: {address: '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd', decimals: BNB_DECIMALS},
-    BUSD: {address: '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7', decimals: BNB_DECIMALS},
-    USDT: {address: '0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684', decimals: BNB_DECIMALS},
-    DAI: {address: '0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867', decimals: BNB_DECIMALS},
-    USDC: {address: '0x9780881Bf45B83Ee028c4c1De7e0C168dF8e9eEF', decimals: BNB_DECIMALS}
+    BNB: {address: BNB_MAINNET, decimals: BNB_DECIMALS},
+    BUSD: {address: BUSD_MAINNET, decimals: BNB_DECIMALS},
+    USDT: {address: USDT_MAINNET, decimals: BNB_DECIMALS},
+    DAI: {address: DAI_MAINNET, decimals: BNB_DECIMALS},
+    USDC: {address: USDC_MAINNET, decimals: BNB_DECIMALS}
   }
 
   constructor(
@@ -58,7 +70,25 @@ export class EnterDrawCardComponent implements OnInit, OnDestroy {
     private statsService: StatsService,
     private platform: PlatformCheckerService,
     public dialog: MatDialog) 
-    { }
+    { 
+      if (IS_LIVE == true){
+        this.symbols = {
+          BNB: {address: BNB_MAINNET, decimals: BNB_DECIMALS},
+          BUSD: {address: BUSD_MAINNET, decimals: BNB_DECIMALS},
+          USDT: {address: USDT_MAINNET, decimals: BNB_DECIMALS},
+          DAI: {address: DAI_MAINNET, decimals: BNB_DECIMALS},
+          USDC: {address: USDC_MAINNET, decimals: BNB_DECIMALS}
+        }
+      }else{
+        this.symbols = {
+          BNB: {address: BNB_TESTNET, decimals: BNB_DECIMALS},
+          BUSD: {address: BUSD_TESTNET, decimals: BNB_DECIMALS},
+          USDT: {address: USDT_TESTNET, decimals: BNB_DECIMALS},
+          DAI: {address: DAI_TESTNET, decimals: BNB_DECIMALS},
+          USDC: {address: USDC_TESTNET, decimals: BNB_DECIMALS}
+        }
+      }
+    }
 
   ngOnInit(): void {
     this.newOdds = 0;

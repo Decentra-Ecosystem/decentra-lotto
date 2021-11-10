@@ -717,6 +717,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     bool public takeStaking = true;
     bool public takeMegadraw = true;
     
+    bool public stopNextDraw = false;
     uint public maxWinners = 40;
     bytes32 private requestId;
     
@@ -739,7 +740,9 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         stablesAccepted[0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867] = true; //dai testnet
         stablesAccepted[0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684] = true; //usdt testnet
         stablesAccepted[0x9780881Bf45B83Ee028c4c1De7e0C168dF8e9eEF] = true; //usdc testnet
-        createNextDraw();
+        
+        //change state to finished
+        _changeState(LotteryState.Finished);
     }
     
     event LotteryStateChanged(LotteryState newState);
@@ -772,6 +775,10 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         NewDraw storage draw = draws[currentDraw];
         draw.state = _newState;
         emit LotteryStateChanged(draw.state);
+    }
+    
+    function setStopNextDraw(bool _stopNextDraw) external onlyOwner{
+        stopNextDraw = _stopNextDraw;
     }
     
     function setMaxTicketsPerTxn(uint _maxTicketsPerTxn) external onlyOwner{
@@ -998,6 +1005,13 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return deloBal - deloBal.div(liquidityDivisor);
     }
     
+    // to be able to manually trigger the next draw if the previous one was stopped
+    function createNextDrawManual() external onlyOwner returns(bool){
+        NewDraw storage draw = draws[currentDraw];
+        require(draw.state == LotteryState.Finished, 'Cannot create new draw until winners drawn from previous.');
+        return createNextDraw();
+    }
+    
     function createNextDraw() private returns(bool){
         currentDraw = currentDraw + 1;
         NewDraw storage draw = draws[currentDraw];
@@ -1054,7 +1068,9 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         
         randomResult = 0;
 
-        createNextDraw();
+        if (stopNextDraw == false){
+            createNextDraw();
+        }
     }
     
     //fast removal - copy pop approach
@@ -1239,13 +1255,13 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
             draw.numParticipants++;
         }
         
-        //add the wallet for each ticket they purchased/donated
+        //add the wallet for each ticket they purchased
         for (uint i=0; i < numTickets; i++){
-            draw.numTickets++;
             draw.tickets.push(receiver);
-            draw.walletNumTickets[receiver]++;
-            walletTotalTicketsPurchased[receiver]++;
         }
+        draw.numTickets += numTickets;
+        draw.walletNumTickets[receiver] += numTickets;
+        walletTotalTicketsPurchased[receiver] += numTickets;
         
         draw.totalSpend += bnbValue;
         draw.walletSpendBNB[receiver] += bnbValue;

@@ -131,7 +131,6 @@ export class DashComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: summaryData => {
-            console.log(summaryData)
             this.miniCardTopData = [summaryData[0], summaryData[1]];
             this.miniCardBottomData = [summaryData[2], summaryData[3], summaryData[4], summaryData[5]];
             this.miniCardData = [summaryData[0], summaryData[1], summaryData[2], summaryData[3], summaryData[4], summaryData[5]];
