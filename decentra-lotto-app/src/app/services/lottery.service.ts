@@ -45,7 +45,7 @@ export class LotteryService {
     constructor() {
         const optionsLive = {
             rpc: {
-                56: 'https://bsc-dataseed1.defibit.io/'
+                56: 'https://bsc-dataseed1.defibit.io/' //https://bsc-dataseed.binance.org/
             },
             network: 'Binance Smart Chain',
             chainId: 56,
@@ -262,6 +262,18 @@ export class LotteryService {
                 .methods.getDrawStats()
                 .call();
             }
+        }catch(err){
+            return -1;
+        }
+        return draw;
+    }
+
+    async getCurrentPot(){
+        var draw;
+        try{
+            draw = await this.lottoContract
+                .methods.getCurrentPot()
+                .call();
         }catch(err){
             return -1;
         }

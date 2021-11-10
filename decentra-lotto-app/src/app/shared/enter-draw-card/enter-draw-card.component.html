@@ -5,7 +5,7 @@
             <form class="example-container">
                 <mat-form-field hintLabel="Your Tickets:" appearance="fill">
                     <mat-label>Buy Tickets:</mat-label>
-                    <input matInput #input maxlength="10" type="number" placeholder="1" [formControl]="numTicketsControl" min="1" (change)="selectToken()">
+                    <input matInput #input maxlength="10" type="number" placeholder="1" [formControl]="numTicketsControl" min="1" max="60" (change)="selectToken()">
                     <mat-hint *ngIf="walletStats" align="end">{{walletStats.numTickets}}</mat-hint>
                     <mat-error *ngIf="numTicketsControl.invalid">Min Tickets: 1</mat-error>
                 </mat-form-field>
