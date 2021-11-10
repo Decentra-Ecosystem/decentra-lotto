@@ -674,13 +674,13 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     DecentraLotto delo;
     DELOStaking deloStaking;
     
-    address public deloAddress = 0x7909B1652cb4f71E1a38568d8cC965cfC3A3FEc9;
-    address public deloStakingAddress = 0xBF1B38b7eCbEDd2236fA8922e632f8a7f662D120;
+    address public deloAddress = 0xC91B4AA7e5C247CB506e112E7FEDF6af7077b90A;
+    address public deloStakingAddress = 0xd34718abB0a49903FfC15779864672B7bC077ce3;
     
-    address public peg = 0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7; // busd
-    address public wethAddress = 0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd; //wbnb
+    address public peg = 0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56; // busd
+    address public wethAddress = 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c; //wbnb
     
-    address public megadrawWallet = 0xdcf5C8273b57D0d227724DD2aC9A0ce010412d0f;
+    address public megadrawWallet = 0x1e714e7DAAb6886920726059960b4A8f68F319e8;
     
     mapping (address => bool) public stablesAccepted;
     
@@ -726,20 +726,20 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
 
     constructor () 
         RandomNumberConsumer(
-            0xa555fC018435bef5A13C6c6870a9d4C11DEC329C, //vrfCoordinator
-            0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06, //link address
-            0xcaf3c3727e033261d383b315559476f48034c13b18f8cafed4d871abe5049186, //key hash
-            0.1 * 10 ** 18 //fee
+            0x747973a5A2a4Ae1D3a8fDF5479f1514F65Db9C31, //vrfCoordinator
+            0x404460C6A5EdE2D891e8297795264fDe62ADBB75, //link address
+            0xc251acd21ec4fb7f31bb8868288bfdbaeb4fbfec2df3735ddbd4f7dc8d60103c, //key hash
+            0.2 * 10 ** 18 //fee
         ) public {
-        uniswapV2Router = IUniswapV2Router02(0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3);
+        uniswapV2Router = IUniswapV2Router02(0x10ED43C718714eb63d5aA57B78B54704E256024E);
         delo = DecentraLotto(deloAddress);
         deloStaking = DELOStaking(deloStakingAddress);
         weth = IERC20(wethAddress);
         drawLength = 1 * 1 weeks;
-        stablesAccepted[0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7] = true; //busd testnet
-        stablesAccepted[0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867] = true; //dai testnet
-        stablesAccepted[0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684] = true; //usdt testnet
-        stablesAccepted[0x9780881Bf45B83Ee028c4c1De7e0C168dF8e9eEF] = true; //usdc testnet
+        stablesAccepted[0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56] = true; //busd
+        stablesAccepted[0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3] = true; //dai
+        stablesAccepted[0x55d398326f99059fF775485246999027B3197955] = true; //usdt
+        stablesAccepted[0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d] = true; //usdc
         
         //change state to finished
         _changeState(LotteryState.Finished);

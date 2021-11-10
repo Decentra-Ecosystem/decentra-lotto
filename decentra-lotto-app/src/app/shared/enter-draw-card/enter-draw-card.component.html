@@ -27,7 +27,8 @@
                 <span *ngIf="charity == null">
                     Received
                 </span>
-                ~ <span class="cost-amt-text" *ngIf="deloReceivedAmount>-1">{{deloReceivedAmount}}(${{usdReceivedAmount}}) </span>
+                ~ 
+                <span class="cost-amt-text" *ngIf="deloReceivedAmount>-1 && symbolControl.value == 'BNB'">{{deloReceivedAmount}}(${{usdReceivedAmount}}) </span>{{price}}
             </h3>
         </div>
         <div class="form-outer">

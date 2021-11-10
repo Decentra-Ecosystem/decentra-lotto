@@ -45,7 +45,7 @@ export class LotteryService {
     constructor() {
         const optionsLive = {
             rpc: {
-                56: 'https://bsc-dataseed.binance.org/'
+                56: 'https://bsc-dataseed1.defibit.io/'
             },
             network: 'Binance Smart Chain',
             chainId: 56,
@@ -99,6 +99,7 @@ export class LotteryService {
         console.log("Killing the wallet connection", this.provider);
         await this.web3Modal.clearCachedProvider();
         this.provider = null;
+        this.clearCache();
         window.location.reload();
     }
 
@@ -330,7 +331,7 @@ export class LotteryService {
         }catch(err){
             return -1;
         }
-        return [success[1], this.roundToken(success[1], 3)];
+        return [success[2], this.roundToken(success[2], 3)];
     }
 
     async getBNBValueInDelo(amt: number){
@@ -559,7 +560,6 @@ export class LotteryService {
                 .methods.yourStakedDELO(this.accounts[0])
                 .call({ from: this.accounts[0] });
         }catch(err){
-            console.log(err)
             return -1;
         }
         return r;
@@ -638,7 +638,7 @@ export class LotteryService {
     }
 
     async getDELOValueInPeg(amountIn){
-        if (amountIn == 0) return 0;
+        if (amountIn == 0 || !amountIn) return 0;
         var r;
         try{
             r = await this.lottoContract
