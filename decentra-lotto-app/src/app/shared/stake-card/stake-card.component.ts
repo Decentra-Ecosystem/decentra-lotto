@@ -73,6 +73,7 @@ export class StakeCardComponent implements OnInit, OnDestroy {
         if (stats != null && stats.walletDELOBalance != null){
           this.user.balance = stats.walletDELOBalance.toString();
           this.walletStats = stats;
+          this.isApproved();
         }
       }
     });
@@ -96,14 +97,18 @@ export class StakeCardComponent implements OnInit, OnDestroy {
 
   async approveToken(){
     this.loading = true;
-    await this.lotteryService.enableStaking(this.symbols.DELOStaking.address, this.walletStats.walletDELOBalanceRaw*2);
+    await this.lotteryService.enableStaking(this.symbols.DELOStaking.address, (this.walletStats.walletDELOBalanceRaw*2).toString());
     this.getData();
   }
 
   async isApproved(){
+    if (!this.walletStats){
+      this.approved == false;
+      return;
+    } 
     this.loading = true;
     var allowance = await this.lotteryService.getAllowanceStaking(this.symbols.DELOStaking.address);
-    if (this.addDecimals(this.balanceControl.value) <= allowance){
+    if (parseFloat(this.walletStats.walletDELOBalanceRaw.toString()) <= parseFloat(allowance.toString())){
       this.approved = true;
     }else{
       this.approved = false;
