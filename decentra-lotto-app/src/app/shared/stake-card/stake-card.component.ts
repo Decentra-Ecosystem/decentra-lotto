@@ -96,13 +96,7 @@ export class StakeCardComponent implements OnInit, OnDestroy {
 
   async approveToken(){
     this.loading = true;
-    var amount;
-    if (this.balanceControl.value >= this.user.balance){
-      amount = this.walletStats.walletDELOBalanceRaw;
-    }else{
-      amount = this.addDecimals(this.balanceControl.value);
-    }
-    await this.lotteryService.enableStaking(this.symbols.DELOStaking.address, amount);
+    await this.lotteryService.enableStaking(this.symbols.DELOStaking.address, this.walletStats.walletDELOBalanceRaw);
     this.getData();
   }
 

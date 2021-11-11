@@ -622,7 +622,7 @@ export class LotteryService {
         }catch(err){
             return -1;
         }
-        return this.roundToken(r, 2);
+        return [r,this.roundToken(r, 2)];
     }
 
     async getTotalDividends() {

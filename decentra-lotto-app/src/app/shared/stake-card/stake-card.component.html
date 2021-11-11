@@ -41,12 +41,13 @@
                     class="button" 
                     [ngClass]="approved == false ? 'buyButton' : ''" 
                     mat-raised-button color="primary" 
-                    [disabled]="loading || approved == true"
+                    [disabled]="loading"
                     type="button" 
+                    *ngIf="approved == false"
                     [style.background]="approved == false ? '#c2a336' : '#ff3f0fda'" 
                     (click) = "approveToken()">
                     <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
-                    <span *ngIf="!loading">Approve</span>
+                    <span *ngIf="!loading">Enable</span>
                 </button>
             </span>
 

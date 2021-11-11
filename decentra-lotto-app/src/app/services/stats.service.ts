@@ -318,12 +318,13 @@ export class StatsService implements OnDestroy {
 
   async getStakingStats(){
     var tvl = await this.lottery.getStakingTVL();
+    var tvlUSD = await this.lottery.getDELOValueInPeg(tvl[0]);
     var withdrawalFee = 2;
     // var totalDividends = await this.lottery.getTotalDividends();
     var yourStake = await this.lottery.getStakedRaw();
     var yourPendingRewards = await this.lottery.getPendingReward();
     var round = await this.lottery.getStakingRound();
-    this.stakingStats = new StakingStats([tvl, withdrawalFee, "Variable", yourStake, yourPendingRewards, round]);
+    this.stakingStats = new StakingStats([tvlUSD, withdrawalFee, "Variable", yourStake, yourPendingRewards, round]);
     return this.stakingStats;
   }
 
@@ -367,7 +368,7 @@ export class StatsService implements OnDestroy {
 
   async getStakingSummaryStats(): Promise<Observable<Detailed[]>> {   
     return of([
-      { title: "Total Value Locked", value: this.stakingStats.tvl.toString(), color: "accent", icon: "local_atm", isCurrency: false },
+      { title: "Total Value Locked", value: '$' + this.stakingStats.tvl.toString(), color: "accent", icon: "local_atm", isCurrency: false },
       { title: "Withdrawal Fee", value: this.stakingStats.withdrawalFee + '%', color: "warn", icon: "lock_open", isCurrency: false },
       { title: "APR", value: this.stakingStats.apr, color: "primary", icon: "paid", isCurrency: false },
       { title: "Your Stake", value: this.stakingStats.yourStakeRounded.toString(), color: "warn", icon: "account_balance", isCurrency: false },
