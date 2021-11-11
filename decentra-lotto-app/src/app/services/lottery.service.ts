@@ -45,7 +45,7 @@ export class LotteryService {
     constructor() {
         const optionsLive = {
             rpc: {
-                56: 'https://bsc-dataseed1.defibit.io/' //https://bsc-dataseed.binance.org/
+                56: 'https://red-spring-violet.bsc.quiknode.pro/' //https://bsc-dataseed.binance.org/ //https://bsc-dataseed1.defibit.io/
             },
             network: 'Binance Smart Chain',
             chainId: 56,

@@ -33,7 +33,7 @@ export class StakingComponent implements OnInit, OnDestroy {
           stakeCard: {cols: 2, rows: 3},
           harvestCard: {cols: 2, rows: 3},
           miniCard: { cols: 1, rows: 1 },
-          info: {cols: 2, rows: 3}
+          info: {cols: 2, rows: 2}
         };
       }
 
@@ -42,7 +42,7 @@ export class StakingComponent implements OnInit, OnDestroy {
         stakeCard: {cols: 3, rows: 2},
         harvestCard: {cols: 3, rows: 2},
         miniCard: { cols: 1, rows: 1 },
-        info: {cols: 6, rows: 1}
+        info: {cols: 3, rows: 1}
       };
     })
   );

@@ -96,14 +96,13 @@ export class StakeCardComponent implements OnInit, OnDestroy {
 
   async approveToken(){
     this.loading = true;
-    await this.lotteryService.enableStaking(this.symbols.DELOStaking.address, this.walletStats.walletDELOBalanceRaw);
+    await this.lotteryService.enableStaking(this.symbols.DELOStaking.address, this.walletStats.walletDELOBalanceRaw*2);
     this.getData();
   }
 
   async isApproved(){
     this.loading = true;
     var allowance = await this.lotteryService.getAllowanceStaking(this.symbols.DELOStaking.address);
-
     if (this.addDecimals(this.balanceControl.value) <= allowance){
       this.approved = true;
     }else{
@@ -141,11 +140,12 @@ export class StakeCardComponent implements OnInit, OnDestroy {
   }
 
   setMax(num){
-    this.balanceControl.setValue(parseFloat(num))
+    this.balanceControl.setValue(parseFloat(num));
+    this.isApproved();
   }
 
   addDecimals(amount){
-    return this.strtodec(Math.floor(amount), TOKEN_DECIMALS)
+    return this.strtodec(amount, TOKEN_DECIMALS)
   }
 
   strtodec(amount,dec){

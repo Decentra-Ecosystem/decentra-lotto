@@ -43,10 +43,17 @@
             </mat-grid-tile>
         </span>
 
-        <!-- Info Panel -->
+        <!-- Instructions Panel -->
         <mat-grid-tile [colspan]="( cardLayout | async )?.info?.cols" [rowspan]="( cardLayout | async )?.info?.rows">
-          <app-card title="Information">
-            <app-staking-info title="Information"></app-staking-info>
+          <app-card title="Instructions">
+            <app-staking-info info="true" title="Instructions"></app-staking-info>
+          </app-card>
+        </mat-grid-tile>
+
+        <!-- How To Panel -->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.info?.cols" [rowspan]="( cardLayout | async )?.info?.rows">
+          <app-card title="How It Works">
+            <app-staking-info info="false" title="How It Works"></app-staking-info>
           </app-card>
         </mat-grid-tile>
 

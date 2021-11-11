@@ -158,7 +158,10 @@ export class NavComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.ngUnsubscribe))
     .subscribe({
         next: stats => {
-          if (stats != null && stats.walletDELOBalance != null) this.user.balance = parseFloat(stats.walletDELOBalance.toFixed(2));
+          if (stats != null && stats.walletDELOBalance != null){
+            var bal = parseFloat(stats.walletDELOBalance.toFixed(2));
+            this.user.balance = bal > 2 ? bal : 0;
+          } 
         }
     });
   }

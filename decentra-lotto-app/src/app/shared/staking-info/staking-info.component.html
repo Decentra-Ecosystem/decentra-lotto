@@ -1,7 +1,6 @@
 <div class="container">
     <div class="row justifyCenter">       
-        <div class="column">
-            <h2>Instructions</h2>
+        <div *ngIf="info == 'true'">
             <div class="howto">
                 <h4>
                     Stake your DELO by choosing the amount you would like to stake, and clicking "Approve". Once the transaction completes, the "Stake" button will be enabled.
@@ -17,9 +16,8 @@
                     
             </div>
         </div> 
-        <hr *ngIf="isMobile()">
-        <div class="column">
-            <h2>How It Works</h2>
+        <!-- <hr *ngIf="isMobile()"> -->
+        <div *ngIf="info == 'false'">
             <div class="howto">
                 <h4>
                     There is no entrance fee to stake, and a nominal 2% withdrawal fee which is distributed amongst other stakers as staking rewards.
