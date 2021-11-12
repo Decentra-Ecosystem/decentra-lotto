@@ -1,0 +1,117 @@
+.more-button {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+ }
+
+ .logo {
+   position: absolute;
+   top: 5px;
+   right: 10px;
+ }
+
+ .small{
+    width: 35px;
+    height: 35px;
+ }
+
+ .large{
+   width: 65px;
+   height: 65px;
+}
+
+.container {
+    display: flex; /* or inline-flex */
+    flex-wrap: wrap;
+    margin: auto;
+    margin-bottom: 40px;
+    margin-top: 10px;
+}
+
+.card-mini {
+    color: white;
+    width: 24%;
+    margin: 5px;
+    padding: 15px;
+    box-shadow: 0 0 .1rem #fff,
+                0 0 .1rem #fff,
+                0 0 1rem #bc13fe,
+                0 0 0.3rem #bc13fe,
+                0 0 0.8rem #bc13fe,
+                inset 0 0 0.7rem #bc13fe;
+ }
+ 
+ .dashboard-card {
+    height: 60%;
+    width: 90%;
+    margin: auto;
+    margin-top: 40px;
+    padding: 15px;
+    box-shadow: 0 0 .1rem #fff,
+                0 0 .1rem #fff,
+                0 0 1rem #bc13fe,
+                0 0 0.3rem #bc13fe,
+                0 0 0.8rem #bc13fe,
+                inset 0 0 0.7rem #bc13fe;
+ }
+ 
+ 
+ .dashboard-card-content {
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 100%;
+    justify-content: center;
+    align-items: stretch;
+ }
+ 
+ mat-card {
+    display: flex;
+    flex-direction: column;
+    /* background: #0f001dcb; */
+    background: #0f001dcb;
+    background: linear-gradient(180deg, #311263 0%, #0f001dcb 100%);
+    padding: 0.4em;
+
+    border-radius: 2rem;
+    border: 0.2rem solid rgb(255, 254, 189);
+ }
+
+ .title{
+   color: white;
+ }
+
+ @media only screen and (max-width : 1552px) {
+    .dashboard-card {
+        height: 90%;
+        width: 100%;
+        margin: auto;
+        margin-top: 10px;
+        padding: 5px;
+     }
+ }
+
+ @media only screen and (max-width : 1552px) {
+    .card-mini {
+        width: 23%;
+        min-width: 140px;
+    }
+ }
+
+ @media only screen and (max-width : 440px) {
+    .dashboard-card {
+        height: 780px;
+        width: 100%;
+        margin: auto;
+        margin-top: 10px;
+        padding: 5px;
+     }
+     .container {
+        margin-top: 0px;
+        margin-bottom: 15px;
+    }
+ }
+
+

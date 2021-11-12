@@ -23,6 +23,7 @@ import { ConnectionModalComponent } from 'src/app/shared/connection-modal/connec
 export class NavComponent implements OnInit, OnDestroy {
   menuItems = [
     {name: 'lottery', enabled:true, url:'', pages: []}, 
+    {name: 'exchange', enabled:true, url:'', pages: []},
     {name:'staking', enabled:true, url:'', pages: []},
     {name:'charity', enabled:true, url:'', collapsed: true, pages: [
       {name:'redpanda earth', enabled:true, url:''},
@@ -104,7 +105,7 @@ export class NavComponent implements OnInit, OnDestroy {
 
   @HostListener('window:focus', ['$event'])
   onFocus(event: FocusEvent): void {
-      this.connect();
+      //this.connect();
   }
 
   async connect(){

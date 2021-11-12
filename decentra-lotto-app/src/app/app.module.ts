@@ -54,6 +54,7 @@ import { RedpandaInfoCardComponent } from './shared/redpanda-info-card/redpanda-
 import { RedPandaVideoComponent } from './shared/redpanda-video/redpanda-video.component';
 import { NgxTweetModule } from "ngx-tweet";
 import { RedPandaExplainerCardComponent } from './shared/redpanda-explainer-card/redpanda-explainer-card.component';
+import { ExchangeComponent } from './pages/exchange/exchange.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { RedPandaExplainerCardComponent } from './shared/redpanda-explainer-card
     RedPandaComponent,
     RedpandaInfoCardComponent,
     RedPandaVideoComponent,
-    RedPandaExplainerCardComponent
+    RedPandaExplainerCardComponent,
+    ExchangeComponent
   ],
   imports: [
     BrowserModule,

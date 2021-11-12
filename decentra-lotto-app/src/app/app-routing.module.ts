@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { DashComponent } from './pages/dash/dash.component';
 import { StakingComponent } from './pages/staking/staking.component';
 import { RedPandaComponent } from './pages/redpanda/redpanda.component';
+import { ExchangeComponent } from './pages/exchange/exchange.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'lottery', pathMatch: 'full' },
@@ -13,6 +14,8 @@ const routes: Routes = [
   { path: 'Redpanda earth', redirectTo: 'redpanda-earth', pathMatch: 'full'},
   { path: 'redpanda earth', redirectTo: 'redpanda-earth', pathMatch: 'full'},
   { path: 'redpanda-earth', component: RedPandaComponent},
+  { path: 'Exchange', redirectTo: 'exchange', pathMatch: 'full'},
+  { path: 'exchange', component: ExchangeComponent},
 ];
 
 @NgModule({

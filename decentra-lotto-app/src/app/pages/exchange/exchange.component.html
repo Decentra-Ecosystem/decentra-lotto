@@ -1,0 +1,59 @@
+
+<mat-card class="dashboard-card">
+    <mat-card-header>
+        <mat-card-title class="title">
+            Cross-Chain Exchange
+            <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                <mat-icon>help</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu" xPosition="before">
+                <button onclick="window.open('https://www.youtube.com/watch?v=FYbtxt0KhIo','_blank')" mat-menu-item>Using the exchange</button>
+                <button onclick="window.open('https://rubic.exchange/faq','_blank')" mat-menu-item>FAQ</button>
+                <button onclick="window.open('https://rubic.finance/assets/pdf/OnePager.pdf','_blank')" mat-menu-item>How Rubic Works</button>
+            </mat-menu>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="dashboard-card-content">
+        <ng-content></ng-content>
+        <div class="container white">
+            <mat-card class="card-mini">
+                <mat-card-header>
+                    Price
+                </mat-card-header>
+                <mat-card-content>
+                    {{price}}
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="card-mini">
+                <mat-card-header>
+                    Circulating
+                </mat-card-header>
+                <mat-card-content>
+                    {{circ}}
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="card-mini">
+                <mat-card-header>
+                    Holders
+                </mat-card-header>
+                <mat-card-content>
+                    {{holders}}
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="card-mini">
+                <mat-card-header>
+                    Cap
+                </mat-card-header>
+                <mat-card-content>
+                    {{cap}}
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <div id="rubic-widget-root"></div>
+    </mat-card-content>
+</mat-card>
+
+
+
+
+

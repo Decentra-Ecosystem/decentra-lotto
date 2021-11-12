@@ -11,7 +11,6 @@ import { LoserModalComponent } from '../../shared/winner-modal/loser-modal/loser
 import { Detailed } from 'src/app/models/stats-detailed.model';
 import { isMobile } from 'web3modal';
 import { Subject } from 'rxjs';
-import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 
 @Component({
   selector: 'app-dash',
@@ -22,6 +21,7 @@ export class DashComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject();
   user: any;
   connectionError: boolean;
+  wrongChain: boolean = false;
   miniCardData: Summary[];
   miniCardTopData: Summary[];
   miniCardBottomData: Summary[];
@@ -86,7 +86,11 @@ export class DashComponent implements OnInit, OnDestroy {
       this.connectionError = true;
     }else{
       this.connectionError = false;
-      await this.Update();
+      if (await this.lotteryService.getChain() != this.lotteryService.options.chainId){
+        this.wrongChain = true;
+      }else{
+        await this.Update();
+      }
     }
   }
   

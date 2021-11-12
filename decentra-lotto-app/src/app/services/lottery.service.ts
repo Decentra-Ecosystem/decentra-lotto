@@ -210,11 +210,11 @@ export class LotteryService {
 
         this.web3js = new Web3(this.provider); // create web3 instance
         var p = await this.web3js.eth.net.getId((err: any, network: any)=> {});
-        if (p != this.options.chainId){
-            if (document.hasFocus()) {
-                this.requestChain();
-            }
-        }
+        // if (p != this.options.chainId){
+        //     if (document.hasFocus()) {
+        //         this.requestChain();
+        //     }
+        // }
 
         this.accounts = await this.web3js.eth.getAccounts(); 
         this.accountStatusSource.next(this.accounts);
