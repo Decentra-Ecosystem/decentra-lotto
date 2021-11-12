@@ -3,8 +3,11 @@
     <h1 class="white">Connect your wallet to continue...</h1>
     <h2 class="white">If you are on mobile, make sure your are using a web3 browser like Metamask Browser.</h2>
   </div>
+  <div *ngIf="wrongChain" class="outer-container">
+    <h1>Switch your wallet network to Binance Smart Chain to continue...</h1>
+  </div>
   <!--dash.component.html-->
-  <div *ngIf="!connectionError" class="outer-container">
+  <div *ngIf="!connectionError && !wrongChain" class="outer-container">
     <div class="grid-container">
       <!-- <h1 class="mat-h1">Dashboard</h1> -->
       <mat-grid-list cols="{{ ( cardLayout | async )?.columns }}" [rowHeight]="rowHeight">

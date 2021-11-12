@@ -20,6 +20,7 @@ import { REDPANDA_ADDRESS_TEST_NET } from '../../models/meta-mask.dictionary';
   styleUrls: ['./redpanda.component.css']
 })
 export class RedPandaComponent implements OnInit {
+  wrongChain: boolean = false;
   private ngUnsubscribe = new Subject();
   user: any;
   connectionError: boolean;
@@ -91,7 +92,11 @@ export class RedPandaComponent implements OnInit {
       this.connectionError = true;
     }else{
       this.connectionError = false;
-      await this.Update();
+      if (await this.lotteryService.getChain() != this.lotteryService.options.chainId){
+        this.wrongChain = true;
+      }else{
+        await this.Update();
+      }
     }
   }
   

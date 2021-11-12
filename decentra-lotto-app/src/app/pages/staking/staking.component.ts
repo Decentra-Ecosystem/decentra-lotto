@@ -13,7 +13,7 @@ import { Subject, Subscription } from 'rxjs';
   styleUrls: ['./staking.component.css']
 })
 export class StakingComponent implements OnInit, OnDestroy {
-
+  wrongChain: boolean = false;
   private ngUnsubscribe = new Subject();
   user: any;
   connectionError: boolean;
@@ -79,7 +79,11 @@ export class StakingComponent implements OnInit, OnDestroy {
       this.connectionError = true;
     }else{
       this.connectionError = false;
-      await this.Update();
+      if (await this.lotteryService.getChain() != this.lotteryService.options.chainId){
+        this.wrongChain = true;
+      }else{
+        await this.Update();
+      }
     }
   }
   
