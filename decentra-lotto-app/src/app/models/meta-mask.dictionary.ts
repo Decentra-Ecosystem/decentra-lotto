@@ -1,4 +1,4 @@
-export var IS_LIVE = false;
+export var IS_LIVE = true;
 
 //platform contracts main net
 //export const DAO_CONTRACT_ADDRESS_MAIN_NET = '0x6220c2b7d807BAFd895bb584B147A4F36Dd5177e';
