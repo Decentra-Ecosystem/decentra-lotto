@@ -24,16 +24,17 @@ class DrawModel {
     ) {
         this.id = obj[0];
         this.numParticipants = obj[1];
-        this.tickets = obj[2];
-        this.winners = obj[3];
-        this.numTickets = obj[4];
-        this.totalSpend = obj[5];
-        this.createdOn = new Date(obj[6]*1000);
-        this.drawDeadline = new Date(obj[7]*1000);
-        this.totalPotRaw = obj[8];
-        this.totalPot = WalletStats.round(obj[8], TOKEN_DECIMALS, 5);
-        this.state = obj[9];
-        this.numWinners = obj[10];
+        this.winners = obj[2];
+
+        this.numTickets = obj[3];
+
+        this.createdOn = new Date(obj[4]*1000);
+        this.drawDeadline = new Date(obj[5]*1000);
+
+        this.totalPotRaw = obj[6];
+        this.totalPot = WalletStats.round(obj[6], TOKEN_DECIMALS, 5);
+        this.state = obj[7];
+        this.numWinners = obj[8];
     }
 }
 

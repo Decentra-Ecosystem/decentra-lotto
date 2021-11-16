@@ -305,7 +305,7 @@ export class StatsService implements OnDestroy {
         walletTotalSpendBNB: this.walletStats.walletTotalSpendBNB,
         walletTotalTicketsPurchased: this.walletStats.walletTotalTicketsPurchased,
         walletTotalWins: this.walletStats.walletTotalWins,
-        walletTotalWinValueLep: this.walletStats.walletTotalWinValueLep,
+        walletTotalWinValueDELO: this.walletStats.walletTotalWinValueDELO,
         walletChance: this.walletStats.walletChance,
         walletDELOBalance: this.walletStats.walletDELOBalance,
         walletDELOBalanceRaw: this.walletStats.walletDELOBalanceRaw,
@@ -362,7 +362,7 @@ export class StatsService implements OnDestroy {
     return of([
       { title: "Tickets Purchased", value: this.walletStats.walletTotalTicketsPurchased.toString(), color: "warn", icon: "portrait", isCurrency: false },
       { title: "Your Wins", value: this.walletStats.walletTotalWins.toString(), color: "accent", icon: "portrait", isCurrency: false },
-      { title: "Win Amount", value: this.walletStats.walletTotalWinValueLep.toString() + " DELO", color: "primary", icon: "portrait", isCurrency: false }
+      { title: "Win Amount", value: this.walletStats.walletTotalWinValueDELO.toString() + " DELO", color: "primary", icon: "portrait", isCurrency: false }
     ]);
   }
 
