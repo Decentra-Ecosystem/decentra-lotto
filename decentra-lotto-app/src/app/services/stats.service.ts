@@ -9,6 +9,8 @@ import { WalletStats } from '../models/walletstats.model';
 import { StakingStats } from '../models/stakingstats.model';
 import { isMobile } from 'web3modal';
 import { TOKEN_DECIMALS } from '../models/meta-mask.dictionary';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { DELO_CONTRACT_ADDRESS_MAIN_NET } from 'src/app/models/meta-mask.dictionary';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +44,7 @@ export class StatsService implements OnDestroy {
 
   initiated: boolean = false;
 
-  constructor(private lottery: LotteryService) { }
+  constructor(private lottery: LotteryService, private http: HttpClient,) { }
 
   ngOnDestroy () {
     if (this.dataSubscription) this.dataSubscription.unsubscribe();
@@ -79,7 +81,10 @@ export class StatsService implements OnDestroy {
     this.drawStats.totalPot = WalletStats.round(this.drawStats.totalPotRaw, TOKEN_DECIMALS, 5);
     this.walletStats.walletChance = this.getChance(false, 0);
     this.drawStats.oddsPerTicket = parseFloat(((this.drawStats.numWinners/this.drawStats.numTickets)*100).toFixed(2));
-    this.drawStats.totalPotUSD = await this.lottery.getDELOValueInPeg(this.drawStats.totalPotRaw);
+    this.getPrice()
+    .subscribe((data: any) => {
+      this.drawStats.totalPotUSD = this.numberWithCommas(Math.round(data.data.price * this.drawStats.totalPot));
+    });
     
     var x = await this.lottery.getUserBalance();
     this.walletStats.walletDELOBalance = x[0];
@@ -236,6 +241,16 @@ export class StatsService implements OnDestroy {
     totalWinningsUSD = parseFloat(totalWinningsUSD.toFixed(2));
     if (sinceLast == true) this.setCheck(address, this.drawStats.id-1);
     return [totalWinnings, position, totalWinningsUSD];
+  }
+
+  getPrice() {
+    var headerDict = {
+      'accept': 'application/json',
+    }
+    var requestOptions = {                                                                                                                                                                                 
+      headers: new HttpHeaders(headerDict), 
+    };
+    return this.http.get("https://api.pancakeswap.info/api/v2/tokens/"+DELO_CONTRACT_ADDRESS_MAIN_NET, requestOptions);
   }
 
   getLastCheck(address){
@@ -402,4 +417,9 @@ export class StatsService implements OnDestroy {
     }
     return '';
   }
+
+  numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
 }

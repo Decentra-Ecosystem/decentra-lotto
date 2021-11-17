@@ -169,7 +169,6 @@ export class NavComponent implements OnInit, OnDestroy {
 
   getPrice() {
     return this.http.get("https://api.pancakeswap.info/api/v2/tokens/"+DELO_CONTRACT_ADDRESS_MAIN_NET, this.requestOptions);
-    //return this.http.get("https://deep-index.moralis.io/api/v2/erc20/"+DELO_CONTRACT_ADDRESS_MAIN_NET+"/price?chain=bsc", this.requestOptions);
   }
 
   connection(){

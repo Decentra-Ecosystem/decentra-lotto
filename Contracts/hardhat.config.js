@@ -62,7 +62,7 @@ module.exports = {
     }
   },
   etherscan: {
-    apiKey: "CTC4WHDW167DVM21XAANUPZ5J7TMJ3MAZF"
+    apiKey: secrets.etherscanKey
   },
   contractSizer: {
     alphaSort: true,
