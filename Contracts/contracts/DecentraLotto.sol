@@ -1,563 +1,22 @@
 pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
+// SPDX-License-Identifier: Unlicensed
+
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
+import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
+import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router01.sol';
+import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 
 
-// SPDX-License-Identifier: Unlicensed
-
-interface IERC20 {
-
-    function totalSupply() external view returns (uint256);
-
-    /**
-     * @dev Returns the amount of tokens owned by `account`.
-     */
-    function balanceOf(address account) external view returns (uint256);
-
-    /**
-     * @dev Moves `amount` tokens from the caller's account to `recipient`.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * Emits a {Transfer} event.
-     */
-    function transfer(address recipient, uint256 amount) external returns (bool);
-
-    /**
-     * @dev Returns the remaining number of tokens that `spender` will be
-     * allowed to spend on behalf of `owner` through {transferFrom}. This is
-     * zero by default.
-     *
-     * This value changes when {approve} or {transferFrom} are called.
-     */
-    function allowance(address owner, address spender) external view returns (uint256);
-
-    /**
-     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * IMPORTANT: Beware that changing an allowance with this method brings the risk
-     * that someone may use both the old and the new allowance by unfortunate
-     * transaction ordering. One possible solution to mitigate this race
-     * condition is to first reduce the spender's allowance to 0 and set the
-     * desired value afterwards:
-     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-     *
-     * Emits an {Approval} event.
-     */
-    function approve(address spender, uint256 amount) external returns (bool);
-
-    /**
-     * @dev Moves `amount` tokens from `sender` to `recipient` using the
-     * allowance mechanism. `amount` is then deducted from the caller's
-     * allowance.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * Emits a {Transfer} event.
-     */
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-    
-    /**
-     * @dev Returns the decimals.
-     */
-    function decimals() external view returns (uint256);
-    
-    /**
-     * @dev Returns the symbol.
-     */
-    function symbol() external view returns (string memory);
-
-    /**
-     * @dev Emitted when `value` tokens are moved from one account (`from`) to
-     * another (`to`).
-     *
-     * Note that `value` may be zero.
-     */
-    event Transfer(address indexed from, address indexed to, uint256 value);
-
-    /**
-     * @dev Emitted when the allowance of a `spender` for an `owner` is set by
-     * a call to {approve}. `value` is the new allowance.
-     */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-    
-    function deposit() external payable;
-    function withdraw(uint256 amount) external;
-}
-
-
-
-/**
- * @dev Wrappers over Solidity's arithmetic operations with added overflow
- * checks.
- *
- * Arithmetic operations in Solidity wrap on overflow. This can easily result
- * in bugs, because programmers usually assume that an overflow raises an
- * error, which is the standard behavior in high level programming languages.
- * `SafeMath` restores this intuition by reverting the transaction when an
- * operation overflows.
- *
- * Using this library instead of the unchecked operations eliminates an entire
- * class of bugs, so it's recommended to use it always.
- */
- 
-
-
-abstract contract Context {
-    function _msgSender() internal view virtual returns (address payable) {
-        return msg.sender;
-    }
-
-    function _msgData() internal view virtual returns (bytes memory) {
-        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
-        return msg.data;
-    }
-}
-
-
-/**
- * @dev Collection of functions related to the address type
- */
-library Address {
-    /**
-     * @dev Returns true if `account` is a contract.
-     *
-     * [IMPORTANT]
-     * ====
-     * It is unsafe to assume that an address for which this function returns
-     * false is an externally-owned account (EOA) and not a contract.
-     *
-     * Among others, `isContract` will return false for the following
-     * types of addresses:
-     *
-     *  - an externally-owned account
-     *  - a contract in construction
-     *  - an address where a contract will be created
-     *  - an address where a contract lived, but was destroyed
-     * ====
-     */
-    function isContract(address account) internal view returns (bool) {
-        // According to EIP-1052, 0x0 is the value returned for not-yet created accounts
-        // and 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 is returned
-        // for accounts without code, i.e. `keccak256('')`
-        bytes32 codehash;
-        bytes32 accountHash = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
-        // solhint-disable-next-line no-inline-assembly
-        assembly { codehash := extcodehash(account) }
-        return (codehash != accountHash && codehash != 0x0);
-    }
-
-    /**
-     * @dev Replacement for Solidity's `transfer`: sends `amount` wei to
-     * `recipient`, forwarding all available gas and reverting on errors.
-     *
-     * https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost
-     * of certain opcodes, possibly making contracts go over the 2300 gas limit
-     * imposed by `transfer`, making them unable to receive funds via
-     * `transfer`. {sendValue} removes this limitation.
-     *
-     * https://diligence.consensys.net/posts/2019/09/stop-using-soliditys-transfer-now/[Learn more].
-     *
-     * IMPORTANT: because control is transferred to `recipient`, care must be
-     * taken to not create reentrancy vulnerabilities. Consider using
-     * {ReentrancyGuard} or the
-     * https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern].
-     */
-    function sendValue(address payable recipient, uint256 amount) internal {
-        require(address(this).balance >= amount, "Address: insufficient balance");
-
-        // solhint-disable-next-line avoid-low-level-calls, avoid-call-value
-        (bool success, ) = recipient.call{ value: amount }("");
-        require(success, "Address: unable to send value, recipient may have reverted");
-    }
-
-    /**
-     * @dev Performs a Solidity function call using a low level `call`. A
-     * plain`call` is an unsafe replacement for a function call: use this
-     * function instead.
-     *
-     * If `target` reverts with a revert reason, it is bubbled up by this
-     * function (like regular Solidity function calls).
-     *
-     * Returns the raw returned data. To convert to the expected return value,
-     * use https://solidity.readthedocs.io/en/latest/units-and-global-variables.html?highlight=abi.decode#abi-encoding-and-decoding-functions[`abi.decode`].
-     *
-     * Requirements:
-     *
-     * - `target` must be a contract.
-     * - calling `target` with `data` must not revert.
-     *
-     * _Available since v3.1._
-     */
-    function functionCall(address target, bytes memory data) internal returns (bytes memory) {
-      return functionCall(target, data, "Address: low-level call failed");
-    }
-
-    /**
-     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`], but with
-     * `errorMessage` as a fallback revert reason when `target` reverts.
-     *
-     * _Available since v3.1._
-     */
-    function functionCall(address target, bytes memory data, string memory errorMessage) internal returns (bytes memory) {
-        return _functionCallWithValue(target, data, 0, errorMessage);
-    }
-
-    /**
-     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],
-     * but also transferring `value` wei to `target`.
-     *
-     * Requirements:
-     *
-     * - the calling contract must have an ETH balance of at least `value`.
-     * - the called Solidity function must be `payable`.
-     *
-     * _Available since v3.1._
-     */
-    function functionCallWithValue(address target, bytes memory data, uint256 value) internal returns (bytes memory) {
-        return functionCallWithValue(target, data, value, "Address: low-level call with value failed");
-    }
-
-    /**
-     * @dev Same as {xref-Address-functionCallWithValue-address-bytes-uint256-}[`functionCallWithValue`], but
-     * with `errorMessage` as a fallback revert reason when `target` reverts.
-     *
-     * _Available since v3.1._
-     */
-    function functionCallWithValue(address target, bytes memory data, uint256 value, string memory errorMessage) internal returns (bytes memory) {
-        require(address(this).balance >= value, "Address: insufficient balance for call");
-        return _functionCallWithValue(target, data, value, errorMessage);
-    }
-
-    function _functionCallWithValue(address target, bytes memory data, uint256 weiValue, string memory errorMessage) private returns (bytes memory) {
-        require(isContract(target), "Address: call to non-contract");
-
-        // solhint-disable-next-line avoid-low-level-calls
-        (bool success, bytes memory returndata) = target.call{ value: weiValue }(data);
-        if (success) {
-            return returndata;
-        } else {
-            // Look for revert reason and bubble it up if present
-            if (returndata.length > 0) {
-                // The easiest way to bubble the revert reason is using memory via assembly
-
-                // solhint-disable-next-line no-inline-assembly
-                assembly {
-                    let returndata_size := mload(returndata)
-                    revert(add(32, returndata), returndata_size)
-                }
-            } else {
-                revert(errorMessage);
-            }
-        }
-    }
-}
-
-/**
- * @dev Contract module which provides a basic access control mechanism, where
- * there is an account (an owner) that can be granted exclusive access to
- * specific functions.
- *
- * By default, the owner account will be the one that deploys the contract. This
- * can later be changed with {transferOwnership}.
- *
- * This module is used through inheritance. It will make available the modifier
- * `onlyOwner`, which can be applied to your functions to restrict their use to
- * the owner.
- */
-contract Ownable is Context {
-    address private _owner;
-    address private _previousOwner;
-    uint256 private _lockTime;
-
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
-    /**
-     * @dev Initializes the contract setting the deployer as the initial owner.
-     */
-    constructor () internal {
-        address msgSender = _msgSender();
-        _owner = msgSender;
-        emit OwnershipTransferred(address(0), msgSender);
-    }
-
-    /**
-     * @dev Returns the address of the current owner.
-     */
-    function owner() public view returns (address) {
-        return _owner;
-    }
-
-    /**
-     * @dev Throws if called by any account other than the owner.
-     */
-    modifier onlyOwner() {
-        require(_owner == _msgSender(), "Ownable: caller is not the owner");
-        _;
-    }
-
-     /**
-     * @dev Leaves the contract without owner. It will not be possible to call
-     * `onlyOwner` functions anymore. Can only be called by the current owner.
-     *
-     * NOTE: Renouncing ownership will leave the contract without an owner,
-     * thereby removing any functionality that is only available to the owner.
-     */
-    function renounceOwnership() public virtual onlyOwner {
-        emit OwnershipTransferred(_owner, address(0));
-        _owner = address(0);
-    }
-
-    /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     * Can only be called by the current owner.
-     */
-    function transferOwnership(address newOwner) public virtual onlyOwner {
-        require(newOwner != address(0), "Ownable: new owner is the zero address");
-        emit OwnershipTransferred(_owner, newOwner);
-        _owner = newOwner;
-    }
-
-    function geUnlockTime() public view returns (uint256) {
-        return _lockTime;
-    }
-
-    //Locks the contract for owner for the amount of time provided
-    function lock(uint256 time) public virtual onlyOwner {
-        _previousOwner = _owner;
-        _owner = address(0);
-        _lockTime = now + time;
-        emit OwnershipTransferred(_owner, address(0));
-    }
-    
-    //Unlocks the contract for owner when _lockTime is exceeds
-    function unlock() public virtual {
-        require(_previousOwner == msg.sender, "You don't have permission to unlock");
-        require(now > _lockTime , "Contract is locked until 7 days");
-        emit OwnershipTransferred(_owner, _previousOwner);
-        _owner = _previousOwner;
-        _previousOwner = address(0);
-    }
-}
-
-// pragma solidity >=0.5.0;
-
-interface IUniswapV2Factory {
-    event PairCreated(address indexed token0, address indexed token1, address pair, uint);
-
-    function feeTo() external view returns (address);
-    function feeToSetter() external view returns (address);
-
-    function getPair(address tokenA, address tokenB) external view returns (address pair);
-    function allPairs(uint) external view returns (address pair);
-    function allPairsLength() external view returns (uint);
-
-    function createPair(address tokenA, address tokenB) external returns (address pair);
-
-    function setFeeTo(address) external;
-    function setFeeToSetter(address) external;
-}
-
-
-// pragma solidity >=0.5.0;
-
-interface IUniswapV2Pair {
-    event Approval(address indexed owner, address indexed spender, uint value);
-    event Transfer(address indexed from, address indexed to, uint value);
-
-    function name() external pure returns (string memory);
-    function symbol() external pure returns (string memory);
-    function decimals() external pure returns (uint8);
-    function totalSupply() external view returns (uint);
-    function balanceOf(address owner) external view returns (uint);
-    function allowance(address owner, address spender) external view returns (uint);
-
-    function approve(address spender, uint value) external returns (bool);
-    function transfer(address to, uint value) external returns (bool);
-    function transferFrom(address from, address to, uint value) external returns (bool);
-
-    function DOMAIN_SEPARATOR() external view returns (bytes32);
-    function PERMIT_TYPEHASH() external pure returns (bytes32);
-    function nonces(address owner) external view returns (uint);
-
-    function permit(address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s) external;
-
-    event Mint(address indexed sender, uint amount0, uint amount1);
-    event Burn(address indexed sender, uint amount0, uint amount1, address indexed to);
-    event Swap(
-        address indexed sender,
-        uint amount0In,
-        uint amount1In,
-        uint amount0Out,
-        uint amount1Out,
-        address indexed to
-    );
-    event Sync(uint112 reserve0, uint112 reserve1);
-
-    function MINIMUM_LIQUIDITY() external pure returns (uint);
-    function factory() external view returns (address);
-    function token0() external view returns (address);
-    function token1() external view returns (address);
-    function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast);
-    function price0CumulativeLast() external view returns (uint);
-    function price1CumulativeLast() external view returns (uint);
-    function kLast() external view returns (uint);
-
-    function mint(address to) external returns (uint liquidity);
-    function burn(address to) external returns (uint amount0, uint amount1);
-    function swap(uint amount0Out, uint amount1Out, address to, bytes calldata data) external;
-    function skim(address to) external;
-    function sync() external;
-
-    function initialize(address, address) external;
-}
-
-// pragma solidity >=0.6.2;
-
-interface IUniswapV2Router01 {
-    function factory() external pure returns (address);
-    function WETH() external pure returns (address);
-
-    function addLiquidity(
-        address tokenA,
-        address tokenB,
-        uint amountADesired,
-        uint amountBDesired,
-        uint amountAMin,
-        uint amountBMin,
-        address to,
-        uint deadline
-    ) external returns (uint amountA, uint amountB, uint liquidity);
-    function addLiquidityETH(
-        address token,
-        uint amountTokenDesired,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline
-    ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
-    function removeLiquidity(
-        address tokenA,
-        address tokenB,
-        uint liquidity,
-        uint amountAMin,
-        uint amountBMin,
-        address to,
-        uint deadline
-    ) external returns (uint amountA, uint amountB);
-    function removeLiquidityETH(
-        address token,
-        uint liquidity,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline
-    ) external returns (uint amountToken, uint amountETH);
-    function removeLiquidityWithPermit(
-        address tokenA,
-        address tokenB,
-        uint liquidity,
-        uint amountAMin,
-        uint amountBMin,
-        address to,
-        uint deadline,
-        bool approveMax, uint8 v, bytes32 r, bytes32 s
-    ) external returns (uint amountA, uint amountB);
-    function removeLiquidityETHWithPermit(
-        address token,
-        uint liquidity,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline,
-        bool approveMax, uint8 v, bytes32 r, bytes32 s
-    ) external returns (uint amountToken, uint amountETH);
-    function swapExactTokensForTokens(
-        uint amountIn,
-        uint amountOutMin,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external returns (uint[] memory amounts);
-    function swapTokensForExactTokens(
-        uint amountOut,
-        uint amountInMax,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external returns (uint[] memory amounts);
-    function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline)
-        external
-        payable
-        returns (uint[] memory amounts);
-    function swapTokensForExactETH(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
-        external
-        returns (uint[] memory amounts);
-    function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
-        external
-        returns (uint[] memory amounts);
-    function swapETHForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline)
-        external
-        payable
-        returns (uint[] memory amounts);
-
-    function quote(uint amountA, uint reserveA, uint reserveB) external pure returns (uint amountB);
-    function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) external pure returns (uint amountOut);
-    function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) external pure returns (uint amountIn);
-    function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts);
-    function getAmountsIn(uint amountOut, address[] calldata path) external view returns (uint[] memory amounts);
-}
-
-
-
-// pragma solidity >=0.6.2;
-
-interface IUniswapV2Router02 is IUniswapV2Router01 {
-    function removeLiquidityETHSupportingFeeOnTransferTokens(
-        address token,
-        uint liquidity,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline
-    ) external returns (uint amountETH);
-    function removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
-        address token,
-        uint liquidity,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline,
-        bool approveMax, uint8 v, bytes32 r, bytes32 s
-    ) external returns (uint amountETH);
-
-    function swapExactTokensForTokensSupportingFeeOnTransferTokens(
-        uint amountIn,
-        uint amountOutMin,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external;
-    function swapExactETHForTokensSupportingFeeOnTransferTokens(
-        uint amountOutMin,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external payable;
-    function swapExactTokensForETHSupportingFeeOnTransferTokens(
-        uint amountIn,
-        uint amountOutMin,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external;
-}
 
 //DecentraLotto Interface
-interface DecentraLotto {
+interface IDecentraLotto {
   function CHARITY_WALLET (  ) external view returns ( address );
   function _burnFee (  ) external view returns ( uint256 );
   function _charityFee (  ) external view returns ( uint256 );
@@ -607,7 +66,7 @@ interface DecentraLotto {
   function withdrawEth ( uint256 amount ) external;
 }
 
-interface DELOStaking {
+interface IDELOStaking {
     function ADDFUNDS(uint256 tokens) external;
 }
 
@@ -641,16 +100,14 @@ abstract contract RandomNumberConsumer is VRFConsumerBase {
 
 contract DrawInterface {
     struct NewDraw {
-        uint id;
-        uint numParticipants;
-        address[] tickets;
+        uint256 id;
+        uint32 numParticipants;
+        uint32 numTickets;
         address[] winners;
-        uint numTickets;
-        uint256 totalSpend;
-        mapping (address => uint) walletSpendBNB;
-        mapping (address => uint) walletNumTickets;
-        mapping (address => uint) walletWinAmount;
-        mapping (address => uint) walletCharityTickets;
+        mapping (uint256 => address) tickets;
+        mapping (address => uint256) walletSpendBNB;
+        mapping (address => uint16) walletNumTickets;
+        mapping (address => uint256) walletWinAmount;
         // A unix timestamp, denoting the created datetime of this draw
         uint256 createdOn;
         // A unix timestamp, denoting the end of the draw
@@ -671,46 +128,42 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     using Address for address;
     
     IERC20 weth;
-    DecentraLotto delo;
-    DELOStaking deloStaking;
+    IDecentraLotto delo;
+    IDELOStaking deloStaking;
     
     address public deloAddress = 0xC91B4AA7e5C247CB506e112E7FEDF6af7077b90A;
-    address public deloStakingAddress = 0xd34718abB0a49903FfC15779864672B7bC077ce3;
-    
+    address public deloStakingAddress = 0xd06e418850Cc6a29a9e8a99ddb8304730367b55D;
     address public peg = 0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56; // busd
     address public wethAddress = 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c; //wbnb
-    
     address public megadrawWallet = 0x1e714e7DAAb6886920726059960b4A8f68F319e8;
     
     mapping (address => bool) public stablesAccepted;
     
-    uint public drawLength;
-    mapping (uint => NewDraw) public draws;
-    uint256 public currentDraw = 0;
+    uint256 public drawLength;
+    mapping (uint16 => NewDraw) public draws;
+    uint16 public currentDraw = 0;
 
-    mapping (address => uint256) public walletTotalTicketsPurchased;
-    mapping (address => uint256) public walletTotalSpendBNB;
+    mapping (address => uint16) private walletTotalTicketsPurchased;
     
-    mapping (address => uint256) public walletTotalWins;
-    mapping (address => uint256) public walletTotalWinValueDelo;
+    mapping (address => uint16) private walletTotalWins;
+    mapping (address => uint256) private walletTotalWinValueDelo;
     
-    mapping (address => uint) public walletTotalCharityTickets;
+    mapping (address => uint16) private walletTotalCharityTickets;
+    mapping (address => uint256) private totalAirdropsReceived;
+    
     mapping (address => bool) public charityRecipients;
-    mapping (address => uint256) public totalAirdropsReceived;
-    
-    uint256 public totalSpend = 0;
-    
-    uint public maxTicketsPerTxn = 60;
+
     uint256 public priceOneTicket = 10 *10**18;
-    uint256 public discountFiveTickets = 5;
-    uint256 public discountTenTickets = 10;
-    uint256 public discountTwentyTickets = 20;
+    uint8 public maxTicketsPerTxn = 60;
+    uint8 public discountFiveTickets = 5;
+    uint8 public discountTenTickets = 10;
+    uint8 public discountTwentyTickets = 20;
     
-    uint public liquidityDivisor = 20; //5%
-    uint public marketingDivisor = 10; //10%
-    uint public hedgeDivisor = 10; //10%
-    uint public stakingDivisor = 5; //20%
-    uint public megadrawDivisor = 10; //10%
+    uint8 public liquidityDivisor = 20; //5%
+    uint8 public marketingDivisor = 10; //10%
+    uint8 public hedgeDivisor = 10; //10%
+    uint8 public stakingDivisor = 5; //20%
+    uint8 public megadrawDivisor = 20; //5%
     bool public takeLiquidity = true;
     bool public takeMarketing = false;
     bool public takeHedge = true;
@@ -732,8 +185,8 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
             0.2 * 10 ** 18 //fee
         ) public {
         uniswapV2Router = IUniswapV2Router02(0x10ED43C718714eb63d5aA57B78B54704E256024E);
-        delo = DecentraLotto(deloAddress);
-        deloStaking = DELOStaking(deloStakingAddress);
+        delo = IDecentraLotto(deloAddress);
+        deloStaking = IDELOStaking(deloStakingAddress);
         weth = IERC20(wethAddress);
         drawLength = 1 * 1 weeks;
         stablesAccepted[0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56] = true; //busd
@@ -771,6 +224,13 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         inSwapAndLiquify = false;
     }
     
+    //@dev - a failsafe just in case the state is stuck somewhere and we need to re-trigger the drawWinners()
+    function changeStateEmergency(LotteryState _newState) external onlyOwner {
+        NewDraw storage draw = draws[currentDraw];
+        draw.state = _newState;
+        emit LotteryStateChanged(draw.state);
+    }
+    
     function _changeState(LotteryState _newState) private {
         NewDraw storage draw = draws[currentDraw];
         draw.state = _newState;
@@ -781,7 +241,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         stopNextDraw = _stopNextDraw;
     }
     
-    function setMaxTicketsPerTxn(uint _maxTicketsPerTxn) external onlyOwner{
+    function setMaxTicketsPerTxn(uint8 _maxTicketsPerTxn) external onlyOwner{
         maxTicketsPerTxn = _maxTicketsPerTxn;
     }
     
@@ -795,7 +255,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     
     function setDeloStakingAddress(address _address) external onlyOwner{
         deloStakingAddress = _address;
-        deloStaking = DELOStaking(deloStakingAddress);
+        deloStaking = IDELOStaking(deloStakingAddress);
     }
     
     function setPegAddress(address _address) external onlyOwner{
@@ -815,7 +275,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         priceOneTicket = _priceOneTicket;
     }
     
-    function setDiscounts(uint _discountFiveTickets, uint _discountTenTickets, uint _discountTwentyTickets) external onlyOwner{
+    function setDiscounts(uint8 _discountFiveTickets, uint8 _discountTenTickets, uint8 _discountTwentyTickets) external onlyOwner{
         discountFiveTickets = _discountFiveTickets;
         discountTenTickets = _discountTenTickets;
         discountTwentyTickets = _discountTwentyTickets;
@@ -829,24 +289,24 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         charityRecipients[_charity] = false;
     }
     
-    function setLiquidityDivisor(uint256 _liqdiv) external onlyOwner{
+    function setLiquidityDivisor(uint8 _liqdiv) external onlyOwner{
         liquidityDivisor = _liqdiv;
     }
     
-    function setMarketingDivisor(uint256 _markdiv) external onlyOwner{
+    function setMarketingDivisor(uint8 _markdiv) external onlyOwner{
         require(_markdiv >= 5, "Cannot set over 20% marketing allocation");
         marketingDivisor = _markdiv;
     }
     
-    function setHedgeDivisor(uint256 _hedgediv) external onlyOwner{
+    function setHedgeDivisor(uint8 _hedgediv) external onlyOwner{
         hedgeDivisor = _hedgediv;
     }
     
-    function setStakingDivisor(uint256 _stakingdiv) external onlyOwner{
+    function setStakingDivisor(uint8 _stakingdiv) external onlyOwner{
         stakingDivisor = _stakingdiv;
     }
     
-    function setMegadrawDivisor(uint256 _megadrawDivisor) external onlyOwner{
+    function setMegadrawDivisor(uint8 _megadrawDivisor) external onlyOwner{
         megadrawDivisor = _megadrawDivisor;
     }
     
@@ -921,20 +381,18 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return true;
     }
     
-    function getWalletWinAmountForDraw(uint _id, address winner) external view returns(uint){
+    function getWalletWinAmountForDraw(uint16 _id, address winner) external view returns(uint){
         NewDraw storage draw = draws[_id];
         return draw.walletWinAmount[winner];
     }
     
-    function getDrawStats(uint _id) external view returns(uint, uint, address[] memory, address[] memory, uint256, uint256, uint256, uint256, uint256, LotteryState, uint){
+    function getDrawStats(uint16 _id) external view returns(uint, uint, address[] memory, uint256, uint256, uint256, uint256, LotteryState, uint){
         NewDraw storage draw = draws[_id];
         return (
             draw.id, 
             draw.numParticipants, 
-            draw.tickets,
             draw.winners,
             draw.numTickets, 
-            draw.totalSpend,
             draw.createdOn, 
             draw.drawDeadline,
             draw.totalPot,
@@ -943,15 +401,13 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         );
     }
     
-    function getDrawStats() external view returns(uint, uint, address[] memory, address[] memory, uint256, uint256, uint256, uint256, uint256, LotteryState, uint){
+    function getDrawStats() external view returns(uint, uint, address[] memory, uint256, uint256, uint256, uint256, LotteryState, uint){
         NewDraw storage draw = draws[currentDraw];
         return (
             draw.id, 
             draw.numParticipants, 
-            draw.tickets,
             draw.winners,
             draw.numTickets, 
-            draw.totalSpend,
             draw.createdOn, 
             draw.drawDeadline, 
             draw.totalPot,
@@ -960,23 +416,11 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         );
     }
     
-    function getWalletDrawCharityStats(uint _id, address _address) external view returns(uint256){
-        NewDraw storage draw = draws[_id];
-        return draw.walletCharityTickets[_address];
-    }
-    
-    function getWalletDrawCharityStats(address _address) external view returns(uint256){
-        NewDraw storage draw = draws[currentDraw];
-        return draw.walletCharityTickets[_address];
-    }
-    
-    function getDrawWalletStats(uint _id) external view returns (uint, uint, uint, uint256, uint256, uint256, uint256, uint256, uint256){
+    function getDrawWalletStats(uint16 _id) external view returns (uint, uint, uint256, uint256, uint256, uint256, uint256){
         NewDraw storage draw = draws[_id];
         return (
             draw.walletSpendBNB[msg.sender], 
             draw.walletNumTickets[msg.sender],
-            draw.walletCharityTickets[msg.sender],
-            walletTotalSpendBNB[msg.sender],
             walletTotalTicketsPurchased[msg.sender],
             walletTotalWins[msg.sender],
             walletTotalWinValueDelo[msg.sender],
@@ -985,13 +429,11 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         );
     }
     
-    function getDrawWalletStats() external view returns (uint, uint, uint, uint256, uint256, uint256, uint256, uint256, uint256){
+    function getDrawWalletStats() external view returns (uint, uint, uint256, uint256, uint256, uint256, uint256){
         NewDraw storage draw = draws[currentDraw];
         return (
             draw.walletSpendBNB[msg.sender], 
             draw.walletNumTickets[msg.sender],
-            draw.walletCharityTickets[msg.sender],
-            walletTotalSpendBNB[msg.sender],
             walletTotalTicketsPurchased[msg.sender],
             walletTotalWins[msg.sender],
             walletTotalWinValueDelo[msg.sender],
@@ -1000,9 +442,9 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         );
     }
     
-    function getCurrentPot() external view returns(uint256){
+    function getCurrentPot() public view returns(uint256){
         uint256 deloBal = delo.balanceOf(address(this));
-        return deloBal - deloBal.div(liquidityDivisor);
+        return deloBal - deloBal.div(liquidityDivisor) - deloBal.div(megadrawDivisor);
     }
     
     // to be able to manually trigger the next draw if the previous one was stopped
@@ -1016,10 +458,10 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         currentDraw = currentDraw + 1;
         NewDraw storage draw = draws[currentDraw];
         draw.id = currentDraw;
+        draw.numTickets = 0;
         draw.createdOn = now;
         draw.drawDeadline = draw.createdOn + drawLength;
         draw.numParticipants = 0;
-        draw.totalSpend = 0;
         _changeState(LotteryState.Open);
         emit DrawCreated(draw.id);
     }
@@ -1050,7 +492,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         
         while (delo.balanceOf(address(this)).div(2) >= deloCost && seed <= maxWinners){
             //pick a random winner
-            address winner = winnersRemoveAt(uint256(keccak256(abi.encode(randomResult, seed))).mod(draw.tickets.length));
+            address winner = draw.tickets[(uint256(keccak256(abi.encode(randomResult, seed))).mod(draw.numTickets))];
             //add them to the winners array
             draw.winners.push(winner);
             //increment their wins
@@ -1071,19 +513,6 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         if (stopNextDraw == false){
             createNextDraw();
         }
-    }
-    
-    //fast removal - copy pop approach
-    function winnersRemoveAt(uint index) internal returns(address){
-        NewDraw storage draw = draws[currentDraw];
-        require(index < draw.tickets.length);
-        //save the winner address
-        address winner = draw.tickets[index];
-        // Move the last element into the place to winners index
-        draw.tickets[index] = draw.tickets[draw.tickets.length - 1];
-        // Remove the last element to reduce the array size
-        draw.tickets.pop();
-        return winner;
     }
     
     /**
@@ -1110,6 +539,12 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         if (takeLiquidity == true && inSwapAndLiquify == false){
             //% to liquidity
             swapAndLiquify(jackpotTotal.div(liquidityDivisor));
+        }
+        
+        //take themegadraw allotment
+        if (takeMegadraw == true){
+            //take megadraw % to be accumulated for megadraws
+            delo.transfer(megadrawWallet, jackpotTotal.div(megadrawDivisor));
         }
         
         //get random number
@@ -1193,7 +628,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return amountIn[0];
     }
     
-    function buyTicketsBNB(uint numTickets, address recipient, address airDropRecipient) payable external isState(LotteryState.Open) returns(bool){
+    function buyTicketsBNB(uint16 numTickets, address recipient, address airDropRecipient) payable external isState(LotteryState.Open) returns(bool){
         NewDraw storage draw = draws[currentDraw];
         require (now < draw.drawDeadline, 'Ticket purchases have ended for this draw');
         require (recipient != address(0), 'Cannot buy a ticket for null address');
@@ -1211,7 +646,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
     }
     
     //approve must first be called by msg.sender
-    function buyTicketsStable(address tokenAddress, uint numTickets, address recipient, address airdropRecipient) isState(LotteryState.Open) external returns(bool){
+    function buyTicketsStable(address tokenAddress, uint16 numTickets, address recipient, address airdropRecipient) isState(LotteryState.Open) external returns(bool){
         NewDraw storage draw = draws[currentDraw];
         require (now < draw.drawDeadline, 'Ticket purchases have ended for this draw');
         require (recipient != address(0), 'Cannot buy a ticket for null address');
@@ -1248,7 +683,7 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         return processTransaction(bnbValue, numTickets, recipient, airdropRecipient);
     }
     
-    function assignTickets(uint256 bnbValue, uint numTickets, address receiver) isState(LotteryState.Open) private returns(bool){
+    function assignTickets(uint256 bnbValue, uint16 numTickets, address receiver) isState(LotteryState.Open) private returns(bool){
         NewDraw storage draw = draws[currentDraw];
         //only add a new participant if the wallet has not purchased a ticket already
         if (draw.walletNumTickets[receiver] <= 0){
@@ -1256,26 +691,24 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
         }
         
         //add the wallet for each ticket they purchased
+        uint32 num = draw.numTickets;
         for (uint i=0; i < numTickets; i++){
-            draw.tickets.push(receiver);
+            draw.tickets[num] = receiver;
+            num += 1;
         }
-        draw.numTickets += numTickets;
+        draw.numTickets = num;
         draw.walletNumTickets[receiver] += numTickets;
         walletTotalTicketsPurchased[receiver] += numTickets;
         
-        draw.totalSpend += bnbValue;
         draw.walletSpendBNB[receiver] += bnbValue;
-        draw.totalPot = delo.balanceOf(address(this));
-        
-        walletTotalSpendBNB[receiver] += bnbValue;
-        totalSpend += bnbValue;
+        draw.totalPot = getCurrentPot();
         
         emit TicketsBought(receiver, numTickets);
         
         return true;
     }
     
-    function processTransaction(uint256 bnbValue, uint numTickets, address recipient, address airdropRecipient) private returns(bool){
+    function processTransaction(uint256 bnbValue, uint16 numTickets, address recipient, address airdropRecipient) isState(LotteryState.Open) private returns(bool){
         uint256 initialTokenBal = delo.balanceOf(address(this));
         
         //take the marketing amount in bnb
@@ -1295,15 +728,8 @@ contract DecentraLottoDraw is Context, Ownable, RandomNumberConsumer, DrawInterf
             }
             //record the amount of ticket airdrops the purchaser donated to charity
             if (charityRecipients[airdropRecipient] == true){
-                NewDraw storage draw = draws[currentDraw];
-                draw.walletCharityTickets[msg.sender] += numTickets;
                 walletTotalCharityTickets[msg.sender] += numTickets;
             }
-        }
-        
-        if (takeMegadraw == true){
-            //take megadraw % to be accumulated for megadraws
-            delo.transfer(megadrawWallet, tokenAmount.div(megadrawDivisor));
         }
         
         if (takeStaking == true){

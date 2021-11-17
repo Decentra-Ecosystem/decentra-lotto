@@ -210,7 +210,7 @@ export class StatsService implements OnDestroy {
           for(var q=0; q < draw.winners.length; q++){
             if (draw.winners[q] == address){
               var h = q+1;
-              if (q == 0){
+              if (positions == ''){
                 positions = h+'';
               }else{
                 positions += ', '+h;
