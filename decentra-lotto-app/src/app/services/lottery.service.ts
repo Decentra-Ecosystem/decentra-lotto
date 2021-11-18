@@ -4,6 +4,7 @@ import {
     IS_LIVE,
     LOTTO_CONTRACT_ADDRESS_TEST_NET, 
     LOTTO_CONTRACT_ADDRESS_MAIN_NET,
+    OLD_LOTTO_CONTRACT_ADDRESS_MAIN_NET,
     DELO_CONTRACT_ADDRESS_MAIN_NET,
     DELO_CONTRACT_ADDRESS_TEST_NET,
     TOKEN_DECIMALS, 
@@ -283,6 +284,19 @@ export class LotteryService {
         var amt;
         try{
             amt = await this.lottoContract
+                .methods.getWalletWinAmountForDraw(id, address)
+                .call();
+        }catch(err){
+            return -1;
+        }
+        return [amt, this.roundToken(amt, 3)];
+    }
+
+    async getWalletWinAmountForDraw1(id: any, address: any) {
+        var amt;
+        try{
+            var contract = new this.web3js.eth.Contract(DecentraLotto, OLD_LOTTO_CONTRACT_ADDRESS_MAIN_NET);
+            amt = await contract
                 .methods.getWalletWinAmountForDraw(id, address)
                 .call();
         }catch(err){

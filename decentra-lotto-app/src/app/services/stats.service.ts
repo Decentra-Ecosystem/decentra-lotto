@@ -243,6 +243,12 @@ export class StatsService implements OnDestroy {
     return [totalWinnings, position, totalWinningsUSD];
   }
 
+  async checkOldWinnings(address){
+    var amt = await this.lottery.getWalletWinAmountForDraw1(1, address);
+    var usdAmt = await this.lottery.getDELOValueInPeg(amt[0]);
+    return [amt[1], "", usdAmt];
+  }
+
   getPrice() {
     var headerDict = {
       'accept': 'application/json',
