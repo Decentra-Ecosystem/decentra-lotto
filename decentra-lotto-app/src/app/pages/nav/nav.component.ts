@@ -27,6 +27,7 @@ export class NavComponent implements OnInit, OnDestroy {
     {name: 'exchange', enabled:true, url:'', pages: []},
     {name:'charity', enabled:true, url:'', collapsed: true, pages: [
       {name:'redpanda earth', enabled:true, url:''},
+      {name:'world of waves', enabled:true, url:''},
     ]}, 
     {name:'syndicates', enabled:false, url:'', pages: []}, 
     {name:'vote', enabled:false, url:'', pages: []}, 

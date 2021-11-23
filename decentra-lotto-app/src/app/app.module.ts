@@ -55,6 +55,9 @@ import { RedPandaVideoComponent } from './shared/redpanda-video/redpanda-video.c
 import { NgxTweetModule } from "ngx-tweet";
 import { RedPandaExplainerCardComponent } from './shared/redpanda-explainer-card/redpanda-explainer-card.component';
 import { ExchangeComponent } from './pages/exchange/exchange.component';
+import { WorldofwavesComponent } from './pages/worldofwaves/worldofwaves.component';
+import { WorldofwavesInfoCardComponent } from './shared/worldofwaves-info-card/worldofwaves-info-card.component';
+import { WorldofwavesVideoComponent } from './shared/worldofwaves-video/worldofwaves-video.component';
 
 @NgModule({
   declarations: [
@@ -81,7 +84,10 @@ import { ExchangeComponent } from './pages/exchange/exchange.component';
     RedpandaInfoCardComponent,
     RedPandaVideoComponent,
     RedPandaExplainerCardComponent,
-    ExchangeComponent
+    ExchangeComponent,
+    WorldofwavesComponent,
+    WorldofwavesInfoCardComponent,
+    WorldofwavesVideoComponent
   ],
   imports: [
     BrowserModule,

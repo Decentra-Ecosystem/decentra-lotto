@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-redpanda-explainer-card',
@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./redpanda-explainer-card.component.css']
 })
 export class RedPandaExplainerCardComponent implements OnInit {
+  @Input() charityName: string;
 
   constructor() { }
 

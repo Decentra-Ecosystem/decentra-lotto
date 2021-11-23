@@ -4,6 +4,7 @@ import { DashComponent } from './pages/dash/dash.component';
 import { StakingComponent } from './pages/staking/staking.component';
 import { RedPandaComponent } from './pages/redpanda/redpanda.component';
 import { ExchangeComponent } from './pages/exchange/exchange.component';
+import { WorldofwavesComponent } from './pages/worldofwaves/worldofwaves.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'lottery', pathMatch: 'full' },
@@ -13,6 +14,9 @@ const routes: Routes = [
   { path: 'staking', component: StakingComponent},
   { path: 'Redpanda earth', redirectTo: 'redpanda-earth', pathMatch: 'full'},
   { path: 'redpanda earth', redirectTo: 'redpanda-earth', pathMatch: 'full'},
+  { path: 'World Of Waves', redirectTo: 'world-of-waves', pathMatch: 'full'},
+  { path: 'world of waves', redirectTo: 'world-of-waves', pathMatch: 'full'},
+  { path: 'world-of-waves', component: WorldofwavesComponent},
   { path: 'redpanda-earth', component: RedPandaComponent},
   { path: 'Exchange', redirectTo: 'exchange', pathMatch: 'full'},
   { path: 'exchange', component: ExchangeComponent},

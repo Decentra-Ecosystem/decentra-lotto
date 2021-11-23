@@ -12,14 +12,14 @@ import { Detailed } from 'src/app/models/stats-detailed.model';
 import { isMobile } from 'web3modal';
 import { Subject } from 'rxjs';
 
-import { REDPANDA_ADDRESS_MAIN_NET } from '../../models/meta-mask.dictionary';
+import { WOW_ADDRESS_MAIN_NET } from '../../models/meta-mask.dictionary';
 
 @Component({
-  selector: 'app-redpanda',
-  templateUrl: './redpanda.component.html',
-  styleUrls: ['./redpanda.component.css']
+  selector: 'app-worldofwaves',
+  templateUrl: './worldofwaves.component.html',
+  styleUrls: ['./worldofwaves.component.css']
 })
-export class RedPandaComponent implements OnInit {
+export class WorldofwavesComponent implements OnInit {
   wrongChain: boolean = false;
   private ngUnsubscribe = new Subject();
   user: any;
@@ -34,7 +34,7 @@ export class RedPandaComponent implements OnInit {
   @ViewChild("oneItem") oneItem: any;
   @ViewChildren("count") count: QueryList<any>;
 
-  charityAddress = REDPANDA_ADDRESS_MAIN_NET;
+  charityAddress = WOW_ADDRESS_MAIN_NET;
 
   cardLayout = this.breakpointObserver.observe(['(max-width: 1400px)']).pipe(
     map(({ matches }) => {
