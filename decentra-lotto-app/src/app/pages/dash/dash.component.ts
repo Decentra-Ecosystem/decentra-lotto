@@ -131,7 +131,7 @@ export class DashComponent implements OnInit, OnDestroy {
   async getSummary(){
     this.statsService.drawStatsSub.subscribe({
       next: async stats => {
-        (await this.statsService.getSummaryStats())
+        (await this.statsService.getSummaryStats(null))
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: summaryData => {

@@ -137,7 +137,7 @@ export class RedPandaComponent implements OnInit {
   async getSummary(){
     this.statsService.drawStatsSub.subscribe({
       next: async stats => {
-        (await this.statsService.getSummaryStats())
+        (await this.statsService.getSummaryStats(REDPANDA_ADDRESS_MAIN_NET))
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: summaryData => {
