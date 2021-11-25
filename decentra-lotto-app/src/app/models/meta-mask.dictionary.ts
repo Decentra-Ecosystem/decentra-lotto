@@ -15,6 +15,7 @@ export const DELOSTAKING_CONTRACT_ADDRESS_TEST_NET = '0xBF1B38b7eCbEDd2236fA8922
 
 //charity
 export const REDPANDA_ADDRESS_TEST_NET = '0xc44ff08425375097e4337b48151499280c25268c';
+export const WOW_ADDRESS_MAIN_NET = '0xb5d85aa6d007a7ff18e649dfcf0fef772e93fe2d';
 
 //token contracts main net
 export const BNB_MAINNET = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c';

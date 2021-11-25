@@ -678,8 +678,8 @@ export class LotteryService {
     async getTotalDonated(address) {
         var r;
         try{
-            r = await this.lottoContract
-                .methods.totalAirdropsReceived(address)
+            r = await this.deloContract
+                .methods.balanceOf(address)
                 .call({ from: this.accounts[0] });
         }catch(err){
             return -1;
