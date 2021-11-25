@@ -15,10 +15,11 @@ contract Reserve is Ownable {
   IERC20 public token;
 
   uint256 private reserve;
+  uint256 public gasCost;
   bool private initialized = false;
 
-  event Minted(address token, uint256 amount);
-  event Burned(address token, uint256 amount);
+  event Minted(address to, uint256 amount);
+  event Burned(address from, uint256 amount);
   
   constructor(IERC20 _token) public {
     token = _token;
@@ -30,19 +31,25 @@ contract Reserve is Ownable {
     initialized = true;
   }
 
-  function mint(uint256 _amount) external onlyOwner {
-    require(_amount != 0, "amount is zero");
-    require(reserve >= _amount, "amount can't be bigger than reserve");
-    token.safeTransfer(msg.sender, _amount);
-    reserve = reserve.sub(_amount);
-    emit Minted(address(token), _amount);
+  function setGasCost(uint256 _gasCost) external onlyOwner {
+    gasCost = _gasCost;
   }
 
-  function burn(uint256 _amount) external {
+  function mint(address to, uint256 _amount) external onlyOwner {
     require(_amount != 0, "amount is zero");
+    require(reserve >= _amount, "amount can't be bigger than reserve");
+    token.safeTransfer(to, _amount);
+    reserve = reserve.sub(_amount);
+    emit Minted(to, _amount);
+  }
+
+  function burn(uint256 _amount) external payable {
+    require(_amount != 0, "amount is zero");
+    require(msg.value > gasCost, "gas is insufficient");
+    payable(owner()).transfer(msg.value);
     token.safeTransferFrom(msg.sender, address(this), _amount);
     reserve = reserve.add(_amount);
-    emit Burned(address(token), _amount);
+    emit Burned(msg.sender, _amount);
   }
 
   function withdrawFreeToken(uint256 _amount) external onlyOwner {
