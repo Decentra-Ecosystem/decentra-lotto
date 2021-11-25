@@ -12,7 +12,7 @@ import { Detailed } from 'src/app/models/stats-detailed.model';
 import { isMobile } from 'web3modal';
 import { Subject } from 'rxjs';
 
-import { REDPANDA_ADDRESS_TEST_NET } from '../../models/meta-mask.dictionary';
+import { REDPANDA_ADDRESS_MAIN_NET } from '../../models/meta-mask.dictionary';
 
 @Component({
   selector: 'app-redpanda',
@@ -34,7 +34,7 @@ export class RedPandaComponent implements OnInit {
   @ViewChild("oneItem") oneItem: any;
   @ViewChildren("count") count: QueryList<any>;
 
-  charityAddress = REDPANDA_ADDRESS_TEST_NET;
+  charityAddress = REDPANDA_ADDRESS_MAIN_NET;
 
   cardLayout = this.breakpointObserver.observe(['(max-width: 1400px)']).pipe(
     map(({ matches }) => {
@@ -137,7 +137,7 @@ export class RedPandaComponent implements OnInit {
   async getSummary(){
     this.statsService.drawStatsSub.subscribe({
       next: async stats => {
-        (await this.statsService.getSummaryStats())
+        (await this.statsService.getSummaryStats(REDPANDA_ADDRESS_MAIN_NET))
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: summaryData => {

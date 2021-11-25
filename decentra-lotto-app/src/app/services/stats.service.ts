@@ -349,16 +349,20 @@ export class StatsService implements OnDestroy {
     return this.stakingStats;
   }
 
-  async getSummaryStats(): Promise<Observable<Summary[]>> {
+  async getSummaryStats(charityAddress): Promise<Observable<Summary[]>> {
     this.getTimeDifference();
 
     var status = this.getState(this.drawStats.state);
     var statusColour = status != "Open" || this.drawStats.drawDeadline <= new Date() ? "warn" : "accent";
     var lock = status != "Open" || this.drawStats.drawDeadline <= new Date() ? "lock" : "lock_open";
     var statusText = status == "Open" && this.drawStats.drawDeadline <= new Date() ? "Deadline Passed" : status;
-    var totalDonated = await this.lottery.getTotalDonated('0xc44ff08425375097e4337b48151499280c25268c');
-    var totalDonatedUSD = await this.lottery.getDELOValueInPeg(totalDonated);
-    totalDonated = WalletStats.round(totalDonated, TOKEN_DECIMALS, 4);
+    var totalDonated = 0;
+    var totalDonatedUSD = 0;
+    if (charityAddress){
+      totalDonated = await this.lottery.getTotalDonated(charityAddress);
+      totalDonatedUSD = await this.lottery.getDELOValueInPeg(totalDonated);
+      totalDonated = WalletStats.round(totalDonated, TOKEN_DECIMALS, 4);
+    }
 
     return of([
       { title: "Total Pot", value: Math.round(this.drawStats.totalPot).toString() + ' ($' + this.drawStats.totalPotUSD.toString() + ')', color: "accent", icon: "local_atm", isCurrency: true },

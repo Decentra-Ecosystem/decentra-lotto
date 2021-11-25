@@ -1,4 +1,5 @@
-<video class="" id="redpandabg" src="../../../assets/videos/redpanda-jungle-video.mp4" autoplay loop playsinline muted></video>
+<div class="wowBG"></div>
+<!-- <video class="" id="redpandabg" src="../../../assets/videos/redpanda-jungle-video.mp4" autoplay loop playsinline muted></video> -->
 <div *ngIf="connectionError" class="outer-container">
     <h1 class="white">Connect your wallet to continue...</h1>
     <h2 class="white">If you are on mobile, make sure your are using a web3 browser like Metamask Browser.</h2>
@@ -13,8 +14,8 @@
       <mat-grid-list cols="{{ ( cardLayout | async )?.columns }}" [rowHeight]="rowHeight">
         <!-- Buy Panel -->
         <mat-grid-tile [colspan]="( cardLayout | async )?.buy?.cols" [rowspan]="( cardLayout | async )?.buy?.rows">
-          <app-card title="RedPanda Donate" logo="assets/images/redpanda/gradientlogoSMALL.png" size="s">
-            <app-enter-draw-card [charity]="'RedPanda'" [charityAddress]="charityAddress"></app-enter-draw-card>
+          <app-card title="WOW Donate" logo="assets/images/worldofwaves/logo_300.png" size="s">
+            <app-enter-draw-card [charity]="'World Of Waves'" [charityAddress]="charityAddress"></app-enter-draw-card>
           </app-card>
         </mat-grid-tile>
 
@@ -26,22 +27,22 @@
 
         <!--Stats Panel-->
         <mat-grid-tile [colspan]="( cardLayout | async )?.stats?.cols" [rowspan]="( cardLayout | async )?.stats?.rows">
-            <app-card title="Donate Airdrop" logo="assets/images/redpanda/gradientlogoSMALL.png" size="s">
-              <app-redpanda-explainer-card charityName="RedPanda Earth"></app-redpanda-explainer-card>
+            <app-card title="Donate Airdrop" logo="assets/images/worldofwaves/logo_300.png" size="s">
+              <app-redpanda-explainer-card charityName="World Of Waves"></app-redpanda-explainer-card>
             </app-card>
         </mat-grid-tile>
         
         <!-- Red Panda Panel -->
         <mat-grid-tile [colspan]="( cardLayout | async )?.explainer?.cols" [rowspan]="( cardLayout | async )?.explainer?.rows">
           <app-card title="About">
-            <app-redpanda-info-card title="About"></app-redpanda-info-card>
+            <app-worldofwaves-info-card title="About"></app-worldofwaves-info-card>
           </app-card>
         </mat-grid-tile>
 
         <!--Video Panel-->
         <mat-grid-tile [colspan]="( cardLayout | async )?.video?.cols" [rowspan]="( cardLayout | async )?.video?.rows">
-          <app-card title="Watch" logo="assets/images/redpanda/gradientlogoSMALL.png" size="s">
-            <app-redpanda-video></app-redpanda-video>
+          <app-card title="WOW Wallet" logo="assets/images/worldofwaves/logo_300.png" size="s">
+            <app-worldofwaves-video></app-worldofwaves-video>
           </app-card>
       </mat-grid-tile>
         

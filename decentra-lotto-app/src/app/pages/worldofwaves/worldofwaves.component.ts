@@ -12,16 +12,18 @@ import { Detailed } from 'src/app/models/stats-detailed.model';
 import { isMobile } from 'web3modal';
 import { Subject } from 'rxjs';
 
+import { WOW_ADDRESS_MAIN_NET } from '../../models/meta-mask.dictionary';
+
 @Component({
-  selector: 'app-dash',
-  templateUrl: './dash.component.html',
-  styleUrls: ['./dash.component.css']
+  selector: 'app-worldofwaves',
+  templateUrl: './worldofwaves.component.html',
+  styleUrls: ['./worldofwaves.component.css']
 })
-export class DashComponent implements OnInit, OnDestroy {
+export class WorldofwavesComponent implements OnInit {
+  wrongChain: boolean = false;
   private ngUnsubscribe = new Subject();
   user: any;
   connectionError: boolean;
-  wrongChain: boolean = false;
   miniCardData: Summary[];
   miniCardTopData: Summary[];
   miniCardBottomData: Summary[];
@@ -32,6 +34,8 @@ export class DashComponent implements OnInit, OnDestroy {
   @ViewChild("oneItem") oneItem: any;
   @ViewChildren("count") count: QueryList<any>;
 
+  charityAddress = WOW_ADDRESS_MAIN_NET;
+
   cardLayout = this.breakpointObserver.observe(['(max-width: 1400px)']).pipe(
     map(({ matches }) => {
       if (matches) {
@@ -39,7 +43,8 @@ export class DashComponent implements OnInit, OnDestroy {
           columns: 2,
           miniCard: { cols: 1, rows: 1 },
           buy: { cols: 2, rows: 3 },
-          explainer: { cols: 2, rows: 3 },
+          explainer: { cols: 2, rows: 4 },
+          video: { cols: 2, rows: 3 },
           stats: { cols: 2, rows: 4 },
         };
       }
@@ -48,8 +53,9 @@ export class DashComponent implements OnInit, OnDestroy {
         columns: 6,
         miniCard: { cols: 1, rows: 1 },
         buy: { cols: 3, rows: 2 },
-        explainer: { cols: 3, rows: 2 },
-        stats: { cols: 3, rows: 2 },
+        explainer: { cols: 2, rows: 2 },
+        video: { cols: 2, rows: 2 },
+        stats: { cols: 2, rows: 2 },
       };
     })
   );
@@ -131,13 +137,13 @@ export class DashComponent implements OnInit, OnDestroy {
   async getSummary(){
     this.statsService.drawStatsSub.subscribe({
       next: async stats => {
-        (await this.statsService.getSummaryStats(null))
+        (await this.statsService.getSummaryStats(WOW_ADDRESS_MAIN_NET))
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: summaryData => {
-            this.miniCardTopData = [summaryData[0], summaryData[1]];
-            this.miniCardBottomData = [summaryData[2], summaryData[3], summaryData[4], summaryData[5]];
-            this.miniCardData = [summaryData[0], summaryData[1], summaryData[2], summaryData[3], summaryData[4], summaryData[5]];
+            this.miniCardTopData = [summaryData[0], summaryData[6]];
+            this.miniCardBottomData = [summaryData[1], summaryData[2], summaryData[3], summaryData[4]];
+            this.miniCardData = [summaryData[0], summaryData[6], summaryData[1], summaryData[2], summaryData[3], summaryData[4]];
           }
         });
       }
@@ -175,4 +181,5 @@ export class DashComponent implements OnInit, OnDestroy {
   mobile(){
     return isMobile();
   }
+
 }
