@@ -81,7 +81,7 @@ export default class SubscribeEventOnEth extends BaseCommand {
             const task = tasks[i]
             const tx = reserveContractOnBsc.methods.mint(task.to, task.amount, task.id);
             const [gasPrice, gasCost] = await Promise.all([
-              web3Eth.eth.getGasPrice(),
+              web3Bsc.eth.getGasPrice(),
                 tx.estimateGas({from: adminBsc}),
               ]);
             const data = tx.encodeABI();
@@ -92,7 +92,7 @@ export default class SubscribeEventOnEth extends BaseCommand {
               gas: gasCost,
               gasPrice
             };
-            const transaction = await web3Eth.eth.sendTransaction(txData);
+            const transaction = await web3Bsc.eth.sendTransaction(txData);
             if (transaction.status) {
               task.status = BridgeStatus.PROCESSED
               await task.save()
