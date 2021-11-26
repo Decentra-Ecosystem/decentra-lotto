@@ -26,8 +26,9 @@
       ]
     },
     "types": [
-      "@adonisjs/core"
+      "@adonisjs/core",
+      "@adonisjs/lucid"
     ],
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   }
 }

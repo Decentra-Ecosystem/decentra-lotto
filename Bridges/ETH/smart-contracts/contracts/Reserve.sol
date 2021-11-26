@@ -15,8 +15,11 @@ contract Reserve is Ownable {
   IERC20 public token;
 
   uint256 private reserve;
+  uint256 private maxReserve;
   uint256 public gasCost;
   bool private initialized = false;
+
+  mapping (uint256 => bool) public processed;
 
   event Minted(address to, uint256 amount);
   event Burned(address from, uint256 amount);
@@ -28,6 +31,8 @@ contract Reserve is Ownable {
   function initialize() external onlyOwner {
     require(initialized == false, "already initialized");
     reserve = token.balanceOf(address(this));
+    maxReserve = token.totalSupply().div(2);
+    require(reserve <= maxReserve, "invalid reserve status");
     initialized = true;
   }
 
@@ -35,11 +40,13 @@ contract Reserve is Ownable {
     gasCost = _gasCost;
   }
 
-  function mint(address to, uint256 _amount) external onlyOwner {
+  function mint(address to, uint256 _amount, uint256 nonce) external onlyOwner {
     require(_amount != 0, "amount is zero");
+    require(processed[nonce] == false, "already processed");
     require(reserve >= _amount, "amount can't be bigger than reserve");
     token.safeTransfer(to, _amount);
     reserve = reserve.sub(_amount);
+    processed[nonce] = true;
     emit Minted(to, _amount);
   }
 
@@ -49,6 +56,7 @@ contract Reserve is Ownable {
     payable(owner()).transfer(msg.value);
     token.safeTransferFrom(msg.sender, address(this), _amount);
     reserve = reserve.add(_amount);
+    require(reserve <= maxReserve, "invalid reserve status");
     emit Burned(msg.sender, _amount);
   }
 
