@@ -38,7 +38,7 @@ export default class SubscribeEventOnEth extends BaseCommand {
     this.logger.info('')
     const { default: TaskBsc } = await import('App/Models/TaskBsc')
 
-    const deployedBlock = 9705245
+    const deployedBlock = Env.get('ETH_START_BLOCK');
 
     const web3Bsc = new Web3(Env.get('BSC_HOST'))
     const web3Eth = new Web3(Env.get('ETH_HOST'))

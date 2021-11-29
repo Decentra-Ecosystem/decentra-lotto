@@ -30,4 +30,6 @@ export default Env.rules({
 	BSC_HOST: Env.schema.string(),
 	ETH_HOST: Env.schema.string(),
 	PRIVATE_KEY: Env.schema.string(),
+	ETH_START_BLOCK: Env.schema.number(),
+	BSC_START_BLOCK: Env.schema.number(),
 })
