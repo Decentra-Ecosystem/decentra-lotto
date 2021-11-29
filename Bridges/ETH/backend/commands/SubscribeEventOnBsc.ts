@@ -37,6 +37,7 @@ export default class SubscribeEventOnBsc extends BaseCommand {
   public async run() {
     this.logger.info('')
     const { default: TaskEth } = await import('App/Models/TaskEth')
+    const { default: BscBlock } = await import('App/Models/BscBlock')
 
     const deployedBlock = Env.get('BSC_START_BLOCK');
 
@@ -49,18 +50,28 @@ export default class SubscribeEventOnBsc extends BaseCommand {
     const reserveContractOnBsc = new web3Bsc.eth.Contract((ReserveAbi as unknown) as AbiItem, addresses.bsc)
     const reserveContractOnEth = new web3Eth.eth.Contract((ReserveAbi as unknown) as AbiItem, addresses.eth)
 
+    const block = await BscBlock.first()
+    if (!block) {
+      await BscBlock.create({
+        blockNumber: deployedBlock
+      })
+    }
+
     while(true) {
       try {
-        const lastBlock = (await TaskEth.query().orderBy('blockNumber', 'desc').first())?.blockNumber
-
+        const block = await BscBlock.first()
+        const currentBlock = await web3Bsc.eth.getBlockNumber()
+        const fromBlock = block?.blockNumber ? block?.blockNumber : deployedBlock
+        const toBlock = fromBlock + 10 < currentBlock ? fromBlock + 10 : currentBlock
+        console.log('lastBlock:', fromBlock)
         reserveContractOnBsc.getPastEvents('Burned', {
-          fromBlock: lastBlock ? lastBlock : deployedBlock,
-          toBlock: 'latest'
+          fromBlock: fromBlock,
+          toBlock: toBlock
         }, function (err, event) {
           // console.log('event:', event)
           // console.log('error:', err)
         }).then(async events => {
-          console.log(`parsing events from block ${lastBlock ? lastBlock : deployedBlock} ...`)
+          console.log(`parsing events from block ${fromBlock} to block ${toBlock} ...`)
           for (let i = 0; i < events.length; i++) {
             const { from, amount } = events[i].returnValues
             // save to database
@@ -73,7 +84,14 @@ export default class SubscribeEventOnBsc extends BaseCommand {
               status: BridgeStatus.PENDING,
               blockNumber: events[i].blockNumber
             })
+
+            // update blockNumber
+            block!.blockNumber = events[i].blockNumber
+            block?.save()
           }
+
+          block!.blockNumber = toBlock
+          block?.save()
     
           const tasks = await TaskEth.query().where('status', BridgeStatus.PENDING)
           for (let i = 0; i < tasks.length; i++) {
