@@ -1,0 +1,50 @@
+
+<mat-card class="dashboard-card">
+    <mat-card-header>
+        <mat-card-title class="title">
+            Cross-Chain Exchange
+            <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                <mat-icon>help</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu" xPosition="before">
+                <!-- <button onclick="window.open('https://www.youtube.com/watch?v=FYbtxt0KhIo','_blank')" mat-menu-item>Using the exchange</button>
+                <button onclick="window.open('https://rubic.exchange/faq','_blank')" mat-menu-item>FAQ</button>
+                <button onclick="window.open('https://rubic.finance/assets/pdf/OnePager.pdf','_blank')" mat-menu-item>How Rubic Works</button> -->
+            </mat-menu>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="dashboard-card-content">
+        <ng-content></ng-content>
+        <div class="container panel">
+            <div class="form-outer">
+                <form class="example-container">
+                    <mat-form-field hintLabel="Balance:" appearance="fill">
+                        <mat-label>Sending Amount:</mat-label>
+                        <input matInput #input maxlength="10" type="number" placeholder="1" [formControl]="numTicketsControl" min="1" max="60" (change)="selectToken()">
+                        <!-- <mat-hint *ngIf="walletStats" align="end">{{walletStats.numTickets}}</mat-hint> -->
+                        <!-- <mat-error *ngIf="numTicketsControl.invalid">Min Tickets: 1</mat-error> -->
+                    </mat-form-field>
+                </form>
+            </div>
+            <div class="white center odds">
+                <h3>—></h3>  
+                <!-- <h3 *ngIf="isMobile()" class="bonus-text" [style.color]="tokenBalance < price ? 'red' : 'white'">
+                    DELO Received ~ <span class="cost-amt-text" *ngIf="deloReceivedAmount>-1 && symbolControl.value == 'BNB'">{{deloReceivedAmount}}(${{usdReceivedAmount}}) </span>{{price}}
+                </h3> -->
+            </div>
+            <div class="form-outer">
+                <form class="example-container">
+                    <mat-form-field hintLabel="Balance:" appearance="outline">
+                        <mat-label>Currency</mat-label>
+                        <mat-option value="DELO">DELO</mat-option>
+                    </mat-form-field>
+                </form>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>
+
+
+
+
+
