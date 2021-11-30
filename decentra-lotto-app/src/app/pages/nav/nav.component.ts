@@ -45,7 +45,7 @@ export class NavComponent implements OnInit, OnDestroy {
     {name:'more', enabled:true, url: '', collapsed: true, pages: [
       {name:'github', enabled:true, url: 'https://github.com/CeltyCrypto/decentra-lotto'},
       {name:'medium', enabled:true, url:'https://decentra-lotto.medium.com'},
-      {name:'whitepaper', enabled:false, url:''}
+      {name:'whitepaper', enabled:true, url:'https://app.decentra-lotto.com/assets/delo_whitepaper.pdf'}
     ]}
   ];
 
