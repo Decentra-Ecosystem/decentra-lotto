@@ -37,8 +37,9 @@ export default class SubscribeEventOnEth extends BaseCommand {
   public async run() {
     this.logger.info('')
     const { default: TaskBsc } = await import('App/Models/TaskBsc')
+    const { default: EthBlock } = await import('App/Models/EthBlock')
 
-    const deployedBlock = 9705245
+    const deployedBlock = Env.get('ETH_START_BLOCK');
 
     const web3Bsc = new Web3(Env.get('BSC_HOST'))
     const web3Eth = new Web3(Env.get('ETH_HOST'))
@@ -49,18 +50,28 @@ export default class SubscribeEventOnEth extends BaseCommand {
     const reserveContractOnBsc = new web3Bsc.eth.Contract((ReserveAbi as unknown) as AbiItem, addresses.bsc)
     const reserveContractOnEth = new web3Eth.eth.Contract((ReserveAbi as unknown) as AbiItem, addresses.eth)
 
+    const block = await EthBlock.first()
+    if (!block) {
+      await EthBlock.create({
+        blockNumber: deployedBlock
+      })
+    }
+
     while(true) {
       try {
-        const lastBlock = (await TaskBsc.query().orderBy('blockNumber', 'desc').first())?.blockNumber
+        const block = await EthBlock.first()
+        const currentBlock = await web3Eth.eth.getBlockNumber()
+        const fromBlock = block?.blockNumber ? block?.blockNumber : deployedBlock
+        const toBlock = fromBlock + 10 < currentBlock ? fromBlock + 10 : currentBlock
         
         reserveContractOnEth.getPastEvents('Burned', {
-          fromBlock: lastBlock ? lastBlock : deployedBlock,
-          toBlock: 'latest'
+          fromBlock: fromBlock,
+          toBlock: toBlock
         }, function (err, event) {
           // console.log('event:', event)
           // console.log('error:', err)
         }).then(async events => {
-          console.log(`parsing events from block ${lastBlock ? lastBlock : deployedBlock} ...`)
+          console.log(`parsing events from block ${fromBlock} to block ${toBlock} ...`)
           for (let i = 0; i < events.length; i++) {
             const { from, amount } = events[i].returnValues
     
@@ -74,7 +85,14 @@ export default class SubscribeEventOnEth extends BaseCommand {
               status: BridgeStatus.PENDING,
               blockNumber: events[i].blockNumber
             })
+
+            // update blockNumber
+            block!.blockNumber = events[i].blockNumber
+            block?.save()
           }
+
+          block!.blockNumber = toBlock
+          block?.save()
     
           const tasks = await TaskBsc.query().where('status', BridgeStatus.PENDING)
           for (let i = 0; i < tasks.length; i++) {
