@@ -1,6 +1,6 @@
 const addresses = {
-  eth: '0x074fF3Da2d1Abe7df14F2e35Afc0De48b5708AFC',
-  bsc: '0x11Cc8EE162646774356F37335d0c6F1d9f453f1E'
+  eth: '0xFedB9E89d2cc87bd9FB4Eab1036656E13190545E',
+  bsc: '0x825C05Bbd547bB45EEDDFfb5651D77C74de99a17'
 }
 
 export default addresses
