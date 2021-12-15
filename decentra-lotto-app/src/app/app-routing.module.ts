@@ -5,6 +5,7 @@ import { StakingComponent } from './pages/staking/staking.component';
 import { RedPandaComponent } from './pages/redpanda/redpanda.component';
 import { ExchangeComponent } from './pages/exchange/exchange.component';
 import { WorldofwavesComponent } from './pages/worldofwaves/worldofwaves.component';
+import { TermsComponent } from './pages/terms/terms.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'lottery', pathMatch: 'full' },
@@ -20,6 +21,8 @@ const routes: Routes = [
   { path: 'redpanda-earth', component: RedPandaComponent},
   { path: 'Exchange', redirectTo: 'exchange', pathMatch: 'full'},
   { path: 'exchange', component: ExchangeComponent},
+  { path: 'Terms', redirectTo: 'terms', pathMatch: 'full'},
+  { path: 'terms', component: TermsComponent},
 ];
 
 @NgModule({

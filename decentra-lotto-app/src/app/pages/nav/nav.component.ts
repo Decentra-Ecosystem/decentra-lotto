@@ -43,9 +43,10 @@ export class NavComponent implements OnInit, OnDestroy {
       {name:'staking contract', enabled:true, url: 'https://solidity.finance/audits/DecentraLotto/'}
     ]},
     {name:'more', enabled:true, url: '', collapsed: true, pages: [
-      {name:'github', enabled:true, url: 'https://github.com/CeltyCrypto/decentra-lotto'},
+      {name:'github', enabled:true, url: 'https://github.com/Decentra-Ecosystem/decentra-lotto'},
       {name:'medium', enabled:true, url:'https://decentra-lotto.medium.com'},
-      {name:'whitepaper', enabled:true, url:'https://app.decentra-lotto.com/assets/delo_whitepaper.pdf'}
+      {name:'whitepaper', enabled:true, url:'https://app.decentra-lotto.com/assets/delo_whitepaper.pdf'},
+      {name:'terms', enabled:true, url:''}
     ]}
   ];
 
@@ -127,10 +128,14 @@ export class NavComponent implements OnInit, OnDestroy {
   }
 
   pollPrice(){
-    this.getPrice()
+    this.statsService.getPrice()
     .pipe(takeUntil(this.ngUnsubscribe))
     .subscribe((data: any) => {
-      this.deloUSDPrice = Math.round(data.data.price * 10000000000) / 10000000000;
+      var p = data.usdPrice;
+      var p2 = p.substring(1);
+      var price = parseFloat(p2);
+      //var price = data['decentra-lotto'].usd;
+      this.deloUSDPrice = Math.round(price * 10000000000) / 10000000000;
         this.pollingTimer = setTimeout(()=>{
           this.pollPrice();
         }, 10000);
@@ -166,10 +171,6 @@ export class NavComponent implements OnInit, OnDestroy {
           } 
         }
     });
-  }
-
-  getPrice() {
-    return this.http.get("https://api.pancakeswap.info/api/v2/tokens/"+DELO_CONTRACT_ADDRESS_MAIN_NET, this.requestOptions);
   }
 
   connection(){

@@ -3,21 +3,21 @@ import { WalletStats } from './walletstats.model';
 
 class DrawModel {
 
-    id: number;
-    numParticipants: number;
-    tickets: any;
-    winners: any;
-    numTickets: number;
-    totalSpend: number;
-    createdOn: Date;
-    drawDeadline: Date;
-    totalPotRaw: number;
-    totalPot: number;
-    totalPotUSD: number;
-    state: number;
-    numWinners: number;
-    stateString: string;
-    oddsPerTicket: number;
+    id: number = 0;
+    numParticipants: number = 0;
+    tickets: any = 0;
+    winners: any = 0;
+    numTickets: number = 0;
+    totalSpend: number = 0;
+    createdOn: Date = new Date();
+    drawDeadline: Date = new Date();
+    totalPotRaw: number = 0;
+    totalPot: number = 0;
+    totalPotUSD: number = 0;
+    state: number = 0;
+    numWinners: number = 0;
+    stateString: string = 'BSC Error';
+    oddsPerTicket: number = 0;
 
     constructor(
         obj: any
@@ -33,6 +33,7 @@ class DrawModel {
 
         this.totalPotRaw = obj[6];
         this.totalPot = WalletStats.round(obj[6], TOKEN_DECIMALS, 5);
+        
         this.state = obj[7];
         this.numWinners = obj[8];
     }

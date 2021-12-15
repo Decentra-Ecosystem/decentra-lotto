@@ -8,7 +8,7 @@ import { DrawModel, State } from '../models/draw.model';
 import { WalletStats } from '../models/walletstats.model';
 import { StakingStats } from '../models/stakingstats.model';
 import { isMobile } from 'web3modal';
-import { TOKEN_DECIMALS } from '../models/meta-mask.dictionary';
+import { LOTTO_CONTRACT_ADDRESS_MAIN_NET, TOKEN_DECIMALS } from '../models/meta-mask.dictionary';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DELO_CONTRACT_ADDRESS_MAIN_NET } from 'src/app/models/meta-mask.dictionary';
 
@@ -19,7 +19,7 @@ export class StatsService implements OnDestroy {
 
   drawStats: DrawModel;
   walletStats: WalletStats;
-  countdown: string;
+  countdown: string = "N/A";
   stakingStats: StakingStats;
   //totalDonated: any;
 
@@ -81,11 +81,11 @@ export class StatsService implements OnDestroy {
     this.drawStats.totalPot = WalletStats.round(this.drawStats.totalPotRaw, TOKEN_DECIMALS, 5);
     this.walletStats.walletChance = this.getChance(false, 0);
     this.drawStats.oddsPerTicket = parseFloat(((this.drawStats.numWinners/this.drawStats.numTickets)*100).toFixed(2));
-    this.getPrice()
-    .subscribe((data: any) => {
-      this.drawStats.totalPotUSD = this.numberWithCommas(Math.round(data.data.price * this.drawStats.totalPot));
-    });
-    
+    var data = await this.getPrice().toPromise();
+    var price = data['usdPrice'];
+    price = parseFloat(price.substring(1));
+    this.drawStats.totalPotUSD = this.numberWithCommas(Math.round(price * this.drawStats.totalPot));
+      
     var x = await this.lottery.getUserBalance();
     this.walletStats.walletDELOBalance = x[0];
     this.walletStats.walletDELOBalanceRaw = x[1];
@@ -256,7 +256,8 @@ export class StatsService implements OnDestroy {
     var requestOptions = {                                                                                                                                                                                 
       headers: new HttpHeaders(headerDict), 
     };
-    return this.http.get("https://api.pancakeswap.info/api/v2/tokens/"+DELO_CONTRACT_ADDRESS_MAIN_NET, requestOptions);
+    return this.http.get("https://delo-stats.azurewebsites.net/api/delo-price?code=qojorarMfy1gljzNUDd9Fe8DySDKvDL1hsIFZKctDUarGFafFruAXQ==", requestOptions);
+    //return this.http.get("https://api.pancakeswap.info/api/v2/tokens/"+DELO_CONTRACT_ADDRESS_MAIN_NET, requestOptions);
   }
 
   getLastCheck(address){

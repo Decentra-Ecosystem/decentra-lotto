@@ -58,6 +58,7 @@ import { ExchangeComponent } from './pages/exchange/exchange.component';
 import { WorldofwavesComponent } from './pages/worldofwaves/worldofwaves.component';
 import { WorldofwavesInfoCardComponent } from './shared/worldofwaves-info-card/worldofwaves-info-card.component';
 import { WorldofwavesVideoComponent } from './shared/worldofwaves-video/worldofwaves-video.component';
+import { TermsComponent } from './pages/terms/terms.component';
 
 @NgModule({
   declarations: [
@@ -87,7 +88,8 @@ import { WorldofwavesVideoComponent } from './shared/worldofwaves-video/worldofw
     ExchangeComponent,
     WorldofwavesComponent,
     WorldofwavesInfoCardComponent,
-    WorldofwavesVideoComponent
+    WorldofwavesVideoComponent,
+    TermsComponent
   ],
   imports: [
     BrowserModule,
