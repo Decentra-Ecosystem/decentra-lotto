@@ -96,6 +96,11 @@
     height: 200px;
   }
 
+  .balanceError{
+    color: red; 
+    font-size: 20px;
+  }
+
   @media only screen and (max-width : 1700px) {
     .panel{
       margin: 0px;
@@ -178,5 +183,9 @@
     .comingsoon{
       width: 150px;
       height: 100px;
+    }
+    .balanceError{
+      color: red; 
+      font-size: 15px;
     }
   }

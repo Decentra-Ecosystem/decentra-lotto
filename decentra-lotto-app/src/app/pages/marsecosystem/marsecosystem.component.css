@@ -1,0 +1,54 @@
+.grid-container {
+    margin: 20px;
+  }
+.outer-container{
+  position: fixed;
+  height: 100%;
+  padding-bottom: 70px;
+  overflow-y:scroll;
+  overflow-x:hidden;
+}
+  
+  .dashboard-card {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+  }
+  
+  .more-button {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+  }
+  
+  .dashboard-card-content {
+    text-align: center;
+  }
+
+  .background{
+    background: url('../../../assets/images/marsecosystem/bg.png');
+    background-size: cover;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+  
+  .mat-select-arrow {
+    border: none;
+  }
+  
+  .white{
+    padding: 20px;;
+    color:white;
+  }
+
+#redpandabg{
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+}
+  

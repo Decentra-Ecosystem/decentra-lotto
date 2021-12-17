@@ -6,6 +6,9 @@ import { RedPandaComponent } from './pages/redpanda/redpanda.component';
 import { ExchangeComponent } from './pages/exchange/exchange.component';
 import { WorldofwavesComponent } from './pages/worldofwaves/worldofwaves.component';
 import { TermsComponent } from './pages/terms/terms.component';
+import { DexkitComponent } from './pages/dexkit/dexkit.component';
+import { EtherlandComponent } from './pages/etherland/etherland.component';
+import { MarsecosystemComponent } from './pages/marsecosystem/marsecosystem.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'lottery', pathMatch: 'full' },
@@ -13,6 +16,13 @@ const routes: Routes = [
   { path: 'Lottery', redirectTo: 'lottery', pathMatch: 'full'},
   { path: 'Staking', redirectTo: 'staking', pathMatch: 'full'},
   { path: 'staking', component: StakingComponent},
+  { path: 'Dexkit', redirectTo: 'dexkit', pathMatch: 'full'},
+  { path: 'dexkit', component: DexkitComponent},
+  { path: 'Etherland', redirectTo: 'etherland', pathMatch: 'full'},
+  { path: 'etherland', component: EtherlandComponent},
+  { path: 'Mars Ecosystem', redirectTo: 'marsecosystem', pathMatch: 'full'},
+  { path: 'mars ecosystem', redirectTo: 'marsecosystem', pathMatch: 'full'},
+  { path: 'marsecosystem', component: MarsecosystemComponent},
   { path: 'Redpanda earth', redirectTo: 'redpanda-earth', pathMatch: 'full'},
   { path: 'redpanda earth', redirectTo: 'redpanda-earth', pathMatch: 'full'},
   { path: 'World Of Waves', redirectTo: 'world-of-waves', pathMatch: 'full'},

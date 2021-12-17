@@ -1,0 +1,57 @@
+<div class="background"></div>
+<!-- <video class="" id="redpandabg" src="../../../assets/videos/redpanda-jungle-video.mp4" autoplay loop playsinline muted></video> -->
+<div *ngIf="connectionError" class="outer-container">
+    <h1 class="white">Connect your wallet to continue...</h1>
+    <h2 class="white">If you are on mobile, make sure your are using a web3 browser like Metamask Browser.</h2>
+  </div>
+  <div *ngIf="wrongChain" class="outer-container">
+    <h1>Switch your wallet network to Binance Smart Chain to continue...</h1>
+  </div>
+  <!--dash.component.html-->
+  <div *ngIf="!connectionError && !wrongChain" class="outer-container">
+    <div class="grid-container">
+      <!-- <h1 class="mat-h1">Dashboard</h1> -->
+      <mat-grid-list cols="{{ ( cardLayout | async )?.columns }}" [rowHeight]="rowHeight">
+        <!-- Buy Panel -->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.buy?.cols" [rowspan]="( cardLayout | async )?.buy?.rows">
+          <app-card title="Win Etherland NFTs" logo="assets/images/etherland/playstore.png" size="s">
+            <app-enter-draw-card [charity]="'Etherland'" [charityAddress]="charityAddress"></app-enter-draw-card>
+          </app-card>
+        </mat-grid-tile>
+
+        <!--Summary Cards-->
+        <mat-grid-tile *ngFor="let mc of miniCardData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+        [rowspan]="( cardLayout | async )?.miniCard?.rows">
+        <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+      </mat-grid-tile>
+
+        <!--Stats Panel-->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.stats?.cols" [rowspan]="( cardLayout | async )?.stats?.rows">
+            <app-card title="Donate Airdrop" logo="assets/images/etherland/playstore.png" size="s">
+              <app-redpanda-explainer-card charityName="Etherland"></app-redpanda-explainer-card>
+            </app-card>
+        </mat-grid-tile>
+        
+        <!-- Red Panda Panel -->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.explainer?.cols" [rowspan]="( cardLayout | async )?.explainer?.rows">
+          <app-card title="About">
+            <app-etherland-info-card title="About"></app-etherland-info-card>
+          </app-card>
+        </mat-grid-tile>
+
+        <!--Video Panel-->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.video?.cols" [rowspan]="( cardLayout | async )?.video?.rows">
+          <app-card title="Watch" logo="assets/images/etherland/playstore.png" size="s">
+            <app-etherland-video></app-etherland-video>
+          </app-card>
+      </mat-grid-tile>
+        
+      </mat-grid-list>
+    </div>
+    <h5 style="color: black; padding-left: 40px; padding-right: 40px; text-align: justify; text-justify: inter-word;"><strong>Disclaimer:</strong> A ticket has no inherent value other than as entry into the Decentra-Lotto draw, and does not give the user any rights or privileges. 
+      Due to the complex nature of the Decentra-Lotto contract, ticket refunds are not possible. 
+      You alone are responsible for doing your own research and being aware of the risks before making any purchase. 
+      Never invest more than you are willing to lose. See here for full terms: <a routerLink="/terms">TERMS</a>
+    </h5>
+  </div>
+  

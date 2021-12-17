@@ -59,6 +59,15 @@ import { WorldofwavesComponent } from './pages/worldofwaves/worldofwaves.compone
 import { WorldofwavesInfoCardComponent } from './shared/worldofwaves-info-card/worldofwaves-info-card.component';
 import { WorldofwavesVideoComponent } from './shared/worldofwaves-video/worldofwaves-video.component';
 import { TermsComponent } from './pages/terms/terms.component';
+import { DexkitComponent } from './pages/dexkit/dexkit.component';
+import { DexkitInfoCardComponent } from './shared/dexkit-info-card/dexkit-info-card.component';
+import { DexkitVideoComponent } from './shared/dexkit-video/dexkit-video.component';
+import { EtherlandInfoCardComponent } from './shared/etherland-info-card/etherland-info-card.component';
+import { EtherlandVideoComponent } from './shared/etherland-video/etherland-video.component';
+import { EtherlandComponent } from './pages/etherland/etherland.component';
+import { MarsecosystemComponent } from './pages/marsecosystem/marsecosystem.component';
+import { MarsecosystemInfoCardComponent } from './shared/marsecosystem-info-card/marsecosystem-info-card.component';
+import { MarsecosystemVideoComponent } from './shared/marsecosystem-video/marsecosystem-video.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +98,16 @@ import { TermsComponent } from './pages/terms/terms.component';
     WorldofwavesComponent,
     WorldofwavesInfoCardComponent,
     WorldofwavesVideoComponent,
-    TermsComponent
+    TermsComponent,
+    DexkitComponent,
+    DexkitInfoCardComponent,
+    DexkitVideoComponent,
+    EtherlandInfoCardComponent,
+    EtherlandVideoComponent,
+    EtherlandComponent,
+    MarsecosystemComponent,
+    MarsecosystemInfoCardComponent,
+    MarsecosystemVideoComponent
   ],
   imports: [
     BrowserModule,

@@ -28,7 +28,7 @@
                     Received
                 </span>
                 ~ 
-                <span class="cost-amt-text" *ngIf="deloReceivedAmount>-1 && symbolControl.value == 'BNB'">{{deloReceivedAmount}}(${{usdReceivedAmount}}) </span>{{price}}
+                <span class="cost-amt-text" *ngIf="deloReceivedAmount>-1 && symbolControl.value == 'BNB'">{{deloReceivedAmount}}(${{usdReceivedAmount}}) </span>
             </h3>
         </div>
         <div class="form-outer">
@@ -68,7 +68,7 @@
     </div>
 
     <div class="container">
-        <p style="color: red; font-size: 20px;" *ngIf="tokenBalance && price && tokenBalance < price || tokenBalance == 0">Not enough balance...</p>
+        <p class="balanceError" *ngIf="tokenBalance && price && tokenBalance < price || tokenBalance == 0">Not enough balance...</p>
         <span *ngIf="tokenBalance && price && tokenBalance >= price">
             <button 
                 class="button" 

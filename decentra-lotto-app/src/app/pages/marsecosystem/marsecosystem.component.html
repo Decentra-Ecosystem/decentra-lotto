@@ -1,0 +1,57 @@
+<div class="background"></div>
+<!-- <video class="" id="redpandabg" src="../../../assets/videos/redpanda-jungle-video.mp4" autoplay loop playsinline muted></video> -->
+<div *ngIf="connectionError" class="outer-container">
+    <h1 class="white">Connect your wallet to continue...</h1>
+    <h2 class="white">If you are on mobile, make sure your are using a web3 browser like Metamask Browser.</h2>
+  </div>
+  <div *ngIf="wrongChain" class="outer-container">
+    <h1>Switch your wallet network to Binance Smart Chain to continue...</h1>
+  </div>
+  <!--dash.component.html-->
+  <div *ngIf="!connectionError && !wrongChain" class="outer-container">
+    <div class="grid-container">
+      <!-- <h1 class="mat-h1">Dashboard</h1> -->
+      <mat-grid-list cols="{{ ( cardLayout | async )?.columns }}" [rowHeight]="rowHeight">
+        <!-- Buy Panel -->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.buy?.cols" [rowspan]="( cardLayout | async )?.buy?.rows">
+            <app-card title="Mars NFT Lottery">
+              <app-enter-draw-card></app-enter-draw-card>
+            </app-card>
+          </mat-grid-tile>
+
+        <!--Summary Cards-->
+        <mat-grid-tile *ngFor="let mc of miniCardData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+            [rowspan]="( cardLayout | async )?.miniCard?.rows">
+            <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+        </mat-grid-tile>
+
+        <!--Stats Panel-->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.explainer?.cols" [rowspan]="( cardLayout | async )?.explainer?.rows">
+            <app-card title="Information">
+              <app-info-card title="Information"></app-info-card>
+            </app-card>
+          </mat-grid-tile>
+        
+        <!-- Red Panda Panel -->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.explainer?.cols" [rowspan]="( cardLayout | async )?.explainer?.rows">
+          <app-card title="About">
+            <app-marsecosystem-info-card title="About"></app-marsecosystem-info-card>
+          </app-card>
+        </mat-grid-tile>
+
+        <!--Video Panel-->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.video?.cols" [rowspan]="( cardLayout | async )?.video?.rows">
+          <app-card title="Watch" logo="assets/images/marsecosystem/32_32.png" size="s">
+            <app-marsecosystem-video></app-marsecosystem-video>
+          </app-card>
+      </mat-grid-tile>
+        
+      </mat-grid-list>
+    </div>
+    <h5 style="color: white; padding-left: 40px; padding-right: 40px; text-align: justify; text-justify: inter-word;"><strong>Disclaimer:</strong> A ticket has no inherent value other than as entry into the Decentra-Lotto draw, and does not give the user any rights or privileges. 
+      Due to the complex nature of the Decentra-Lotto contract, ticket refunds are not possible. 
+      You alone are responsible for doing your own research and being aware of the risks before making any purchase. 
+      Never invest more than you are willing to lose. See here for full terms: <a routerLink="/terms">TERMS</a>
+    </h5>
+  </div>
+  
