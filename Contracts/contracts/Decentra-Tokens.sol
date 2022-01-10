@@ -110,7 +110,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
 
     //token config
     string private _name = "Decentra FEG";
-    string private _symbol = "DFEG";
+    string private _symbol = "DFEG3";
     uint8 private _decimals = 9;
 
     uint256 public _taxFee = 1;
@@ -126,8 +126,8 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     //
 
     //other config and members
-    IUniswapV2Router02 public immutable uniswapV2Router;
-    address public immutable uniswapV2Pair;
+    IUniswapV2Router02 public uniswapV2Router;
+    address public uniswapV2Pair;
 
     bool inSwapAndDistribute;
     bool public swapAndDistributeEnabled = false;
@@ -220,6 +220,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         _isLottoExcluded[owner()] = true;
         _isLottoExcluded[_devWallet] = true;
         _isLottoExcluded[_ecosystemWallet] = true;
+        _isLottoExcluded[address(this)] = true;
 
         emit Transfer(address(0), owner(), _tTotal);
     }
@@ -347,6 +348,12 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
 
     function setMinLottoBalance(uint256 minBalance) public onlyOwner() {
         minLottoBalance = minBalance * 10**_decimals;
+    }
+
+    function setRouterAddress(address newRouter) external onlyOwner() {
+        IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(newRouter);
+        uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory()).createPair(address(this), _uniswapV2Router.WETH());
+        uniswapV2Router = _uniswapV2Router;
     }
 
     function excludeFromReward(address account) public onlyOwner() {
@@ -558,8 +565,8 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         return _isExcludedFromMaxTx[account];
     }
 
-    function setNumTokensSellToAddToLiquidity(uint256 _numTokensSellToAddToLiquidity) public onlyOwner{
-        numTokensSellToDistribute = _numTokensSellToAddToLiquidity*10**_decimals;
+    function setNumTokensSellToDistribute(uint256 _numTokensSellToDistribute) public onlyOwner{
+        numTokensSellToDistribute = _numTokensSellToDistribute*10**_decimals;
     }
 
     function _approve(address owner, address spender, uint256 amount) private {
@@ -654,6 +661,8 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
 
         numWinners++;
         lottoWinners[numWinners] = Winner(randomAddress, jackpotAmount);
+
+        _changeState(LotteryState.Open);
 
         emit WinnerPaid(randomAddress, jackpotAmount);
     }
