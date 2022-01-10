@@ -48,21 +48,47 @@ module.exports = {
             runs: 10000,
           },
         },
+      },
+      {
+        version: "0.8.4",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 10000,
+          },
+        },
+      },
+      {
+        version: "0.8.7",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 10000,
+          },
+        },
       }
     ]
   },
   networks: {
     bscTestNet:{
-      url: secrets.urlTestNet,
+      url: secrets.urlBSCTestNet,
       accounts: [secrets.keyTest]
     },
     bscMainNet:{
-      url: secrets.url,
+      url: secrets.urlBSCMainNet,
+      accounts: [secrets.keyLive]
+    },
+    ethRinkeby:{
+      url: secrets.urlETHRinkeby,
+      accounts: [secrets.keyTest]
+    },
+    ethMainNet:{
+      url: secrets.urlETHMainNet,
       accounts: [secrets.keyLive]
     }
   },
   etherscan: {
-    apiKey: secrets.etherscanKey
+    apiKey: secrets.etherscan
   },
   contractSizer: {
     alphaSort: true,
