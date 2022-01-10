@@ -55,15 +55,23 @@ abstract contract RandomNumberConsumer is VRFConsumerBase {
 contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     using Address for address;
 
-    address[] private _addressList;
+    //tracking addresses for lotto entry using mappings
+    uint256 private numAddresses = 0;
+    mapping (uint256 => address) private _addressList;
     mapping (address => bool) private _AddressExists;
+    //
+
+    //token amounts
     mapping (address => uint256) private _rOwned;
     mapping (address => uint256) private _tOwned;
     mapping (address => mapping (address => uint256)) private _allowances;
-
     //
+
+    //Contract init and sniper config
     address constant public DEAD = 0x000000000000000000000000000000000000dEaD;
-    address constant public JACKPOT_TOKEN = 0x8B3192f5eEBD8579568A2Ed41E6FEB402f93f73F; //SAITAMA
+    address public JACKPOT_TOKEN_ADDRESS;
+    IERC20 jackpotToken;
+    uint8 private _jackpotTokenDecimals;
     mapping (address => bool) private _isSniperOrBlacklisted;
     bool private sniperProtection = true;
     bool public _hasLiqBeenAdded = false;
@@ -72,27 +80,37 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     uint256 private snipeBlockAmt = 2;
     //
 
+    //excludes
     mapping (address => bool) private _isExcludedFromFee;
     mapping (address => bool) private _isExcludedFromMaxTx;
     mapping (address => bool) private _isExcludedFromMaxWallet;
     mapping (address => bool) private _isExcluded;
     mapping (address => bool) private _isLottoExcluded;
     address[] private _excluded;
+    //
 
+    //fees
     uint256 private constant MAX = ~uint256(0);
-    uint256 private _tTotal = 1 * 10**12 * 10**9;
+    uint256 private _tTotal = 1 * 10**12 * 10**_decimals;
     uint256 private _rTotal = (MAX - (MAX % _tTotal));
     uint256 private _tFeeTotal;
+    //
 
+    //payable wallets
 	address payable private _devWallet;
     address payable private _ecosystemWallet;
-	uint256 private _minLottoBalance = 1 * 10**9 * 10**9;
-	uint256 public maxLottoWin = 0;
-	address public maxLottoAddress;
-    LotteryState public state;
 
-    string private _name = "Decentra SAITAMA";
-    string private _symbol = "DSAI";
+    //lotto config
+	uint256 public lottoJackpotAmount;
+    uint256 public minLottoBalance = 1 * 10**9 * 10**_decimals;
+    mapping(uint256 => Winner) public lottoWinners;
+    uint256 public numWinners = 0;
+    LotteryState public state;
+    //
+
+    //token config
+    string private _name = "Decentra FEG";
+    string private _symbol = "DFEG";
     uint8 private _decimals = 9;
 
     uint256 public _taxFee = 1;
@@ -105,42 +123,62 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     uint256 public _percentOfSwapIsLotto = 22;
     uint256 public _ecosystemLottoDevFee = 7;
     uint256 private _previousEcosystemLottoDevFee = _ecosystemLottoDevFee;
+    //
 
+    //other config and members
     IUniswapV2Router02 public immutable uniswapV2Router;
     address public immutable uniswapV2Pair;
 
-    bool inSwapAndLiquify;
-    bool public swapAndLiquifyEnabled = false;
+    bool inSwapAndDistribute;
+    bool public swapAndDistributeEnabled = false;
 
-    uint256 public _maxTxAmount = 125 * 10**8 * 10**9;
-    uint256 public _maxWalletAmount = 20 * 10**9 * 10**9;
-    uint256 private numTokensSellToAddToLiquidity =  25 * 10**8 * 10**9;
+    uint256 public _maxTxAmount = 125 * 10**8 * 10**_decimals;
+    uint256 public _maxWalletAmount = 20 * 10**9 * 10**_decimals;
+    uint256 private numTokensSellToDistribute =  25 * 10**8 * 10**_decimals;
 
     bytes32 private requestId;
+    //
 
+    //events
     event MinTokensBeforeSwapUpdated(uint256 minTokensBeforeSwap);
-    event SwapAndLiquifyEnabledUpdated(bool enabled);
-    event SwapAndLiquify(
+    event SwapAndDistributeEnabledUpdated(bool enabled);
+    event SwapAndDistribute(
         uint256 tokensSwapped,
-        uint256 ethReceived,
-        uint256 tokensIntoLiqudity
+        uint256 jackpotETHAmount,
+        uint256 ecosystemETHAmount,
+        uint256 devETHAmount
     );
     event SniperCaught(address sniperAddress);
     event LotteryStateChanged(LotteryState newState);
+    event GetRandom(bytes32 requestId);
+    event GotRandom(uint256 randomNumber);
+    event WinnerPaid(address indexed user, uint256 amount);
+    //
 
+    //enums
     enum LotteryState{
         Open,
         GettingRandom,
         GotRandom
     }
+    //
 
-    modifier lockTheSwap {
-        inSwapAndLiquify = true;
-        _;
-        inSwapAndLiquify = false;
+    //structs
+    struct Winner {
+        address winner;
+        uint256 amount;
     }
+    //
 
-    constructor (address router, address marketingWallet, address ecosystemWallet) 
+    //modifiers
+    modifier lockTheSwap {
+        inSwapAndDistribute = true;
+        _;
+        inSwapAndDistribute = false;
+    }
+    //
+
+    constructor (address router, address devWallet, address ecosystemWallet, address jackpotTokenAddress_IN, uint8 jackpotTokenDecimals_IN, uint256 lottoJackpotAmount_IN) 
         RandomNumberConsumer(
             0xb3dCcb4Cf7a26f6cf6B120Cf5A73875B7BBc655B, //vrfCoordinator rinkeby
             0x01BE23585060835E02B77ef475b0Cc51aA1e0709, //link address rinkeby
@@ -149,8 +187,13 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         ) public {
         _rOwned[owner()] = _rTotal;
 
+        JACKPOT_TOKEN_ADDRESS = jackpotTokenAddress_IN;
+        _jackpotTokenDecimals = jackpotTokenDecimals_IN;
+        lottoJackpotAmount = lottoJackpotAmount_IN * 10**_jackpotTokenDecimals; //383720382996
+        jackpotToken = IERC20(JACKPOT_TOKEN_ADDRESS);
+    
 		addAddress(owner());
-		_devWallet = payable(marketingWallet);
+		_devWallet = payable(devWallet);
         _ecosystemWallet = payable(ecosystemWallet);
 
         IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(router);
@@ -292,8 +335,18 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         _ecosystemWallet = payable(ecosystem);
     }
 
+    function updateJackpotTokenAddress(address token, uint8 decimalsIn) external onlyOwner {
+        JACKPOT_TOKEN_ADDRESS = token;
+        _jackpotTokenDecimals = decimalsIn;
+        jackpotToken = IERC20(JACKPOT_TOKEN_ADDRESS);
+    }
+
+    function setlottoJackpotAmount(uint256 minBalance) public onlyOwner() {
+        lottoJackpotAmount = minBalance * 10**_jackpotTokenDecimals;
+    }
+
     function setMinLottoBalance(uint256 minBalance) public onlyOwner() {
-        _minLottoBalance = minBalance * 10**9;
+        minLottoBalance = minBalance * 10**_decimals;
     }
 
     function excludeFromReward(address account) public onlyOwner() {
@@ -368,12 +421,12 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     }
 
     function setMaxTxAmount(uint256 maxTxAmount) external onlyOwner() {
-        _maxTxAmount = maxTxAmount*10**9;
+        _maxTxAmount = maxTxAmount*10**_decimals;
     }
 
-    function setSwapAndLiquifyEnabled(bool _enabled) public onlyOwner {
-        swapAndLiquifyEnabled = _enabled;
-        emit SwapAndLiquifyEnabledUpdated(_enabled);
+    function setSwapAndDistributeEnabled(bool _enabled) public onlyOwner {
+        swapAndDistributeEnabled = _enabled;
+        emit SwapAndDistributeEnabledUpdated(_enabled);
     }
 
      //to recieve ETH from uniswapV2Router when swaping
@@ -448,7 +501,8 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
 	function addAddress(address adr) private {
         if(!_AddressExists[adr]){
             _AddressExists[adr] = true;
-            _addressList.push(adr);
+            _addressList[numAddresses] = adr;
+            numAddresses++;
         }
     }
 
@@ -505,7 +559,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     }
 
     function setNumTokensSellToAddToLiquidity(uint256 _numTokensSellToAddToLiquidity) public onlyOwner{
-        numTokensSellToAddToLiquidity = _numTokensSellToAddToLiquidity*10**9;
+        numTokensSellToDistribute = _numTokensSellToAddToLiquidity*10**_decimals;
     }
 
     function _approve(address owner, address spender, uint256 amount) private {
@@ -537,19 +591,31 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
             contractTokenBalance = _maxTxAmount;
         }
 
-        bool overMinTokenBalance = contractTokenBalance >= numTokensSellToAddToLiquidity;
+        bool overMinTokenBalance = contractTokenBalance >= numTokensSellToDistribute;
         if (
             overMinTokenBalance &&
-            !inSwapAndLiquify &&
+            !inSwapAndDistribute &&
             from != uniswapV2Pair &&
-            swapAndLiquifyEnabled
+            swapAndDistributeEnabled
         ) {
-            contractTokenBalance = numTokensSellToAddToLiquidity;
+            contractTokenBalance = numTokensSellToDistribute;
             //add liquidity
-            swapAndLiquify(contractTokenBalance);
+            swapAndDistribute(contractTokenBalance);
         }else{
-            //check jackpot threshold and lotto state here
+            //check if random got to draw winner here so as not to do too much in one transaction avoiding of gas exceptions
+            if (state == LotteryState.GotRandom){
+                _changeState(LotteryState.Open);
+                drawWinner();
+            }
+        }
 
+        //check jackpot threshold and lotto state here to get random
+        uint256 jackpotTokenBalance = jackpotToken.balanceOf(address(this));
+        bool overMinJackpotBalance = jackpotTokenBalance >= lottoJackpotAmount;
+        if (overMinJackpotBalance && state == LotteryState.Open && LINK.balanceOf(address(this)) >= fee){
+            _changeState(LotteryState.GettingRandom);
+            requestId = getRandomNumber();
+            emit GetRandom(requestId);
         }
 
         //indicates if fee should be deducted from transfer
@@ -567,10 +633,35 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         _tokenTransfer(from,to,amount,takeFee);
     }
 
-    function swapAndLiquify(uint256 contractTokenBalance) private lockTheSwap {
+    function getRandomAddress(uint32 seed) private view returns(address) {
+        return _addressList[(uint256(keccak256(abi.encode(randomResult, seed))) % numAddresses)];
+    }
+
+    function drawWinner() private {
+        //seed for abi encoding random number
+        uint32 seed = 1;
+        address randomAddress = getRandomAddress(seed);
+
+        //get more random addresses until an address qualifies to win
+        while (balanceOf(randomAddress) < minLottoBalance || _isLottoExcluded[randomAddress]){
+            seed++;
+            randomAddress = getRandomAddress(seed);
+        }
+
+        uint256 jackpotAmount = jackpotToken.balanceOf(address(this));
+
+        jackpotToken.transfer(randomAddress, jackpotAmount);
+
+        numWinners++;
+        lottoWinners[numWinners] = Winner(randomAddress, jackpotAmount);
+
+        emit WinnerPaid(randomAddress, jackpotAmount);
+    }
+
+    function swapAndDistribute(uint256 contractTokenBalance) private lockTheSwap {
         //SWAP TO ETH
         uint256 initialBalance = address(this).balance;
-        swapTokensForEth(initialBalance);
+        swapTokensForEth(contractTokenBalance);
         //amount of ETH swapped into
         uint256 deltaBalance = address(this).balance;
 
@@ -585,37 +676,8 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         _ecosystemWallet.transfer(ecosystemETHAmount);
         _devWallet.transfer(deltaBalance-ecosystemETHAmount-jackpotETHAmount);
 
-        //emit SwapAndLiquify(half, ethToBeAddedToLiquidity, otherHalf);
+        emit SwapAndDistribute(contractTokenBalance, jackpotETHAmount, ecosystemETHAmount, deltaBalance-ecosystemETHAmount-jackpotETHAmount);
     }
-
-    // function swapAndLiquify(uint256 contractTokenBalance) private lockTheSwap {
-    //     uint256 autoLpAmount = contractTokenBalance*(_percentOfSwapIsLP)/(100);
-
-    //     // split the contract balance into halves
-    //     uint256 half = autoLpAmount/(2);
-    //     uint256 otherHalf = autoLpAmount-(half);
-
-    //     uint256 amountForDev = contractTokenBalance-(half)-(otherHalf);
-
-    //      uint256 tokenAmountToBeSwapped = amountForDev+(otherHalf);
-
-    //     uint256 initialBalance = address(this).balance;
-
-    //     swapTokensForEth(tokenAmountToBeSwapped);
-
-    //     uint256 deltaBalance = address(this).balance-(initialBalance);
-
-
-    //     uint256 lpEthRatio = otherHalf*(100)/(tokenAmountToBeSwapped);
-
-    //     uint256 ethToBeAddedToLiquidity = deltaBalance*(lpEthRatio)/(100);
-
-    //     addLiquidity(half, ethToBeAddedToLiquidity);
-
-    //     _devWallet.transfer(deltaBalance-ethToBeAddedToLiquidity);
-
-    //     emit SwapAndLiquify(half, ethToBeAddedToLiquidity, otherHalf);
-    // }
 
     function swapTokensForEth(uint256 tokenAmount) private {
         // generate the uniswap pair path of token -> weth
@@ -639,7 +701,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         // generate the uniswap pair path of weth -> token
         address[] memory path = new address[](2);
         path[0] = uniswapV2Router.WETH();
-        path[1] = JACKPOT_TOKEN;
+        path[1] = JACKPOT_TOKEN_ADDRESS;
 
         // make the swap
         uniswapV2Router.swapExactETHForTokensSupportingFeeOnTransferTokens{value: ethAmount}(
@@ -671,8 +733,8 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
             _liqAddBlock = block.number;
             _hasLiqBeenAdded = true;
 
-            swapAndLiquifyEnabled = true;
-            emit SwapAndLiquifyEnabledUpdated(true);
+            swapAndDistributeEnabled = true;
+            emit SwapAndDistributeEnabledUpdated(true);
         }
     }
 
@@ -784,11 +846,11 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     function fulfillRandomness(bytes32 _requestId, uint256 randomness) internal override {
         require (requestId == _requestId, "requestId doesn't match");
         
-        //randomResult = randomness;
+        randomResult = randomness;
         
-        //_changeState(LotteryState.Ready);
+        _changeState(LotteryState.GotRandom);
         
-        //emit GotRandom(randomResult);
+        emit GotRandom(randomResult);
     }
 
     function _changeState(LotteryState _newState) private {
