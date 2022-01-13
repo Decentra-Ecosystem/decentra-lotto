@@ -72,28 +72,43 @@ module.exports = {
   networks: {
     bscTestNet:{
       url: secrets.urlBSCTestNet,
-      accounts: [secrets.keyTest]
+      accounts: [secrets.deployerPrivatekeyTest]
     },
     bscMainNet:{
       url: secrets.urlBSCMainNet,
-      accounts: [secrets.keyLive]
+      accounts: [secrets.deployerPrivatekeyLive]
     },
     ethRinkeby:{
       url: secrets.urlETHRinkeby,
-      accounts: [secrets.keyTest]
+      accounts: [secrets.deployerPrivatekeyTest]
+    },
+    ethRopsten:{
+      url: secrets.urlETHRopsten,
+      accounts: [secrets.deployerPrivatekeyTest],
+    },
+    ethKovan:{
+      url: secrets.urlETHKovan,
+      accounts: [secrets.deployerPrivatekeyTest],
+    },
+    ethGorli:{
+      url: secrets.urlETHGorli,
+      accounts: [secrets.deployerPrivatekeyTest],
     },
     ethMainNet:{
       url: secrets.urlETHMainNet,
-      accounts: [secrets.keyLive]
+      accounts: [secrets.deployerPrivatekeyLive]
     }
   },
   etherscan: {
-    apiKey: secrets.etherscan
+    apiKey: secrets.etherscanTest
   },
   contractSizer: {
     alphaSort: true,
     disambiguatePaths: false,
     runOnCompile: true,
     strict: true,
+  },
+  mocha: {
+    timeout: 400000
   }
 };

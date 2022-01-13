@@ -2,19 +2,19 @@
 
 /**
 
-   #Lucky Panda #LUCKYP
+   #Decentra-Tokens
 
-   TG: https://t.me/LuckyPandaPortal
-   Website: https://luckypandatoken.net/
+   TG: 
+   Website: https://decentra-tokens.com/
 
-   2% fee auto add to the liquidity pool to locked forever when selling
-   1% fee auto distribute to all holders
-   5% fee auto moved to dev wallet
-   4% lotto fee
+   10% tax buys and sells
+    1% Reflection yield
+    5% Development/team
+    2% is sent to the DELO mega draw wallet 
+    2% is used to buy the meme lottery token
 
  */
 pragma solidity 0.8.7;
-pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
@@ -40,7 +40,7 @@ abstract contract RandomNumberConsumer is VRFConsumerBase {
         )
     {
         keyHash = _keyHash;
-        fee = _fee; // 0.1 LINK for testnet, 0.2 LINK for Live (Varies by network)
+        fee = _fee; // 0.1 LINK for testnet, 2 LINK for Live (Varies by network)
     }
     
     /** 
@@ -67,6 +67,28 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     mapping (address => mapping (address => uint256)) private _allowances;
     //
 
+    //token config
+    string private _name = "DE-FEG";
+    string private _symbol = "DFEG";
+    uint8 private _decimals = 9;
+
+    uint256 public _taxFee = 1;
+    uint256 private _previousTaxFee = _taxFee;
+
+    uint256 public _jackpotFee = 2;
+    uint256 private _previousJackpotFee = _jackpotFee;
+
+    uint256 public _percentOfSwapIsEcosystem = 22;
+    uint256 public _percentOfSwapIsLotto = 22;
+    uint256 public _ecosystemLottoDevFee = 7;
+    uint256 private _previousEcosystemLottoDevFee = _ecosystemLottoDevFee;
+
+    uint256 private constant MAX = ~uint256(0);
+    uint256 private _tTotal = 1 * 10**7 * 10**9;
+    uint256 private _rTotal = (MAX - (MAX % _tTotal));
+    uint256 private _tFeeTotal;
+    //
+
     //Contract init and sniper config
     address constant public DEAD = 0x000000000000000000000000000000000000dEaD;
     address public JACKPOT_TOKEN_ADDRESS;
@@ -89,40 +111,18 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     address[] private _excluded;
     //
 
-    //fees
-    uint256 private constant MAX = ~uint256(0);
-    uint256 private _tTotal = 1 * 10**12 * 10**_decimals;
-    uint256 private _rTotal = (MAX - (MAX % _tTotal));
-    uint256 private _tFeeTotal;
-    //
-
     //payable wallets
 	address payable private _devWallet;
     address payable private _ecosystemWallet;
 
     //lotto config
+    bool public lottoOn = true;
 	uint256 public lottoJackpotAmount;
-    uint256 public minLottoBalance = 1 * 10**9 * 10**_decimals;
+    uint256 public minLottoBalance = 1 * 10**4 * 10**9;
     mapping(uint256 => Winner) public lottoWinners;
     uint256 public numWinners = 0;
     LotteryState public state;
-    //
-
-    //token config
-    string private _name = "Decentra FEG";
-    string private _symbol = "DFEG3";
-    uint8 private _decimals = 9;
-
-    uint256 public _taxFee = 1;
-    uint256 private _previousTaxFee = _taxFee;
-
-    uint256 public _jackpotFee = 2;
-    uint256 private _previousJackpotFee = _jackpotFee;
-
-    uint256 public _percentOfSwapIsEcosystem = 22;
-    uint256 public _percentOfSwapIsLotto = 22;
-    uint256 public _ecosystemLottoDevFee = 7;
-    uint256 private _previousEcosystemLottoDevFee = _ecosystemLottoDevFee;
+    uint256 public totalWon = 0;
     //
 
     //other config and members
@@ -130,11 +130,11 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     address public uniswapV2Pair;
 
     bool inSwapAndDistribute;
-    bool public swapAndDistributeEnabled = false;
+    bool public swapAndDistributeEnabled = true;
 
-    uint256 public _maxTxAmount = 125 * 10**8 * 10**_decimals;
-    uint256 public _maxWalletAmount = 20 * 10**9 * 10**_decimals;
-    uint256 private numTokensSellToDistribute =  25 * 10**8 * 10**_decimals;
+    uint256 public _maxTxAmount = 5 * 10**4 * 10**9; //0.5%
+    uint256 public _maxWalletAmount = 15 * 10**4 * 10**9; //1.5%
+    uint256 public numTokensSellToDistribute =  1 * 10**4 * 10**9; //0.1%
 
     bytes32 private requestId;
     //
@@ -142,6 +142,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     //events
     event MinTokensBeforeSwapUpdated(uint256 minTokensBeforeSwap);
     event SwapAndDistributeEnabledUpdated(bool enabled);
+    event LottoEnabledUpdated(bool enabled);
     event SwapAndDistribute(
         uint256 tokensSwapped,
         uint256 jackpotETHAmount,
@@ -189,7 +190,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
 
         JACKPOT_TOKEN_ADDRESS = jackpotTokenAddress_IN;
         _jackpotTokenDecimals = jackpotTokenDecimals_IN;
-        lottoJackpotAmount = lottoJackpotAmount_IN * 10**_jackpotTokenDecimals; //383720382996
+        lottoJackpotAmount = lottoJackpotAmount_IN * 10**_jackpotTokenDecimals;
         jackpotToken = IERC20(JACKPOT_TOKEN_ADDRESS);
     
 		addAddress(owner());
@@ -436,6 +437,29 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         emit SwapAndDistributeEnabledUpdated(_enabled);
     }
 
+    function setLottoEnabled(bool _lottoOn) public onlyOwner {
+        lottoOn = _lottoOn;
+        emit LottoEnabledUpdated(_lottoOn);
+    }
+
+    //withdraw dust leftover from swaps
+    function withdrawETH(uint256 amount) external onlyOwner {
+        payable(msg.sender).transfer(amount);
+    }
+
+    //withdraw token link or trapped tokens
+    function withdrawToken(address _address, uint256 amount) external onlyOwner {
+        // Ensure requested tokens isn't Jackpot token (cannot withdraw the pot)
+        require(_address != JACKPOT_TOKEN_ADDRESS, "Cannot withdraw Lottery pot");
+        require(_address != address(this), "Cannot withdraw platform token");
+        IERC20 token = IERC20(_address);
+        token.transfer(msg.sender, amount);
+    }
+
+    function getStats() external view returns(uint256, uint256, uint256, LotteryState, uint256) {
+        return(lottoJackpotAmount, minLottoBalance, numWinners, state, totalWon);
+    }
+
      //to recieve ETH from uniswapV2Router when swaping
     receive() external payable {}
 
@@ -588,7 +612,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         if(from != owner() && to != owner() && !_isExcludedFromMaxTx[from] && !_isExcludedFromMaxTx[to])
             require(amount <= _maxTxAmount, "Transfer amount exceeds the maxTxAmount.");
 
-        if(from != owner() && to != owner() && !_isExcludedFromMaxWallet[to])
+        if(from != owner() && to != owner() && !_isExcludedFromMaxWallet[to] && from == uniswapV2Pair)
             require(balanceOf(to)+(amount) <= _maxWalletAmount, "Transfer amount makes wallet hold more than max.");
 
         uint256 contractTokenBalance = balanceOf(address(this));
@@ -606,11 +630,11 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
             swapAndDistributeEnabled
         ) {
             contractTokenBalance = numTokensSellToDistribute;
-            //add liquidity
+            //swa and distribute tokens
             swapAndDistribute(contractTokenBalance);
         }else{
             //check if random got to draw winner here so as not to do too much in one transaction avoiding of gas exceptions
-            if (state == LotteryState.GotRandom){
+            if (state == LotteryState.GotRandom && lottoOn){
                 _changeState(LotteryState.Open);
                 drawWinner();
             }
@@ -619,7 +643,12 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         //check jackpot threshold and lotto state here to get random
         uint256 jackpotTokenBalance = jackpotToken.balanceOf(address(this));
         bool overMinJackpotBalance = jackpotTokenBalance >= lottoJackpotAmount;
-        if (overMinJackpotBalance && state == LotteryState.Open && LINK.balanceOf(address(this)) >= fee){
+        if (
+            overMinJackpotBalance && 
+            state == LotteryState.Open && 
+            LINK.balanceOf(address(this)) >= fee && 
+            lottoOn
+        ) {
             _changeState(LotteryState.GettingRandom);
             requestId = getRandomNumber();
             emit GetRandom(requestId);
@@ -661,6 +690,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
 
         numWinners++;
         lottoWinners[numWinners] = Winner(randomAddress, jackpotAmount);
+        totalWon += jackpotAmount;
 
         _changeState(LotteryState.Open);
 
@@ -672,7 +702,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         uint256 initialBalance = address(this).balance;
         swapTokensForEth(contractTokenBalance);
         //amount of ETH swapped into
-        uint256 deltaBalance = address(this).balance;
+        uint256 deltaBalance = address(this).balance - initialBalance;
 
         //get the percentage split for Ecosystem, and Lotto
         uint256 ecosystemETHAmount = (deltaBalance*_percentOfSwapIsEcosystem)/100;
@@ -767,8 +797,12 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         snipersCaught ++;
     }
 
-    function flipSniperProtection() public onlyOwner{
-        sniperProtection = !sniperProtection;
+    function setSniperProtection(bool _sniperProtection) public onlyOwner{
+        sniperProtection = _sniperProtection;
+    }
+
+    function setLiqAddedManually(bool _liqAdded) public onlyOwner{
+        _hasLiqBeenAdded = _liqAdded;
     }
 
     //this method is responsible for taking all fee, if takeFee is true and checking/banning bots

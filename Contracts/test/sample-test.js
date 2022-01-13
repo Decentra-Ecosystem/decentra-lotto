@@ -1,19 +1,19 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
+// const { expect } = require("chai");
+// const { ethers } = require("hardhat");
 
-describe("DecentraLotto", function () {
-  it("Should return the new greeting once it's changed", async function () {
-    const DecentraLotto = await ethers.getContractFactory("DecentraLotto");
-    const decentraLotto = await DecentraLotto.deploy("Hello, world!");
-    await decentraLotto.deployed();
+// describe("DecentraLotto", function () {
+//   it("Should return the new greeting once it's changed", async function () {
+//     const DecentraLotto = await ethers.getContractFactory("DecentraLotto");
+//     const decentraLotto = await DecentraLotto.deploy("Hello, world!");
+//     await decentraLotto.deployed();
 
-    expect(await decentraLotto.greet()).to.equal("Hello, world!");
+//     expect(await decentraLotto.greet()).to.equal("Hello, world!");
 
-    const setGreetingTx = await decentraLotto.setGreeting("Hola, mundo!");
+//     const setGreetingTx = await decentraLotto.setGreeting("Hola, mundo!");
 
-    // wait until the transaction is mined
-    await setGreetingTx.wait();
+//     // wait until the transaction is mined
+//     await setGreetingTx.wait();
 
-    expect(await decentraLotto.greet()).to.equal("Hola, mundo!");
-  });
-});
+//     expect(await decentraLotto.greet()).to.equal("Hola, mundo!");
+//   });
+// });
