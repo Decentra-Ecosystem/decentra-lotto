@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-let args = require("../arguments.json");
+let args = require("../arguments_test.json");
 let abi = require("../artifacts/contracts/Decentra-Tokens.sol/DecentraTokens.json").abi;
 let uniswapABI = require("../artifacts/@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol/IUniswapV2Router02.json").abi;
 let secrets = require("../secrets");
@@ -97,9 +97,6 @@ async function sell(address, buyerWallet, buyerUniswap, buyerDecentraTokens, dea
   var approveTx = await buyerDecentraTokens.approve(uniAddress, bal);
   await approveTx.wait();
   console.log("Approved.");
-
-  console.log("");
-
   console.log("Selling token...");
   var sellTx = await buyerUniswap.swapExactTokensForETHSupportingFeeOnTransferTokens(bal, 0, [address, weth], buyerWallet.address, deadline, {
     from: buyerWallet.address
@@ -109,6 +106,7 @@ async function sell(address, buyerWallet, buyerUniswap, buyerDecentraTokens, dea
   var bal = await buyerDecentraTokens.balanceOf(buyerWallet.address);
   expect(bal).to.be.equal(0);
   console.log("Token sold.");
+  console.log("");
 }
 
 async function buy(address, buyerWallet, buyerUniswap, buyerDecentraTokens, deadline){
@@ -130,6 +128,7 @@ async function buy(address, buyerWallet, buyerUniswap, buyerDecentraTokens, dead
   }
   bal = await buyerDecentraTokens.balanceOf(buyerWallet.address);
   expect(bal).to.be.above(0);
+  console.log("");
 }
 
 async function deployDFEG(abi, wallet, uniAddress, uniswap, deadline, startToken, jackpotAddress){
