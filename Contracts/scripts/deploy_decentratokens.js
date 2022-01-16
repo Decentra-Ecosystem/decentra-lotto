@@ -3,17 +3,24 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
+const isTest = true;
 const hre = require("hardhat");
-let args = require("../arguments_live.json");
-
-//npx hardhat run scripts/deploy_decentratokens.js --network ethRinkeby
-//npx hardhat verify "0x3EeAA98951d61d39a3B7ef654F89ec78B702564c" --constructor-args arguments.js --network ethRinkeby
+let args;
+if (isTest){
+  args = require(".././arguments/DFEG/arguments_test.json");
+}else{
+  args = require(".././arguments/DFEG/arguments_live.json");
+}
 
 //0.1. Update chainlink addresses and fee in contract
 //0.2. Update arguments.js and arguments.json
 //1. Call this
 //2. Call distribute_tokens script
 //3. Call Add liquidity script
+
+//npx hardhat run scripts/deploy_decentratokens.js --network ethRinkeby
+//npx hardhat verify "0xCb2d85E6057c625a7e3545C1a8A1d37D1f4f08D6" --constructor-args "arguments/DFEG/arguments_test.js" --network ethRinkeby
+//npx hardhat run scripts/distribute_decentratokens.js --network ethRinkeby
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command

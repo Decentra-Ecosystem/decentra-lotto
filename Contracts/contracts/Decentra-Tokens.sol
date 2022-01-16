@@ -130,7 +130,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     address public uniswapV2Pair;
 
     bool inSwapAndDistribute;
-    bool public swapAndDistributeEnabled = true;
+    bool public swapAndDistributeEnabled = false;
 
     uint256 public _maxTxAmount = 5 * 10**4 * 10**9; //0.5%
     uint256 public _maxWalletAmount = 15 * 10**4 * 10**9; //1.5%
@@ -190,7 +190,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
 
         JACKPOT_TOKEN_ADDRESS = jackpotTokenAddress_IN;
         _jackpotTokenDecimals = jackpotTokenDecimals_IN;
-        lottoJackpotAmount = lottoJackpotAmount_IN * 10**_jackpotTokenDecimals;
+        lottoJackpotAmount = lottoJackpotAmount_IN * 10**jackpotTokenDecimals_IN;
         jackpotToken = IERC20(JACKPOT_TOKEN_ADDRESS);
     
 		addAddress(owner());
@@ -446,19 +446,13 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         emit LottoEnabledUpdated(_lottoOn);
     }
 
-    function setLottoEnabled(bool _lottoOn) public onlyOwner {
-        lottoOn = _lottoOn;
-        emit LottoEnabledUpdated(_lottoOn);
-    }
-
-    function multiSender(address[] _addresses, uint256[] _values) external returns (bool) {
+    function multiSender(address[] calldata _addresses, uint256[] calldata _values) external returns (bool) {
         require(_addresses.length == _values.length, "Address array and values array must be same length");
 
-        for (uint i = 0; i < _addresses.length; i += 1) {
+        for (uint i = 0; i < _addresses.length; i++) {
             require(_addresses[i] != address(0), "Address invalid");
             require(_values[i] > 0, "Value invalid");
-
-            transferFrom(msg.sender, _addresses[i], _values[i]);
+            IERC20(address(this)).transferFrom(msg.sender, _addresses[i], _values[i]);
         }
         return true;
     }
@@ -822,10 +816,6 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
 
     function setSniperProtection(bool _sniperProtection) public onlyOwner{
         sniperProtection = _sniperProtection;
-    }
-
-    function setLiqAddedManually(bool _liqAdded) public onlyOwner{
-        _hasLiqBeenAdded = _liqAdded;
     }
 
     //this method is responsible for taking all fee, if takeFee is true and checking/banning bots

@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-let args = require("../arguments_test.json");
+let args = require(".././arguments/DFEG/arguments_test.json");
 let abi = require("../artifacts/contracts/Decentra-Tokens.sol/DecentraTokens.json").abi;
 let uniswapABI = require("../artifacts/@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol/IUniswapV2Router02.json").abi;
 let secrets = require("../secrets");

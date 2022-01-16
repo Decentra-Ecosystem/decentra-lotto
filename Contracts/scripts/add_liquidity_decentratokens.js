@@ -3,27 +3,41 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const ethers = require("hardhat");
+const isTest = true;
+const hre = require("hardhat");
 let abi = require("../artifacts/contracts/Decentra-Tokens.sol/DecentraTokens.json").abi;
 let uniswapABI = require("../artifacts/@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol/IUniswapV2Router02.json").abi;
+let secrets = require("../secrets");
 
 const address = '';
 const amtETH = '';
 const amtTokens = '';
 
 async function main() {
+  let apiKey;
+  let deployerKey;
+  let providerName;
+  if (isTest == true){
+    apiKey = secrets.rinkeyAPIKey;
+    deployerKey = secrets.deployerPrivatekeyTest;
+    providerName = "rinkeby";
+  }else{
+    apiKey = secrets.urlETHMainNet;
+    deployerKey = secrets.deployerPrivatekeyLive
+    providerName = homestead
+  }
   console.log("Setting up wallet...");
   const uniAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
-  const provider = new ethers.providers.InfuraProvider("rinkeby", secrets.rinkeyAPIKey);
+  const provider = new hre.ethers.providers.InfuraProvider(providerName, apiKey);
   var now = new Date();
   var deadline = addHoursToDate(now, 1).getTime();
-  var wallet  = new ethers.Wallet(secrets.deployerPrivatekeyTest, provider);
-  var uniswap = new ethers.Contract(uniAddress,uniswapABI,wallet);
+  var wallet  = new hre.ethers.Wallet(deployerKey, provider);
+  var uniswap = new hre.ethers.Contract(uniAddress,uniswapABI,wallet);
   console.log("Wallet setup complete...");
   
   console.log("");
 
-  decentraTokens = new ethers.Contract(address,abi,wallet);
+  decentraTokens = new hre.ethers.Contract(address,abi,wallet);
   console.log('Got deployed token.');
 
   await addLiquidity(decentraTokens, wallet, uniAddress, uniswap, address, deadline)
@@ -55,7 +69,7 @@ async function addLiquidity(token, wallet, uniAddress, uniswap, address, deadlin
 
     //add liquidity
     console.log("Adding liquidity...");
-    let ethAmt = new ethers.BigNumber.from("10000000000000000");
+    let ethAmt = new hre.ethers.BigNumber.from("10000000000000000");
     var liquidityTx = await uniswap.addLiquidityETH(address, liquidityAmt, 0, ethAmt, wallet.address, deadline, {
       from: wallet.address,
       value: ethAmt
@@ -77,7 +91,7 @@ function addHoursToDate(date, hours) {
 }
 
 function bigNumToReadable(num) {
-  return ethers.utils.formatUnits(num, 9);
+  return hre.ethers.utils.formatUnits(num, 9);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
