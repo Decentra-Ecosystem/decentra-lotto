@@ -120,6 +120,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
 	uint256 public lottoJackpotAmount;
     uint256 public minLottoBalance = 1 * 10**4 * 10**9;
     mapping(uint256 => Winner) public lottoWinners;
+    mapping(address => uint256) public walletWinAmount;
     uint256 public numWinners = 0;
     LotteryState public state;
     uint256 public totalWon = 0;
@@ -709,6 +710,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
 
         numWinners++;
         lottoWinners[numWinners] = Winner(randomAddress, jackpotAmount);
+        walletWinAmount[randomAddress] += jackpotAmount;
         totalWon += jackpotAmount;
 
         emit WinnerPaid(randomAddress, jackpotAmount);

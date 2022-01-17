@@ -9,11 +9,15 @@ let abi = require("../artifacts/contracts/Decentra-Tokens.sol/DecentraTokens.jso
 let uniswapABI = require("../artifacts/@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol/IUniswapV2Router02.json").abi;
 let secrets = require("../secrets");
 
-const address = '';
-const amtETH = '';
-const amtTokens = '';
+const address = '0xAAd765909cC7149a55e362095446144F2CA5C13E';
+const amtETH = '10000000000000000'; //0.01eth
+const tokenPercentsupply = 40; //40%
 
 async function main() {
+  if (address == ''){
+    console.log("Address blank");
+    return;
+  }
   let apiKey;
   let deployerKey;
   let providerName;
@@ -52,7 +56,7 @@ async function addLiquidity(token, wallet, uniAddress, uniswap, address, deadlin
   if (!liquidityAdded){
     expect(supply).to.equal(ownerBalance);
     console.log("No liquidity detected, adding initial liquidity...");
-    var liquidityAmt = supply.div(100).mul(40);
+    var liquidityAmt = supply.div(100).mul(tokenPercentsupply);
     var allowance = await token.allowance(wallet.address, uniAddress);
     
     if (allowance < liquidityAmt){
@@ -69,18 +73,15 @@ async function addLiquidity(token, wallet, uniAddress, uniswap, address, deadlin
 
     //add liquidity
     console.log("Adding liquidity...");
-    let ethAmt = new hre.ethers.BigNumber.from("10000000000000000");
+    let ethAmt = new hre.ethers.BigNumber.from(amtETH);
     var liquidityTx = await uniswap.addLiquidityETH(address, liquidityAmt, 0, ethAmt, wallet.address, deadline, {
       from: wallet.address,
       value: ethAmt
     });
     // wait until the transaction is mined
     await liquidityTx.wait();
-    if(!isFEG){
-      var liqAdded = await token._hasLiqBeenAdded();
-      console.log("Liq Added: " + liqAdded);
-    }
-    console.log("Liquidity added.");
+    var liqAdded = await token._hasLiqBeenAdded();
+    console.log("Liq Added: " + liqAdded);
   }else{
     console.log("Liquidity already added.");
   }
