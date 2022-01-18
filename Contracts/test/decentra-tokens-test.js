@@ -142,7 +142,7 @@ async function deployDFEG(abi, wallet, uniAddress, uniswap, deadline, startToken
   }else{
     console.log("Deploying DFEG token...");
     const DecentraTokensDeployer = await ethers.getContractFactory("DecentraTokens", wallet);
-    const decentraTokensDeployer = await DecentraTokensDeployer.deploy(args[0], args[1], args[2], jackpotAddress, args[4], args[5]);
+    const decentraTokensDeployer = await DecentraTokensDeployer.deploy(args[0], args[1], args[2], args[3], jackpotAddress, args[5], args[6]);
     await decentraTokensDeployer.deployed();
     decentraTokens = new ethers.Contract(decentraTokensDeployer.address,abi,wallet);
     address = decentraTokensDeployer.address;

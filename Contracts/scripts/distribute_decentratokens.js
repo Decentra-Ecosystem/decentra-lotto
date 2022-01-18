@@ -45,8 +45,9 @@ async function main() {
     "0x063EF4446f0641F0B452f7C59e659DaD79FF25AB", //Jordan
     "0x982bE252407D54C8df1B93caeD441bA7c6bE3e12", //Calypso
     "0x86f6408de4e5a9510aac4b97142777c8ce3c023d", //Pepetron
-    "0x57f945C25C268219ea8a18eB79530E8A892c481C", //Celty
+    "0x57f945C25C268219ea8a18eB79530E8A892c481C", //Celty - Alternate
     "0xE01033d96A31B9Df6c78d284A05f428F020ab83D", //Satoshi
+    "0x417B5BF4CF974176C5b01b256F6d0EBd8e87adEe", //Celty Alternate 02
   ];
 
   var amounts = [];

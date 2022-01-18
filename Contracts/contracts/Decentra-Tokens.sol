@@ -78,10 +78,12 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     uint256 public _jackpotFee = 2;
     uint256 private _previousJackpotFee = _jackpotFee;
 
-    uint256 public _percentOfSwapIsEcosystem = 22;
-    uint256 public _percentOfSwapIsLotto = 22;
     uint256 public _ecosystemLottoDevFee = 7;
     uint256 private _previousEcosystemLottoDevFee = _ecosystemLottoDevFee;
+
+    uint256 public _percentOfSwapIsEcosystem = 22;
+    uint256 public _percentOfSwapIsLotto = 22;
+    uint256 public _percentOfSwapIsMarketing = 22;
 
     uint256 private constant MAX = ~uint256(0);
     uint256 private _tTotal = 1 * 10**7 * 10**9;
@@ -113,6 +115,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
 
     //payable wallets
 	address payable private _devWallet;
+    address payable private _marketingWallet;
     address payable private _ecosystemWallet;
 
     //lotto config
@@ -180,12 +183,12 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     }
     //
 
-    constructor (address router, address devWallet, address ecosystemWallet, address jackpotTokenAddress_IN, uint8 jackpotTokenDecimals_IN, uint256 lottoJackpotAmount_IN) 
+    constructor (address router, address devWallet, address marketingWallet, address ecosystemWallet, address jackpotTokenAddress_IN, uint8 jackpotTokenDecimals_IN, uint256 lottoJackpotAmount_IN) 
         RandomNumberConsumer(
-            0xb3dCcb4Cf7a26f6cf6B120Cf5A73875B7BBc655B, //vrfCoordinator rinkeby //0xf0d54349aDdcf704F77AE15b96510dEA15cb7952 //vrfCoordinator ETH mainnet
-            0x01BE23585060835E02B77ef475b0Cc51aA1e0709, //link address rinkeby //0x514910771AF9Ca656af840dff83E8264EcF986CA // link address ETH mainnet
-            0x2ed0feb3e7fd2022120aa84fab1945545a9f2ffc9076fd6156fa96eaff4c1311, //key hash rinkeby //0xAA77729D3466CA35AE8D28B3BBAC7CC36A5031EFDC430821C02BC31A238AF445 //key hash ETH mainnet
-            0.1 * 10 ** 18 //fee rinkeby //2 //fee ETH mainnet
+            0xf0d54349aDdcf704F77AE15b96510dEA15cb7952, //vrfCoordinator ETH mainnet
+            0x514910771AF9Ca656af840dff83E8264EcF986CA, // link address ETH mainnet
+            0xAA77729D3466CA35AE8D28B3BBAC7CC36A5031EFDC430821C02BC31A238AF445, //key hash ETH mainnet
+            2 * 10 ** 18 //fee ETH mainnet
         ) public {
         _rOwned[owner()] = _rTotal;
 
@@ -196,6 +199,7 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
     
 		addAddress(owner());
 		_devWallet = payable(devWallet);
+        _marketingWallet = payable(marketingWallet);
         _ecosystemWallet = payable(ecosystemWallet);
 
         IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(router);
@@ -210,18 +214,22 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         _isExcludedFromFee[owner()] = true;
         _isExcludedFromFee[_devWallet] = true;
         _isExcludedFromFee[_ecosystemWallet] = true;
+        _isExcludedFromFee[_marketingWallet] = true;
         _isExcludedFromFee[address(this)] = true;
         _isExcludedFromMaxTx[owner()] = true;
         _isExcludedFromMaxTx[_devWallet] = true;
         _isExcludedFromMaxTx[_ecosystemWallet] = true;
+        _isExcludedFromMaxTx[_marketingWallet] = true;
         _isExcludedFromMaxWallet[owner()] = true;
         _isExcludedFromMaxWallet[_devWallet] = true;
         _isExcludedFromMaxWallet[_ecosystemWallet] = true;
+        _isExcludedFromMaxWallet[_marketingWallet] = true;
         _isExcludedFromMaxWallet[address(this)] = true;
         _isExcludedFromMaxWallet[DEAD] = true;
         _isLottoExcluded[owner()] = true;
         _isLottoExcluded[_devWallet] = true;
         _isLottoExcluded[_ecosystemWallet] = true;
+        _isLottoExcluded[_marketingWallet] = true;
         _isLottoExcluded[address(this)] = true;
         _isLottoExcluded[uniswapV2Pair] = true;
         _isLottoExcluded[router] = true;
@@ -336,6 +344,10 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         _devWallet = payable(dev);
     }
 
+    function setMarketingAddress(address marketing) public onlyOwner() {
+        _marketingWallet = payable(marketing);
+    }
+
     function setEcosystemAddress(address ecosystem) external onlyOwner {
         _ecosystemWallet = payable(ecosystem);
     }
@@ -423,6 +435,10 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
 
     function setPercentOfSwapIsEcosystem(uint256 percentOfSwapIsEcosystem) external onlyOwner() {
         _percentOfSwapIsEcosystem = percentOfSwapIsEcosystem;
+    }
+
+    function setPercentOfSwapIsMarketing(uint256 percentOfSwapIsMarketing) external onlyOwner() {
+        _percentOfSwapIsMarketing = percentOfSwapIsMarketing;
     }
 
     function setEcosystemLottoDevFee(uint256 ecosystemLottoDevFee) external onlyOwner() {
@@ -726,13 +742,15 @@ contract DecentraTokens is Context, IERC20, Ownable, RandomNumberConsumer {
         //get the percentage split for Ecosystem, and Lotto
         uint256 ecosystemETHAmount = (deltaBalance*_percentOfSwapIsEcosystem)/100;
         uint256 jackpotETHAmount = (deltaBalance*_percentOfSwapIsLotto)/100;
+        uint256 marketingETHAmount = (deltaBalance*_percentOfSwapIsMarketing)/100;
 
         //swap to jackpot token
         swapEthForJackpotToken(jackpotETHAmount);
 
-        //send ETH to ecosystem and dev
+        //send ETH to ecosystem and marketing, and dev
         _ecosystemWallet.transfer(ecosystemETHAmount);
-        _devWallet.transfer(deltaBalance-ecosystemETHAmount-jackpotETHAmount);
+        _marketingWallet.transfer(marketingETHAmount);
+        _devWallet.transfer(deltaBalance-ecosystemETHAmount-jackpotETHAmount-marketingETHAmount);
 
         emit SwapAndDistribute(contractTokenBalance, jackpotETHAmount, ecosystemETHAmount, deltaBalance-ecosystemETHAmount-jackpotETHAmount);
     }

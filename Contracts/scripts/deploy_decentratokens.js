@@ -3,7 +3,7 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const isTest = true;
+const isTest = false;
 const hre = require("hardhat");
 let args;
 if (isTest){
@@ -12,8 +12,8 @@ if (isTest){
   args = require(".././arguments/DFEG/arguments_live.json");
 }
 
-//0.1. Update chainlink addresses and fee in contract
-//0.2. Update arguments.js and arguments.json
+//0.1. Update chainlink addresses and fee in contract - DONE
+//0.2. Update arguments.js and arguments.json - DONE
 //1. Call this
 //2. Call distribute_tokens script
 //3. Call Add liquidity script
@@ -32,7 +32,7 @@ async function main() {
 
   // We get the contract to deploy
   const DecentraTokens = await hre.ethers.getContractFactory("DecentraTokens");
-  const decentraTokens = await DecentraTokens.deploy(args[0], args[1], args[2], args[3], args[4], args[5]);
+  const decentraTokens = await DecentraTokens.deploy(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
 
   await decentraTokens.deployed();
 
