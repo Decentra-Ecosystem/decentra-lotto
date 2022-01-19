@@ -100,7 +100,7 @@ module.exports = {
     }
   },
   etherscan: {
-    apiKey: secrets.etherscanTest
+    apiKey: secrets.etherscan
   },
   contractSizer: {
     alphaSort: true,

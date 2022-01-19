@@ -18,9 +18,10 @@ if (isTest){
 //2. Call distribute_tokens script
 //3. Call Add liquidity script
 
-//npx hardhat run scripts/deploy_decentratokens.js --network ethRinkeby
-//npx hardhat verify "0xCb2d85E6057c625a7e3545C1a8A1d37D1f4f08D6" --constructor-args "arguments/DFEG/arguments_test.js" --network ethRinkeby
-//npx hardhat run scripts/distribute_decentratokens.js --network ethRinkeby
+//npx hardhat run scripts/deploy_decentratokens.js --network ethMainNet
+//npx hardhat run scripts/add_liquidity_decentratokens.js --network ethMainNet
+//npx hardhat verify "0xD29F40422fD95737750B0DE59800b302B18f6729" --constructor-args "arguments/DFEG/arguments_live.js" --network ethMainNet
+//npx hardhat run scripts/distribute_decentratokens.js --network ethMainNet
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command

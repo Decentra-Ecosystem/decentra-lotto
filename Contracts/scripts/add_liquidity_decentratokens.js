@@ -3,15 +3,15 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const isTest = true;
+const isTest = false;
 const hre = require("hardhat");
 let abi = require("../artifacts/contracts/Decentra-Tokens.sol/DecentraTokens.json").abi;
 let uniswapABI = require("../artifacts/@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol/IUniswapV2Router02.json").abi;
 let secrets = require("../secrets");
 
-const address = '0xAAd765909cC7149a55e362095446144F2CA5C13E';
-const amtETH = '10000000000000000'; //0.01eth
-const tokenPercentsupply = 40; //40%
+const address = '0xD29F40422fD95737750B0DE59800b302B18f6729';
+const amtETH = '5500000000000000000'; //5.5eth
+const tokenPercentsupply = 25; //25%
 
 async function main() {
   if (address == ''){
@@ -26,9 +26,9 @@ async function main() {
     deployerKey = secrets.deployerPrivatekeyTest;
     providerName = "rinkeby";
   }else{
-    apiKey = secrets.urlETHMainNet;
+    apiKey = secrets.mainnetAPIKey;
     deployerKey = secrets.deployerPrivatekeyLive
-    providerName = homestead
+    providerName = "homestead"
   }
   console.log("Setting up wallet...");
   const uniAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
@@ -54,7 +54,6 @@ async function addLiquidity(token, wallet, uniAddress, uniswap, address, deadlin
   var liquidityAdded = await token._hasLiqBeenAdded();
   console.log("Checking liquidity...");
   if (!liquidityAdded){
-    expect(supply).to.equal(ownerBalance);
     console.log("No liquidity detected, adding initial liquidity...");
     var liquidityAmt = supply.div(100).mul(tokenPercentsupply);
     var allowance = await token.allowance(wallet.address, uniAddress);
@@ -64,7 +63,6 @@ async function addLiquidity(token, wallet, uniAddress, uniswap, address, deadlin
       var approveTx = await token.approve(uniAddress, liquidityAmt);
       await approveTx.wait();
   
-      expect(await token.allowance(wallet.address, uniAddress)).to.equal(liquidityAmt);
       console.log("Uniswap Approved.");
     }else{
       console.log("Uniswap already approved for liquidity amount.");
