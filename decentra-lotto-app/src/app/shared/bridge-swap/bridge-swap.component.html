@@ -1,0 +1,48 @@
+<div class="container panel">
+    <div class="form-outer">
+        <form class="example-container">
+            <mat-form-field hintLabel="From" appearance="fill">
+                <mat-label *ngIf="user.balance != null" style="font-size: 16px;">Balance: {{user.balance}}</mat-label>
+                <input matInput #input maxlength="10" max="{{user.balance}}" type="number" placeholder="1" [formControl]="balanceControl" min="0">
+                <mat-hint align="end"><span *ngIf="isBSC" >BSC</span><span *ngIf="!isBSC" >ETH</span></mat-hint>
+                <button matSuffix mat-icon-button aria-label="Max" (click)="setMax(user.balance)">
+                    Max
+                </button>
+                <mat-error *ngIf="balanceControl.invalid">Error - invalid amount</mat-error>
+            </mat-form-field>
+        </form>
+    </div>
+    <div class="white center odds">
+        <span *ngIf="!isMobile()" (click)="swapChain()">
+            <img src="../../../assets/images/swap.png" height="40px"><br/><br/>
+        </span>
+        <span *ngIf="isMobile()" (click)="swapChain()">
+            <br/><img src="../../../assets/images/swap_vert.png" height="40px"><br/><br/>
+        </span>
+    </div>
+    <div class="form-outer">
+        <form class="example-container">
+            <mat-form-field hintLabel="To" appearance="fill">
+                <mat-label *ngIf="user.balance != null" style="font-size: 16px;">Balance: {{user.balance}}</mat-label>
+                <input matInput #input maxlength="10" max="{{user.balance}}" type="number" placeholder="1" [formControl]="balanceControl" min="0" readonly>
+                <mat-hint align="end"><span *ngIf="isBSC" >ETH</span><span *ngIf="!isBSC" >BSC</span></mat-hint>
+                <mat-error *ngIf="balanceControl.invalid">Error - invalid amount</mat-error>
+            </mat-form-field>
+        </form>
+    </div>
+</div>
+<div class="buttons">
+    <span [matTooltip]="balanceControl.value <= 0 ? 'You must first enter an amount to bridge' : ''">
+        <button 
+            class="button" 
+            [ngClass]="balanceControl.value > 0 ? 'buyButton' : ''" 
+            mat-raised-button color="primary" 
+            [disabled]="loading || balanceControl.value <= 0"
+            type="button" 
+            [style.background]="balanceControl.value > 0 ? '#c2a336' : '#ff3f0fda'" 
+            (click) = "bridge()">
+            <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
+            <span *ngIf="!loading">Bridge</span>
+        </button>
+    </span>
+</div>

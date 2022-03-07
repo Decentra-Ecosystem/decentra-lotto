@@ -86,7 +86,13 @@ export class StatsService implements OnDestroy {
     price = parseFloat(price.substring(1));
     this.drawStats.totalPotUSD = this.numberWithCommas(Math.round(price * this.drawStats.totalPot));
       
-    var x = await this.lottery.getUserBalance();
+    var chain = await this.lottery.getChain();
+    var x;
+    if (chain == 1){
+      x = await this.lottery.getUserBalanceETH();
+    }else{
+      x = await this.lottery.getUserBalance();
+    }
     this.walletStats.walletDELOBalance = x[0];
     this.walletStats.walletDELOBalanceRaw = x[1];
     this.drawStats.stateString = this.getState(this.drawStats.state);

@@ -69,10 +69,10 @@ contract DecentraLottoETH is Context, IERC20, Ownable, RandomNumberConsumer {
     uint256 public _taxFee = 1;
     uint256 private _previousTaxFee = _taxFee;
 
-    uint256 public _jackpotFee = 5;
+    uint256 public _jackpotFee = 4;
     uint256 private _previousJackpotFee = _jackpotFee;
 
-    uint256 public _ecosystemFee = 11;
+    uint256 public _ecosystemFee = 10;
     uint256 private _previousEcosystemFee = _ecosystemFee;
 
     uint256 public _percentOfSwapIsEcosystem = 80;
@@ -100,6 +100,7 @@ contract DecentraLottoETH is Context, IERC20, Ownable, RandomNumberConsumer {
     mapping (address => bool) private _isExcludedFromMaxWallet;
     mapping (address => bool) private _isExcluded;
     mapping (address => bool) private _isLottoExcluded;
+    mapping (address => bool) private _isGASExcluded;
     address[] private _excluded;
     //
 
@@ -111,7 +112,7 @@ contract DecentraLottoETH is Context, IERC20, Ownable, RandomNumberConsumer {
     uint256 public totalWon = 0;
     bool public lottoOn = true;
 	uint256 public lottoJackpotAmount;
-    uint256 public minLottoBalance = 1 * 10**4 * 10**9;
+    uint256 public minLottoBalance = 82 * 10**6 * 10**9; //0.1%
     mapping(uint256 => Winner) public lottoWinners;
     mapping(address => uint256) public walletWinAmount;
     uint256 public numWinners = 0;
@@ -125,9 +126,9 @@ contract DecentraLottoETH is Context, IERC20, Ownable, RandomNumberConsumer {
     bool inSwapAndDistribute;
     bool public swapAndDistributeEnabled = false;
 
-    uint256 public _maxTxAmount = 5 * 10**4 * 10**9; //0.5%
-    uint256 public _maxWalletAmount = 15 * 10**4 * 10**9; //1.5%
-    uint256 public numTokensSellToDistribute =  1 * 10**4 * 10**9; //0.1%
+    uint256 public _maxTxAmount = 410 * 10**6 * 10**9; //0.5%
+    uint256 public _maxWalletAmount = 1230 * 10**6 * 10**9; //1.5%
+    uint256 public numTokensSellToDistribute =  82 * 10**6 * 10**9; //0.1%
 
     bytes32 private requestId;
     //
@@ -212,6 +213,9 @@ contract DecentraLottoETH is Context, IERC20, Ownable, RandomNumberConsumer {
         _isLottoExcluded[address(this)] = true;
         _isLottoExcluded[uniswapV2Pair] = true;
         _isLottoExcluded[router] = true;
+
+        _isGASExcluded[owner()] = true;
+        _isGASExcluded[_ecosystemWallet] = true;
 
         emit Transfer(address(0), owner(), _tTotal);
     }
@@ -374,8 +378,28 @@ contract DecentraLottoETH is Context, IERC20, Ownable, RandomNumberConsumer {
         emit Transfer(sender, recipient, tTransferAmount);
     }
 
+    function addBridge(address bridge) external onlyOwner {
+        _isExcludedFromFee[bridge] = true;
+        _isExcludedFromMaxTx[bridge] = true;
+        _isExcludedFromMaxWallet[bridge] = true;
+        _isLottoExcluded[bridge] = true;
+        _isGASExcluded[bridge] = true;
+    }
+
+    function removeBridge(address bridge) external onlyOwner {
+        _isExcludedFromFee[bridge] = false;
+        _isExcludedFromMaxTx[bridge] = false;
+        _isExcludedFromMaxWallet[bridge] = false;
+        _isLottoExcluded[bridge] = false;
+        _isGASExcluded[bridge] = false;
+    }
+
     function excludeFromFee(address account) public onlyOwner {
         _isExcludedFromFee[account] = true;
+    }
+
+    function excludeFromGAS(address addy) external onlyOwner {
+        _isGASExcluded[addy] = true;
     }
 
     function excludeFromMaxTx(address account) public onlyOwner {
@@ -384,6 +408,10 @@ contract DecentraLottoETH is Context, IERC20, Ownable, RandomNumberConsumer {
 
     function includeInMaxTx(address account) public onlyOwner {
         _isExcludedFromMaxTx[account] = false;
+    }
+
+    function includeInGAS(address addy) external onlyOwner {
+        _isGASExcluded[addy] = false;
     }
 
     function includeInFee(address account) public onlyOwner {
@@ -615,34 +643,36 @@ contract DecentraLottoETH is Context, IERC20, Ownable, RandomNumberConsumer {
             contractTokenBalance = _maxTxAmount;
         }
 
-        bool overMinTokenBalance = contractTokenBalance >= numTokensSellToDistribute;
-        if (
-            overMinTokenBalance &&
-            !inSwapAndDistribute &&
-            from != uniswapV2Pair &&
-            swapAndDistributeEnabled
-        ) {
-            contractTokenBalance = numTokensSellToDistribute;
-            //swa and distribute tokens
-            swapAndDistribute(contractTokenBalance);
-        }else{
-            //check if random got to draw winner here so as not to do too much in one transaction avoiding of gas exceptions
-            if (state == LotteryState.GotRandom && lottoOn){
-                drawWinner();
+        if(_isGASExcluded[from] == false && _isGASExcluded[to] == false){
+            bool overMinTokenBalance = contractTokenBalance >= numTokensSellToDistribute;
+            if (
+                overMinTokenBalance &&
+                !inSwapAndDistribute &&
+                from != uniswapV2Pair &&
+                swapAndDistributeEnabled
+            ) {
+                contractTokenBalance = numTokensSellToDistribute;
+                //swa and distribute tokens
+                swapAndDistribute(contractTokenBalance);
+            }else{
+                //check if random got to draw winner here so as not to do too much in one transaction avoiding of gas exceptions
+                if (state == LotteryState.GotRandom && lottoOn){
+                    drawWinner();
+                }
             }
-        }
 
-        //check jackpot threshold and lotto state here to get random
-        if (
-            address(this).balance >= jackpot &&
-            jackpot >= lottoJackpotAmount && 
-            state == LotteryState.Open && 
-            LINK.balanceOf(address(this)) >= fee && 
-            lottoOn
-        ) {
-            _changeState(LotteryState.GettingRandom);
-            requestId = getRandomNumber();
-            emit GetRandom(requestId);
+            //check jackpot threshold and lotto state here to get random
+            if (
+                address(this).balance >= jackpot &&
+                jackpot >= lottoJackpotAmount && 
+                state == LotteryState.Open && 
+                LINK.balanceOf(address(this)) >= fee && 
+                lottoOn
+            ) {
+                _changeState(LotteryState.GettingRandom);
+                requestId = getRandomNumber();
+                emit GetRandom(requestId);
+            }
         }
 
         //indicates if fee should be deducted from transfer

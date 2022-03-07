@@ -24,6 +24,7 @@ export class NavComponent implements OnInit, OnDestroy {
   menuItems = [
     {name: 'lottery', enabled:true, url:'', pages: []}, 
     {name:'staking', enabled:true, url:'', pages: []},
+    {name:'bridge', enabled:true, url:'', pages: []},
     {name:'NFT Partners', enabled:true, url:'', collapsed: true, pages: [
       {name:'dexkit', enabled:true, url:''},
       {name:'etherland', enabled:true, url:''},
@@ -37,9 +38,10 @@ export class NavComponent implements OnInit, OnDestroy {
     {name:'syndicates', enabled:false, url:'', pages: []}, 
     {name:'vote', enabled:false, url:'', pages: []}, 
     {name:'trade', enabled:true, url:'', collapsed: true, pages: [
-      {name:'buy', enabled:true, url:'https://pancakeswap.finance/swap?outputCurrency=0xC91B4AA7e5C247CB506e112E7FEDF6af7077b90A'},
-      {name:'dextools', enabled:true, url: 'https://www.dextools.io/app/bsc/pair-explorer/0xc989c0e5d5035e689c129868944db9e091690875'},
-      {name:'poocoin', enabled:true, url: 'https://poocoin.app/tokens/0xC91B4AA7e5C247CB506e112E7FEDF6af7077b90A'}
+      {name:'buy bsc', enabled:true, url:'https://pancakeswap.finance/swap?outputCurrency=0xC91B4AA7e5C247CB506e112E7FEDF6af7077b90A'},
+      {name:'buy eth', enabled:true, url:'https://pancakeswap.finance/swap?outputCurrency=0xC91B4AA7e5C247CB506e112E7FEDF6af7077b90A'},
+      {name:'dextools bsc', enabled:true, url: 'https://www.dextools.io/app/bsc/pair-explorer/0xc989c0e5d5035e689c129868944db9e091690875'},
+      {name:'dextools eth', enabled:true, url: 'https://www.dextools.io/app/bsc/pair-explorer/0xc989c0e5d5035e689c129868944db9e091690875'},
     ]}, 
     {name:'docs', enabled:true, url:'https://docs.decentralotto.com/', pages: []},
     {name:'audits', enabled:true, url:'', collapsed: true, pages: [
@@ -62,6 +64,7 @@ export class NavComponent implements OnInit, OnDestroy {
   chain_name: string;
   metaConnection: any;
   deloUSDPrice: any;
+  deloETHUSDPrice: any;
   pollingTimer: any;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
@@ -139,8 +142,16 @@ export class NavComponent implements OnInit, OnDestroy {
       var p = data.usdPrice;
       var p2 = p.substring(1);
       var price = parseFloat(p2);
+
+      var q = data.usdETHPrice;
+      var q2 = q.substring(1);
+      var priceETH = parseFloat(q2);
       //var price = data['decentra-lotto'].usd;
       this.deloUSDPrice = Math.round(price * 10000000000) / 10000000000;
+        this.pollingTimer = setTimeout(()=>{
+          this.pollPrice();
+        }, 10000);
+      this.deloETHUSDPrice = Math.round(priceETH * 10000000000) / 10000000000;
         this.pollingTimer = setTimeout(()=>{
           this.pollPrice();
         }, 10000);
@@ -166,6 +177,7 @@ export class NavComponent implements OnInit, OnDestroy {
       this.chain_image = "../../../assets/images/meta_wallet.png";
       this.chain_name = "Unknown";
     }
+    
     this.statsService.walletStatsSub
     .pipe(takeUntil(this.ngUnsubscribe))
     .subscribe({

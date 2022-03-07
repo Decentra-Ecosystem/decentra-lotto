@@ -11,13 +11,20 @@ import {
     BNB_DECIMALS,
     DELOSTAKING_CONTRACT_ADDRESS_MAIN_NET,
     DELOSTAKING_CONTRACT_ADDRESS_TEST_NET,
-    WEB3
+    WEB3,
+    DELO_BSC_BRIDGE_CONTRACT_ADDRESS_TEST_NET,
+    DELO_ETH_BRIDGE_CONTRACT_ADDRESS_TEST_NET,
+    DELO_BSC_BRIDGE_CONTRACT_ADDRESS_MAIN_NET,
+    DELO_ETH_BRIDGE_CONTRACT_ADDRESS_MAIN_NET,
+    DELO_ETH_CONTRACT_ADDRESS_TEST_NET,
+    DELO_ETH_CONTRACT_ADDRESS_MAIN_NET
 } from '../models/meta-mask.dictionary';
 import Web3 from 'web3';
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import DecentraLotto from "../../assets/json/DecentraLotto.json";
 import Delo from "../../assets/json/delo.json";
+import DeloETH from "../../assets/json/delo.json";
 import DELOStaking from "../../assets/json/delo_stake.json"
 import Approve from "../../assets/json/approve.json";
 import { StakingStats } from '../models/stakingstats.model';
@@ -32,9 +39,13 @@ export class LotteryService {
     LOTTO_CONTRACT_ADDRESS: string;
     DELO_CONTRACT_ADDRESS: string;
     DELOSTAKING_CONTRACT_ADDRESS: string;
+    DELO_ETH_CONTRACT_ADDRESS: string
+    BSC_BRIDGE_ADDRESS: string;
+    ETH_BRIDGE_ADDRESS: string;
     lottoContract: any;
     stakingContract: any;
     deloContract: any;
+    deloETHContract: any;
     options: any;
     web3Modal: any;
     ethereumDetected: boolean = false;
@@ -65,11 +76,17 @@ export class LotteryService {
             this.LOTTO_CONTRACT_ADDRESS = LOTTO_CONTRACT_ADDRESS_MAIN_NET;
             this.DELO_CONTRACT_ADDRESS = DELO_CONTRACT_ADDRESS_MAIN_NET;
             this.DELOSTAKING_CONTRACT_ADDRESS = DELOSTAKING_CONTRACT_ADDRESS_MAIN_NET;
+            this.BSC_BRIDGE_ADDRESS = DELO_BSC_BRIDGE_CONTRACT_ADDRESS_MAIN_NET;
+            this.ETH_BRIDGE_ADDRESS = DELO_ETH_BRIDGE_CONTRACT_ADDRESS_MAIN_NET;
+            this.DELO_ETH_CONTRACT_ADDRESS = DELO_ETH_CONTRACT_ADDRESS_MAIN_NET;
         }else{
             this.options = optionsTest;
             this.LOTTO_CONTRACT_ADDRESS = LOTTO_CONTRACT_ADDRESS_TEST_NET;
             this.DELO_CONTRACT_ADDRESS = DELO_CONTRACT_ADDRESS_TEST_NET;
             this.DELOSTAKING_CONTRACT_ADDRESS = DELOSTAKING_CONTRACT_ADDRESS_TEST_NET;
+            this.BSC_BRIDGE_ADDRESS = DELO_BSC_BRIDGE_CONTRACT_ADDRESS_TEST_NET;
+            this.ETH_BRIDGE_ADDRESS = DELO_ETH_BRIDGE_CONTRACT_ADDRESS_TEST_NET;
+            this.DELO_ETH_CONTRACT_ADDRESS = DELO_ETH_CONTRACT_ADDRESS_TEST_NET;
         }
 
         this.web3Modal = new Web3Modal({
@@ -107,33 +124,48 @@ export class LotteryService {
         return await this.web3js.eth.net.getId();
     }
 
-    requestChain(){
-        window.ethereum
-        .request(
-            { method: 'wallet_addEthereumChain', 
-                params: [
+    async requestChain(chain){
+        var id, chainName, symbol, rpcUrls, blockExplorerUrls;
+        if (chain == "BSC"){
+            id = '0x' + this.options.chainId.toString(16);
+            chainName = "Binance Smart Chain"
+            symbol = "BSC"
+            rpcUrls = [this.options.rpc[56]];
+            blockExplorerUrls = ['https://bscscan.com/'];
+        }else{
+            var x = 1;
+            id = '0x' + x.toString(16);
+        }
+
+        try {
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: id }],
+            });
+          } catch (switchError) {
+            // This error code indicates that the chain has not been added to MetaMask.
+            if (switchError.code === 4902) {
+              try {
+                await window.ethereum.request({
+                  method: 'wallet_addEthereumChain',
+                  params: [
                     { 
-                        chainId: '0x' + this.options.chainId.toString(16), 
-                        chainName: this.options.network, 
-                        nativeCurrency: { 
-                            name: 'BNB', 
-                            symbol: 'BNB', 
-                            decimals: BNB_DECIMALS 
-                        }, 
-                        rpcUrls: [this.options.rpc[56]], 
-                        blockExplorerUrls: ['https://bscscan.com/'] 
-                    }
-                ] 
-        })
-        .catch((err) => {
-            if (err.code === 4001) {
-              // EIP-1193 userRejectedRequest error
-              // If this happens, the user rejected the connection request.
-              console.log('Please connect to MetaMask.');
-            } else {
-              console.error(err);
+                          chainId: id, 
+                          chainName: chainName, 
+                          nativeCurrency: {
+                            name: symbol,
+                            symbol: symbol,
+                            decimals: 18
+                          },
+                          rpcUrls: rpcUrls,
+                          blockExplorerUrls: blockExplorerUrls
+                    }],
+                });
+              } catch (addError) {
+                // handle "add" error
+              }
             }
-        });
+        }
     }
 
     handleEthereum() {
@@ -221,6 +253,7 @@ export class LotteryService {
 
         this.lottoContract = new this.web3js.eth.Contract(DecentraLotto, this.LOTTO_CONTRACT_ADDRESS);
         this.deloContract = new this.web3js.eth.Contract(Delo, this.DELO_CONTRACT_ADDRESS);
+        this.deloETHContract = new this.web3js.eth.Contract(DeloETH, this.DELO_ETH_CONTRACT_ADDRESS);
         this.stakingContract = new this.web3js.eth.Contract(DELOStaking, this.DELOSTAKING_CONTRACT_ADDRESS);
 
         // detect Metamask account change
@@ -244,6 +277,38 @@ export class LotteryService {
             bal = await this.deloContract
                 .methods.balanceOf(this.accounts[0])
                 .call({ from: this.accounts[0] });
+        }catch(err){
+            return -1;
+        }
+        return [this.roundToken(bal, 4), bal];
+    }
+
+    async getUserBalanceETH(){
+        var bal;
+        try{
+            bal = await this.deloETHContract
+                .methods.balanceOf(this.accounts[0])
+                .call({ from: this.accounts[0] });
+        }catch(err){
+            return -1;
+        }
+        return [this.roundToken(bal, 4), bal];
+    }
+
+    async getReserveBalance(chain){
+        var bal, address, contract;
+        if(chain =='ETH'){
+            contract = this.deloETHContract;
+            address = this.ETH_BRIDGE_ADDRESS;
+        }else if(chain =='BSC'){
+            contract = this.deloContract;
+            address = this.BSC_BRIDGE_ADDRESS
+        }
+        
+        try{
+            bal = await contract
+                .methods.balanceOf(address)
+                .call();
         }catch(err){
             return -1;
         }

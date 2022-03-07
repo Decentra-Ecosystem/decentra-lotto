@@ -6,7 +6,7 @@
       [opened]="(isHandset$ | async) === false">
     <mat-toolbar class="linkText" style="color: white;">Menu</mat-toolbar>
     <mat-nav-list class="list">
-      <span *ngFor="let item of menuItems">
+      <span *ngFor="let item of menuItems; let i = index">
         <!-- simple rouer link -->
         <span *ngIf="item.url == '' && item.pages.length == 0">
           <a class="link" mat-list-item [routerLink]="'/'+item.name" routerLinkActive="active-link"> 
@@ -19,7 +19,7 @@
           <a class="link" mat-list-item routerLinkActive="active-link" (click)="item.collapsed = !item.collapsed"> 
               <span class="linkText">{{item.name | titlecase}}<mat-icon class="material-icons">arrow_drop_down</mat-icon></span>
           </a>
-          <span *ngFor="let subitem of item.pages">
+          <span *ngFor="let subitem of item.pages; let p = index">
             <span *ngIf="subitem.url == ''">
               <a [ngClass]="item.collapsed == true ? 'accordion' : 'link'" mat-list-item [routerLink]="'/'+subitem.name" routerLinkActive="active-link"> 
                 <span class="linkTextDD">{{subitem.name | titlecase}}</span> <img *ngIf="subitem.enabled == false" src="../../../assets/images/coming_soon.png">
@@ -29,9 +29,9 @@
               <a [ngClass]="item.collapsed == true ? 'accordion' : 'link'" mat-list-item href="{{subitem.url}}"target="_blank"> 
                 <span class="linkTextDD">{{subitem.name | titlecase}}</span> <img *ngIf="subitem.enabled == false" src="../../../assets/images/coming_soon.png">
               </a>
-            </span>
+            </span>            
           </span>
-        </span>
+          </span>
       </span>
 
 
@@ -54,16 +54,8 @@
           </a>
         </span>
       </span> -->
-      
+
     </mat-nav-list>
-    <p class="legals">
-      <strong>Operated by:</strong><br /><br />
-      DECENTRALOTTO LIMITADA<br />
-      SAN JOSE-SAN JOSE MATA REDONDA<br />
-      SABANA OESTE<br />
-      AVENIDA DOCE CALLE NOVENTA, OFICINAS DEL BUFETE ERP LAWYERS<br />
-      Corporate Identification number: 3-102-840494<br />
-    </p>
     <!-- <button 
         mat-raised-button 
         color="primary" 
@@ -73,8 +65,17 @@
         Start Test
     </button> -->
 
+    <p class="legals">
+      <strong>Operated by:</strong><br />
+      DECENTRALOTTO LIMITADA<br />
+      SAN JOSE-SAN JOSE MATA REDONDA, SABANA OESTE<br />
+      AVENIDA DOCE CALLE NOVENTA, OFICINAS DEL BUFETE ERP LAWYERS<br />
+      Corporate Identification number: 3-102-840494<br />
+    </p>
+
     <div class="bottomPanel">
-      <h2 style="text-align: left;"><img width="35px;" src="assets/images/logo/decentra-lotto-O_s.png">${{deloUSDPrice}}</h2>
+      <p style="text-align: left;"><img width="25px;" src="assets/images/bsc.png">${{deloUSDPrice}}</p>
+      <p style="text-align: left;"><img width="25px;" src="assets/images/eth.png">${{deloETHUSDPrice}}</p>
       <div class="bottom">
         <a style="padding:8px;" href="https://t.me/decentra_lotto" target="_blank"><img src="../../../assets/images/tg_icon.png"></a>
         <a style="padding:8px;" href="https://twitter.com/Decentra_Lotto" target="_blank"><img src="../../../assets/images/twitter_icon.png"></a>

@@ -9,6 +9,7 @@ import { TermsComponent } from './pages/terms/terms.component';
 import { DexkitComponent } from './pages/dexkit/dexkit.component';
 import { EtherlandComponent } from './pages/etherland/etherland.component';
 import { MarsecosystemComponent } from './pages/marsecosystem/marsecosystem.component';
+import { BridgeComponent } from './pages/bridge/bridge.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'lottery', pathMatch: 'full' },
@@ -16,6 +17,8 @@ const routes: Routes = [
   { path: 'Lottery', redirectTo: 'lottery', pathMatch: 'full'},
   { path: 'Staking', redirectTo: 'staking', pathMatch: 'full'},
   { path: 'staking', component: StakingComponent},
+  { path: 'Bridge', redirectTo: 'bridge', pathMatch: 'full'},
+  { path: 'bridge', component: BridgeComponent},
   { path: 'Dexkit', redirectTo: 'dexkit', pathMatch: 'full'},
   { path: 'dexkit', component: DexkitComponent},
   { path: 'Etherland', redirectTo: 'etherland', pathMatch: 'full'},

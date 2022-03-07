@@ -68,6 +68,8 @@ import { EtherlandComponent } from './pages/etherland/etherland.component';
 import { MarsecosystemComponent } from './pages/marsecosystem/marsecosystem.component';
 import { MarsecosystemInfoCardComponent } from './shared/marsecosystem-info-card/marsecosystem-info-card.component';
 import { MarsecosystemVideoComponent } from './shared/marsecosystem-video/marsecosystem-video.component';
+import { BridgeComponent } from './pages/bridge/bridge.component';
+import { BridgeSwapComponent } from './shared/bridge-swap/bridge-swap.component';
 
 @NgModule({
   declarations: [
@@ -107,7 +109,9 @@ import { MarsecosystemVideoComponent } from './shared/marsecosystem-video/marsec
     EtherlandComponent,
     MarsecosystemComponent,
     MarsecosystemInfoCardComponent,
-    MarsecosystemVideoComponent
+    MarsecosystemVideoComponent,
+    BridgeComponent,
+    BridgeSwapComponent
   ],
   imports: [
     BrowserModule,

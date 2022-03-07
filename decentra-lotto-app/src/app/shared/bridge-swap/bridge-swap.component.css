@@ -1,0 +1,199 @@
+.container {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+  }
+
+  .example-container{
+    width: 260px;
+  }
+
+  .cost-text {
+    font-size: 25px;
+    font-family: 'LeagueSpartan', 'arial', sans-serif;
+  }
+
+  .bonus-text {
+    font-size: 20px;
+    font-family: 'LeagueSpartan', 'arial', sans-serif;
+  }
+
+  .cost-amt-text {
+    animation: color-change 10s infinite alternate;
+  }
+
+  .buyButton {
+    color: rgb(226, 80, 75);
+    animation: flicker 10s infinite alternate;
+  }
+
+  .buttons{
+    margin: 20px;
+  }
+
+  .button {
+      margin: 5px;
+      text-align: center;
+      font-size: 21px;
+      width: 180px;
+      height: 37px;
+  }
+
+  .buyButtonDisabled {
+    color: rgb(72, 203, 255);
+    animation: flicker 10s infinite alternate;
+  }
+
+  @keyframes color-change {
+    0% { color: rgb(236, 208, 255); }
+    25% { color: rgb(252, 63, 227); }
+    50% { color: rgb(158, 233, 108); }
+    75% { color: rgb(236, 220, 74); }
+    100% { color: rgb(230, 102, 52); }
+  }
+  
+  h1 {
+    font-size: 4.2rem;    
+  }
+  .form-outer{
+    background-color: rgb(255, 255, 255); 
+    border-radius: 5px; 
+    padding: 10px;
+    box-shadow: 0px 0px 5px 5px rgba(251, 255, 0, 0.616);
+    font-size: 20px;
+    height: 120px;
+  }
+
+  .white{
+    color: white;
+  }
+
+  .center {
+    margin: auto;
+    width: 50%;
+    box-shadow: 0px 0px 5px 5px rgb(251, 255, 0, 0.616);
+    z-index: 0;
+    padding-top: 15px;
+  }
+
+  .panel{
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    margin-right: 20px;
+  }
+
+  .neonText {
+    animation: flickerPink 1.5s infinite alternate;
+    color: #fff;
+  }
+  .randomLoader{
+    text-align: left;
+    width: 32%; 
+    margin-left: auto; 
+    margin-right: 25%;
+  }
+
+  .randomText{
+    position:relative; 
+    top: -60px; 
+    left: 5%;
+    font-size: 12px;
+  }
+
+  .comingsoon{
+    width: 300px;
+    height: 200px;
+  }
+
+  .balanceError{
+    color: red; 
+    font-size: 20px;
+  }
+
+  @media only screen and (max-width : 1700px) {
+    .panel{
+      margin: 0px;
+    }
+  }
+
+  @media only screen and (max-width : 992px) {
+    .container {
+        display: flex;
+        justify-content: space-around;
+        flex-direction: column;
+      }
+      .panel{
+        margin: 0px;
+      }
+      .form-outer{
+        background-color: rgb(255, 255, 255);
+        z-index: 1;
+        box-shadow: 0px 0px 5px 5px rgba(251, 255, 0, 0.616);
+        /* border: 3px solid green; */
+        font-size: 15px;
+        height: fit-content;
+        margin-left: 30px;
+        margin-right: 30px;
+      }
+      .center {
+        margin: auto;
+        width: 80%;
+        box-shadow: 0px 0px 5px 5px rgb(251, 255, 0, 0.616);
+        z-index: 0;
+        padding-top: 15px;
+      }
+      .cost-text {
+        font-size: 20px;
+        margin: 0px;
+      }
+      .bonus-text {
+        font-size: 17px;
+      }
+      .discount{
+        font-size: smaller;
+      }
+  }
+  @media only screen and (max-width : 600px) {
+    .odds{
+      padding-top: 0px; 
+      margin-top:0px;
+    }
+    .randomLoader{
+        width: 38%;
+        margin-right: 31%;
+    }
+    .cost-text {
+        font-size: 15px;
+        margin: 0px;
+        padding: 0px;
+      }
+      .bonus-text {
+        font-size: 13px;
+        margin: 0px;
+        margin-top: 5px;
+        margin-bottom: 2px;
+      }
+      .button {
+        font-size: 13px;
+        margin: 3px;
+        width: 46%;
+        text-align: center;
+    }
+    .form-outer{
+        background-color: rgb(255, 255, 255);
+        z-index: 1;
+        box-shadow: 0px 0px 5px 5px rgba(251, 255, 0, 0.616);
+        /* border: 3px solid green; */
+        height: fit-content;
+        font-size: 15px;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+    .comingsoon{
+      width: 150px;
+      height: 100px;
+    }
+    .balanceError{
+      color: red; 
+      font-size: 15px;
+    }
+  }
