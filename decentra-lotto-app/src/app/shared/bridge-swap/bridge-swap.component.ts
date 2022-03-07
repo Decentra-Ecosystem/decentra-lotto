@@ -23,6 +23,7 @@ import { StatsService } from 'src/app/services/stats.service';
 export class BridgeSwapComponent implements OnInit, OnDestroy {
 
   balanceControl = new FormControl(0, Validators.min(0));
+  receivedControl = new FormControl(0, Validators.min(0));
   user:any;
   walletStats: WalletStats;
   symbols: any;
@@ -31,7 +32,7 @@ export class BridgeSwapComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject();
 
   constructor(private lotteryService: LotteryService, private statsService: StatsService, private platform: PlatformCheckerService,) { 
-    this.user = {address: '', truncatedAddress: '', balance: ''};
+    this.user = {address: '', truncatedAddress: '', balance: '0', balanceETH: '0'};
     if (IS_LIVE){
       this.symbols = {
         DELO: {address: DELO_CONTRACT_ADDRESS_MAIN_NET, decimals: TOKEN_DECIMALS},
@@ -81,6 +82,7 @@ export class BridgeSwapComponent implements OnInit, OnDestroy {
 
   setMax(num){
     this.balanceControl.setValue(parseFloat(num));
+    this.amountChanged();
   }
 
   isMobile(){
@@ -93,6 +95,10 @@ export class BridgeSwapComponent implements OnInit, OnDestroy {
 
   swapChain(){
     this.lotteryService.requestChain(this.isBSC==true ? 'ETH' : 'BSC');
+  }
+
+  amountChanged(){
+    this.receivedControl.setValue(this.balanceControl.value);
   }
 
 }

@@ -3,9 +3,9 @@
         <form class="example-container">
             <mat-form-field hintLabel="From" appearance="fill">
                 <mat-label *ngIf="user.balance != null" style="font-size: 16px;">Balance: {{user.balance}}</mat-label>
-                <input matInput #input maxlength="10" max="{{user.balance}}" type="number" placeholder="1" [formControl]="balanceControl" min="0">
+                <input class="form" matInput #input maxlength="10" max="{{user.balance}}" type="number" placeholder="1" [formControl]="balanceControl" min="0" (change)="amountChanged()">
                 <mat-hint align="end"><span *ngIf="isBSC" >BSC</span><span *ngIf="!isBSC" >ETH</span></mat-hint>
-                <button matSuffix mat-icon-button aria-label="Max" (click)="setMax(user.balance)">
+                <button class="max" matSuffix mat-icon-button aria-label="Max" (click)="setMax(user.balance)">
                     Max
                 </button>
                 <mat-error *ngIf="balanceControl.invalid">Error - invalid amount</mat-error>
@@ -23,10 +23,10 @@
     <div class="form-outer">
         <form class="example-container">
             <mat-form-field hintLabel="To" appearance="fill">
-                <mat-label *ngIf="user.balance != null" style="font-size: 16px;">Balance: {{user.balance}}</mat-label>
-                <input matInput #input maxlength="10" max="{{user.balance}}" type="number" placeholder="1" [formControl]="balanceControl" min="0" readonly>
+                <mat-label *ngIf="user.balance != null" style="font-size: 16px;">DELO <span *ngIf="isBSC" >ETH</span><span *ngIf="!isBSC" >BSC</span> received:</mat-label>
+                <input class="form" matInput #input maxlength="10" max="{{user.balance}}" type="number" placeholder="1" [formControl]="receivedControl" min="0" readonly>
                 <mat-hint align="end"><span *ngIf="isBSC" >ETH</span><span *ngIf="!isBSC" >BSC</span></mat-hint>
-                <mat-error *ngIf="balanceControl.invalid">Error - invalid amount</mat-error>
+                <mat-error *ngIf="receivedControl.invalid">Error - invalid amount</mat-error>
             </mat-form-field>
         </form>
     </div>

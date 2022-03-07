@@ -39,6 +39,10 @@
       height: 37px;
   }
 
+  .max {
+    font-size: 17px !important;
+  }
+
   .buyButtonDisabled {
     color: rgb(72, 203, 255);
     animation: flicker 10s infinite alternate;
@@ -107,6 +111,10 @@
   .balanceError{
     color: red; 
     font-size: 20px;
+  }
+
+  .form{
+    height: 25px;
   }
 
   @media only screen and (max-width : 1700px) {
