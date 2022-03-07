@@ -3,7 +3,7 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const isTest = false;
+const isTest = true;
 const hre = require("hardhat");
 let abi = require("../artifacts/contracts/Decentra-Tokens.sol/DecentraTokens.json").abi;
 let amount = 3500000000000000; //35% of supply

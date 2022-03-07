@@ -7,9 +7,9 @@ const isTest = false;
 const hre = require("hardhat");
 let args;
 if (isTest){
-  args = require(".././arguments/DFEG/arguments_test.json");
+  args = require(".././arguments/DSHIB/arguments_test.json");
 }else{
-  args = require(".././arguments/DFEG/arguments_live.json");
+  args = require(".././arguments/DSHIB/arguments_live.json");
 }
 
 //0.1. Update chainlink addresses and fee in contract - DONE
@@ -20,7 +20,7 @@ if (isTest){
 
 //npx hardhat run scripts/deploy_decentratokens.js --network ethMainNet
 //npx hardhat run scripts/add_liquidity_decentratokens.js --network ethMainNet
-//npx hardhat verify "0xD29F40422fD95737750B0DE59800b302B18f6729" --constructor-args "arguments/DFEG/arguments_live.js" --network ethMainNet
+//npx hardhat verify "0xd38d1913799909158e319453ab315CAB1bEfb55c" --constructor-args "arguments/DSHIB/arguments_live.js" --network ethMainNet
 //npx hardhat run scripts/distribute_decentratokens.js --network ethMainNet
 
 async function main() {
@@ -33,7 +33,7 @@ async function main() {
 
   // We get the contract to deploy
   const DecentraTokens = await hre.ethers.getContractFactory("DecentraTokens");
-  const decentraTokens = await DecentraTokens.deploy(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+  const decentraTokens = await DecentraTokens.deploy(args[0], args[1], args[2], args[3], args[4]);
 
   await decentraTokens.deployed();
 

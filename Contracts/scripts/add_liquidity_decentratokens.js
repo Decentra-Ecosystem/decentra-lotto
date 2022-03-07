@@ -9,8 +9,8 @@ let abi = require("../artifacts/contracts/Decentra-Tokens.sol/DecentraTokens.jso
 let uniswapABI = require("../artifacts/@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol/IUniswapV2Router02.json").abi;
 let secrets = require("../secrets");
 
-const address = '0xD29F40422fD95737750B0DE59800b302B18f6729';
-const amtETH = '5500000000000000000'; //5.5eth
+const address = '0xd38d1913799909158e319453ab315CAB1bEfb55c';
+const amtETH = '1500000000000000000'; //1.5eth
 const tokenPercentsupply = 25; //25%
 
 async function main() {

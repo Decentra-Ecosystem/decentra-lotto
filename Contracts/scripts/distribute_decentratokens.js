@@ -3,15 +3,19 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const isTest = false;
+const isTest = true;
 const hre = require("hardhat");
 let abi = require("../artifacts/contracts/Decentra-Tokens.sol/DecentraTokens.json").abi;
 let amount = 100000000000000; //1% of supply
 let secrets = require("../secrets");
 
-const address = '0xD29F40422fD95737750B0DE59800b302B18f6729';
+const address = '0xd38d1913799909158e319453ab315CAB1bEfb55c';
 
 async function main() {
+  if (address == ''){
+    console.log("Address blank");
+    return;
+  }
   let apiKey;
   let deployerKey;
   let providerName;
@@ -49,13 +53,7 @@ async function main() {
   // "0x417B5BF4CF974176C5b01b256F6d0EBd8e87adEe", //Celty Alternate 02
 
   var wallets = [
-    "0x67d695c0e3163db57eabfb00f25703bb6ce07094", //influencer 1
-    "0x18fc59b55E06C2c244746dFd45E56428d771F8e7",  //influencer 2
-    "0x3c1E0A5965a9420b6E803600e933a36E829cceF5",  //influencer 3
-    "0x4F7DBe707e2eD8f6eC749e7813C7f6A51E29436c",  //influencer 4
-    "0x4e78d5966d91f31c1ad4633277c10233a99406d4",  //influencer 5
-    "0x896F7e1A695455AAe1Aaea58ca1B77ba9D9EA88c",  //influencer 6
-    "0x903d4a8165C11bC4ec22a2A2C1f00dFcE205C18E" // influencer 7 saitama
+    "",
   ];
 
   var amounts = [];

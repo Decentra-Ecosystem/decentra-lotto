@@ -142,7 +142,7 @@ async function deployDFEG(abi, wallet, uniAddress, uniswap, deadline, startToken
   }else{
     console.log("Deploying DFEG token...");
     const DecentraTokensDeployer = await ethers.getContractFactory("DecentraTokens", wallet);
-    const decentraTokensDeployer = await DecentraTokensDeployer.deploy(args[0], args[1], args[2], args[3], jackpotAddress, args[5], args[6]);
+    const decentraTokensDeployer = await DecentraTokensDeployer.deploy(args[0], args[1], jackpotAddress, args[3], args[4]);
     await decentraTokensDeployer.deployed();
     decentraTokens = new ethers.Contract(decentraTokensDeployer.address,abi,wallet);
     address = decentraTokensDeployer.address;
@@ -155,7 +155,7 @@ async function deployDFEG(abi, wallet, uniAddress, uniswap, deadline, startToken
   console.log("Starting initial checks...");
   //var flipSniper = await decentraTokens.setSniperProtection(false, {from: wallet.address});
   //await flipSniper.wait();
-  expect(await decentraTokens.symbol()).to.equal("DFEG");
+  expect(await decentraTokens.symbol()).to.equal("DSHIB");
   console.log("Initial checks passed.");
   //
 
