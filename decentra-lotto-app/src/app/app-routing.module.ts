@@ -10,11 +10,14 @@ import { DexkitComponent } from './pages/dexkit/dexkit.component';
 import { EtherlandComponent } from './pages/etherland/etherland.component';
 import { MarsecosystemComponent } from './pages/marsecosystem/marsecosystem.component';
 import { BridgeComponent } from './pages/bridge/bridge.component';
+import { EthlotteryComponent } from './pages/ethlottery/ethlottery.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'lottery', pathMatch: 'full' },
-  { path: 'lottery', component: DashComponent},
-  { path: 'Lottery', redirectTo: 'lottery', pathMatch: 'full'},
+  { path: '', redirectTo: 'bsc-lottery', pathMatch: 'full' },
+  { path: 'bsc-lottery', component: DashComponent},
+  { path: 'bsc lottery', redirectTo: 'bsc-lottery', pathMatch: 'full'},
+  { path: 'eth-lottery', component: EthlotteryComponent},
+  { path: 'eth lottery', redirectTo: 'eth-lottery', pathMatch: 'full'},
   { path: 'Staking', redirectTo: 'staking', pathMatch: 'full'},
   { path: 'staking', component: StakingComponent},
   { path: 'Bridge', redirectTo: 'bridge', pathMatch: 'full'},

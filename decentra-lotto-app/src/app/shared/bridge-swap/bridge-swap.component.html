@@ -32,14 +32,27 @@
     </div>
 </div>
 <div class="buttons">
+    <span [matTooltip]="approved == true ? 'Already approved for this amount' : ''">
+        <button 
+            class="button" 
+            [ngClass]="approved == false ? 'buyButton' : ''" 
+            mat-raised-button color="primary" 
+            [disabled]="loading || approved == true"
+            type="button" 
+            [style.background]="approved == false ? '#c2a336' : '#ff3f0fda'" 
+            (click) = "approveToken()">
+            <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
+            <span *ngIf="!loading">Approve</span>
+        </button>
+    </span>
     <span [matTooltip]="balanceControl.value <= 0 ? 'You must first enter an amount to bridge' : ''">
         <button 
             class="button" 
-            [ngClass]="balanceControl.value > 0 ? 'buyButton' : ''" 
+            [ngClass]="canBridge() ? 'buyButton' : ''" 
             mat-raised-button color="primary" 
-            [disabled]="loading || balanceControl.value <= 0"
+            [disabled]="loading || !canBridge()"
             type="button" 
-            [style.background]="balanceControl.value > 0 ? '#c2a336' : '#ff3f0fda'" 
+            [style.background]="canBridge() ? '#c2a336' : '#ff3f0fda'" 
             (click) = "bridge()">
             <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
             <span *ngIf="!loading">Bridge</span>

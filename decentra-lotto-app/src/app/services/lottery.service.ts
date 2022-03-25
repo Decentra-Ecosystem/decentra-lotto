@@ -25,7 +25,8 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import DecentraLotto from "../../assets/json/DecentraLotto.json";
 import Delo from "../../assets/json/delo.json";
 import DeloETH from "../../assets/json/delo.json";
-import DELOStaking from "../../assets/json/delo_stake.json"
+import DELOStaking from "../../assets/json/delo_stake.json";
+import DELOBridge from "../../assets/json/delo_reserve.json"
 import Approve from "../../assets/json/approve.json";
 import { StakingStats } from '../models/stakingstats.model';
 
@@ -46,6 +47,8 @@ export class LotteryService {
     stakingContract: any;
     deloContract: any;
     deloETHContract: any;
+    ethBridgeContract: any;
+    bscBridgeContract: any;
     options: any;
     web3Modal: any;
     ethereumDetected: boolean = false;
@@ -255,6 +258,8 @@ export class LotteryService {
         this.deloContract = new this.web3js.eth.Contract(Delo, this.DELO_CONTRACT_ADDRESS);
         this.deloETHContract = new this.web3js.eth.Contract(DeloETH, this.DELO_ETH_CONTRACT_ADDRESS);
         this.stakingContract = new this.web3js.eth.Contract(DELOStaking, this.DELOSTAKING_CONTRACT_ADDRESS);
+        this.ethBridgeContract = new this.web3js.eth.Contract(DELOBridge, this.ETH_BRIDGE_ADDRESS);
+        this.bscBridgeContract = new this.web3js.eth.Contract(DELOBridge, this.BSC_BRIDGE_ADDRESS);
 
         // detect Metamask account change
         window.ethereum.on('accountsChanged', async function (accounts: any) {
@@ -296,7 +301,7 @@ export class LotteryService {
     }
 
     async getReserveBalance(chain){
-        var bal, address, contract;
+        var bal, totalSupply, address, contract;
         if(chain =='ETH'){
             contract = this.deloETHContract;
             address = this.ETH_BRIDGE_ADDRESS;
@@ -309,10 +314,113 @@ export class LotteryService {
             bal = await contract
                 .methods.balanceOf(address)
                 .call();
+            
+            totalSupply = await contract
+                .methods.totalSupply()
+                .call();
         }catch(err){
             return -1;
         }
-        return [this.roundToken(bal, 4), bal];
+
+        bal = totalSupply / 2 - bal;
+        return [this.roundToken(bal, 2), bal];
+    }
+
+    async getBridgeGasCost(chain){
+        var fee, contract;
+        if(chain =='ETH'){
+            contract = this.ethBridgeContract;
+        }else if(chain =='BSC'){
+            contract = this.bscBridgeContract;
+        }
+        
+        try{
+            fee = await contract
+                .methods.gasCost()
+                .call();
+        }catch(err){
+            return -1;
+        }
+        return fee;
+    }
+
+    async setGasCost(chain){
+        var fee, contract;
+        if(chain =='ETH'){
+            contract = this.ethBridgeContract;
+        }else if(chain =='BSC'){
+            contract = this.bscBridgeContract;
+        }
+        
+        try{
+            fee = await contract
+                .methods.setGasCost('12000000000000000')
+                .send({ from: this.accounts[0] });
+        }catch(err){
+            console.log(err)
+            return -1;
+        }
+        
+        return fee;
+    }
+
+    async bridgeInit(chain){
+        var fee, contract;
+        if(chain =='ETH'){
+            contract = this.ethBridgeContract;
+        }else if(chain =='BSC'){
+            contract = this.bscBridgeContract;
+        }
+        
+        try{
+            fee = await contract
+                .methods.initialize()
+                .send({ from: this.accounts[0] });
+        }catch(err){
+            console.log(err)
+            return -1;
+        }
+        
+        return fee;
+    }
+
+    async bridgeTokens(chain, amount){
+        var contract;
+        if(chain =='ETH'){
+            contract = this.ethBridgeContract;
+        }else if(chain =='BSC'){
+            contract = this.bscBridgeContract;
+        }
+
+        var gas = await this.getBridgeGasCost(chain);
+        var x = parseInt(gas) * 1.1; //10% slippage
+        gas = x.toString();
+        if (gas > 0){
+            try{
+                await contract
+                    .methods.burn(amount)
+                    .send({ from: this.accounts[0], value: gas });
+            }catch(err){
+                console.log(err)
+                return -1;
+            }
+        }else{
+            return -1;
+        }
+        
+        return true;
+    }
+
+    async getAllowanceBridge(address) {      
+        var result;
+        try{
+            result = await this.deloContract
+                .methods.allowance(this.accounts[0], address)
+                .call({ from: this.accounts[0] });
+        }catch(err){
+            return -1;
+        }
+        return result;
     }
 
     async getDrawStats(id: any) {
@@ -547,6 +655,18 @@ export class LotteryService {
     }
 
     async enableStaking(address: any, amount: any) {
+        var success;
+        try{
+            success = await this.deloContract
+                .methods.approve(address, amount)
+                .send({ from: this.accounts[0] });
+        }catch(err){
+            return false;
+        }
+        return success;
+    }
+
+    async enableBridge(address: any, amount: any) {
         var success;
         try{
             success = await this.deloContract

@@ -70,6 +70,7 @@ import { MarsecosystemInfoCardComponent } from './shared/marsecosystem-info-card
 import { MarsecosystemVideoComponent } from './shared/marsecosystem-video/marsecosystem-video.component';
 import { BridgeComponent } from './pages/bridge/bridge.component';
 import { BridgeSwapComponent } from './shared/bridge-swap/bridge-swap.component';
+import { EthlotteryComponent } from './pages/ethlottery/ethlottery.component';
 
 @NgModule({
   declarations: [
@@ -111,7 +112,8 @@ import { BridgeSwapComponent } from './shared/bridge-swap/bridge-swap.component'
     MarsecosystemInfoCardComponent,
     MarsecosystemVideoComponent,
     BridgeComponent,
-    BridgeSwapComponent
+    BridgeSwapComponent,
+    EthlotteryComponent
   ],
   imports: [
     BrowserModule,

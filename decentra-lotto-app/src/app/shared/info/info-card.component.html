@@ -1,29 +1,59 @@
 <div class="container">
       <div class="row">
-            <div class="column1">
-                  <h2>Bulk Buy Discounts</h2>
-                  <div *ngIf="discounts">
-                        <h4><mat-icon class="mat-icon" class="avatar-icon" style="margin:0px;">star_outline</mat-icon> 5 Tickets: {{discounts[0]}}% off</h4>
-                        <h4><mat-icon class="mat-icon" class="avatar-icon">star_half</mat-icon> 10 Tickets: {{discounts[1]}}% off</h4>
-                        <h4><mat-icon class="mat-icon" class="avatar-icon">star</mat-icon> 20 Tickets: {{discounts[2]}}% off</h4>
+            <div *ngIf="!type">
+                  <div class="column1">
+                        <h2>Bulk Buy Discounts</h2>
+                        <div *ngIf="discounts">
+                              <h4><mat-icon class="mat-icon" class="avatar-icon" style="margin:0px;">star_outline</mat-icon> 5 Tickets: {{discounts[0]}}% off</h4>
+                              <h4><mat-icon class="mat-icon" class="avatar-icon">star_half</mat-icon> 10 Tickets: {{discounts[1]}}% off</h4>
+                              <h4><mat-icon class="mat-icon" class="avatar-icon">star</mat-icon> 20 Tickets: {{discounts[2]}}% off</h4>
+                        </div>
+                  </div>
+                
+                  <div class="column2">
+                        <h2>How To</h2>
+                        <div class="howto">
+                              <h4>
+                                    Use the "Ticket Swap" panel above to buy a ticket to enter the current draw using BNB, BUSD, USDT, USDC or DAI. Draws last for one week.
+                              </h4>
+                              <h4>
+                                    The number of winning tickets depends on the size of the pot - the bigger the pot, the more winners. 
+                                    The minimum you can win is $10 (the price of a ticket). There is no maximum win amount.
+                              </h4>
+                              <h4>
+                                    Once you buy a ticket, your total tickets, winning chance and other stats can be seen in the "Your Stats" panel.
+                              </h4>
+                        </div>
+                </div>
+            </div>
+            <div *ngIf="type=='ETH'">
+                  <div class="column2">
+                        <div class="howto">
+                              <h4>
+                                    The Ethereum lottery is extremely simple to save you on GAS - 
+                                    there are no ticket purchases needed and you are automatically entered into lottery draws just by holding the DELO token on Ethereum.
+                                    There is a minimum hold requirement of 82,000,000 DELO (0.1% of the supply) to be automatically entered into every draw. 
+                                    If you hold less than this, you will not be in with a chance to win the jackpot.
+                              </h4>
+                              <h4>
+                                    All you have to do to enter is buy and hold at least 82,000,000 DELO ETH, or bridge accross from BSC to ETH. 
+                                    Draws happen automatically once the "Current Pot" has met the threshold "Next Draw At" above.
+                                    Once this happens, Chainlink is used to fairly draw a winner from the DELO ETH token holders.
+                              </h4>
+                        </div>
+                  </div>
+                  <div class="column1">
+                        <div style="padding: 20px;">
+                              <h4>
+                                    Disclaimer:
+                              </h4>
+                              <h5>
+                                    You alone are responsible for doing your own research and being aware of the risks before making any purchase. 
+                                    Never invest more than you are willing to lose. See here for full terms: <a routerLink="/terms">TERMS</a>
+                              </h5>
+                        </div>
                   </div>
             </div>
-          
-            <div class="column2">
-                  <h2>How To</h2>
-                  <div class="howto">
-                        <h4>
-                              Use the "Ticket Swap" panel above to buy a ticket to enter the current draw using BNB, BUSD, USDT, USDC or DAI. Draws last for one week.
-                        </h4>
-                        <h4>
-                              The number of winning tickets depends on the size of the pot - the bigger the pot, the more winners. 
-                              The minimum you can win is $10 (the price of a ticket). There is no maximum win amount.
-                        </h4>
-                        <h4>
-                              Once you buy a ticket, your total tickets, winning chance and other stats can be seen in the "Your Stats" panel.
-                        </h4>
-                  </div>
-          </div>
       </div>
 </div>
 

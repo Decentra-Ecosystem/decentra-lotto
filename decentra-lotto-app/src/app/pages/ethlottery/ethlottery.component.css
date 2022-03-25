@@ -1,0 +1,52 @@
+.grid-container {
+    margin: 20px;
+  }
+  
+  .dashboard-card {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+  }
+
+  .hrSplit{
+    border-top: 1px dashed white;
+  }
+  
+  .more-button {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+  }
+  
+  .dashboard-card-content {
+    text-align: center;
+  }
+  
+  .mat-select-arrow {
+    border: none;
+  }
+  
+  .white{
+    padding: 20px;;
+    color:white;
+  }
+
+  .checkButton {
+    color: rgb(226, 80, 75);
+    animation: flicker 10s infinite alternate;
+  }
+
+  .buttons{
+    margin: 5px;
+  }
+
+  .button {
+      margin: 5px;
+      text-align: center;
+      font-size: 21px;
+      width: 220px;
+      height: 50px;
+  }
+  

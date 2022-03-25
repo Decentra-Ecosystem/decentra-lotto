@@ -22,30 +22,34 @@ import { ConnectionModalComponent } from 'src/app/shared/connection-modal/connec
 })
 export class NavComponent implements OnInit, OnDestroy {
   menuItems = [
-    {name: 'lottery', enabled:true, url:'', pages: []}, 
+    {name: 'lottery', enabled:true, url:'', collapsed: true, pages: [
+      {name:'bsc lottery', enabled:true, url:''},
+      {name:'eth lottery', enabled:true, url:''},
+    ]}, 
     {name:'staking', enabled:true, url:'', pages: []},
     {name:'bridge', enabled:true, url:'', pages: []},
+    {name: 'exchange', enabled:true, url:'', pages: []},
+    {name:'docs', enabled:true, url:'https://docs.decentra-lotto.com/', pages: []},
     {name:'NFT Partners', enabled:true, url:'', collapsed: true, pages: [
       {name:'dexkit', enabled:true, url:''},
       {name:'etherland', enabled:true, url:''},
       {name:'marsecosystem', enabled:true, url:''},
     ]},
-    {name: 'exchange', enabled:true, url:'', pages: []},
     {name:'charity', enabled:true, url:'', collapsed: true, pages: [
       {name:'redpanda earth', enabled:true, url:''},
       {name:'world of waves', enabled:true, url:''},
     ]}, 
-    {name:'syndicates', enabled:false, url:'', pages: []}, 
-    {name:'vote', enabled:false, url:'', pages: []}, 
+    // {name:'syndicates', enabled:false, url:'', pages: []}, 
+    // {name:'vote', enabled:false, url:'', pages: []}, 
     {name:'trade', enabled:true, url:'', collapsed: true, pages: [
       {name:'buy bsc', enabled:true, url:'https://pancakeswap.finance/swap?outputCurrency=0xC91B4AA7e5C247CB506e112E7FEDF6af7077b90A'},
       {name:'buy eth', enabled:true, url:'https://pancakeswap.finance/swap?outputCurrency=0xC91B4AA7e5C247CB506e112E7FEDF6af7077b90A'},
       {name:'dextools bsc', enabled:true, url: 'https://www.dextools.io/app/bsc/pair-explorer/0xc989c0e5d5035e689c129868944db9e091690875'},
       {name:'dextools eth', enabled:true, url: 'https://www.dextools.io/app/bsc/pair-explorer/0xc989c0e5d5035e689c129868944db9e091690875'},
     ]}, 
-    {name:'docs', enabled:true, url:'https://docs.decentralotto.com/', pages: []},
     {name:'audits', enabled:true, url:'', collapsed: true, pages: [
-      {name:'delo contract', enabled:true, url:'https://solidity.finance/audits/DecentraLotto/'},
+      {name:'Certik', enabled:true, url:'https://www.certik.com/projects/decentra'},
+      {name:'Solidity', enabled:true, url:'https://solidity.finance/audits/DecentraLotto/'},
       {name:'lotto contract', enabled:true, url: 'https://solidity.finance/audits/DecentraLotto/'},
       {name:'staking contract', enabled:true, url: 'https://solidity.finance/audits/DecentraLotto/'}
     ]},
@@ -139,22 +143,21 @@ export class NavComponent implements OnInit, OnDestroy {
     this.statsService.getPrice()
     .pipe(takeUntil(this.ngUnsubscribe))
     .subscribe((data: any) => {
-      var p = data.usdPrice;
-      var p2 = p.substring(1);
-      var price = parseFloat(p2);
+      if (typeof data.usdPrice === 'string' || data.usdPrice instanceof String){
+        this.deloUSDPrice = data.usdPrice;
+      }else{
+        this.deloUSDPrice = "Error Fetching Data"
+      }
 
-      var q = data.usdETHPrice;
-      var q2 = q.substring(1);
-      var priceETH = parseFloat(q2);
-      //var price = data['decentra-lotto'].usd;
-      this.deloUSDPrice = Math.round(price * 10000000000) / 10000000000;
-        this.pollingTimer = setTimeout(()=>{
+      if (typeof data.usdPrice === 'string' || data.usdPrice instanceof String){
+        this.deloETHUSDPrice = data.usdETHPrice;
+      }else{
+        this.deloETHUSDPrice = "Error Fetching Data"
+      }
+
+      this.pollingTimer = setTimeout(()=>{
           this.pollPrice();
-        }, 10000);
-      this.deloETHUSDPrice = Math.round(priceETH * 10000000000) / 10000000000;
-        this.pollingTimer = setTimeout(()=>{
-          this.pollPrice();
-        }, 10000);
+      }, 10000);
     });
   }
 

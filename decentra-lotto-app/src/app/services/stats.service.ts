@@ -262,8 +262,7 @@ export class StatsService implements OnDestroy {
     var requestOptions = {                                                                                                                                                                                 
       headers: new HttpHeaders(headerDict), 
     };
-    return this.http.get("https://delo-stats.azurewebsites.net/api/delo-price?code=qojorarMfy1gljzNUDd9Fe8DySDKvDL1hsIFZKctDUarGFafFruAXQ==", requestOptions);
-    //return this.http.get("https://api.pancakeswap.info/api/v2/tokens/"+DELO_CONTRACT_ADDRESS_MAIN_NET, requestOptions);
+    return this.http.get("https://delo-stats.azurewebsites.net/api/delo-price-lite?code=1", requestOptions);
   }
 
   getLastCheck(address){

@@ -23,7 +23,7 @@
 .container {
     display: flex; /* or inline-flex */
     flex-wrap: wrap;
-    margin: auto;
+    justify-content: center;
     margin-bottom: 40px;
     margin-top: 10px;
 }
@@ -31,8 +31,11 @@
 .card-mini {
     color: white;
     width: 24%;
-    margin: 5px;
-    padding: 15px;
+    margin-left: 2px;
+    margin-right: 2px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
     box-shadow: 0 0 .1rem #fff,
                 0 0 .1rem #fff,
                 0 0 1rem #bc13fe,
@@ -60,7 +63,7 @@
    background-image: linear-gradient(#0f0022, #0c0111 );
    height: 60%;
    margin: auto;
-   margin-top: 40px;
+   margin-top: 30px;
    padding: 15px;
    box-shadow: 0 0 .1rem #fff,
                0 0 .1rem #fff,
@@ -71,7 +74,7 @@
  }
 
  .swap{
-    padding-top: 30px;
+    padding-top: 10px;
  }
  
  .dashboard-card-content {

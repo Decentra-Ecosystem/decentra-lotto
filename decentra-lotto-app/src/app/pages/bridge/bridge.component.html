@@ -2,14 +2,12 @@
 <mat-card class="dashboard-card">
     <mat-card-header>
         <mat-card-title class="title">
-            DELO Bridge
+            <span *ngIf="isBSC">BSC</span><span *ngIf="!isBSC">ETH</span> &nbsp;<img src="../../../assets/images/swap.png" height="20px">&nbsp; <span *ngIf="isBSC">ETH</span><span *ngIf="!isBSC">BSC</span> &nbsp;DELO Bridge
             <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
                 <mat-icon>help</mat-icon>
             </button>
             <mat-menu #menu="matMenu" xPosition="before">
-                <button onclick="window.open('https://www.youtube.com/watch?v=FYbtxt0KhIo','_blank')" mat-menu-item>Using the exchange</button>
-                <button onclick="window.open('https://rubic.exchange/faq','_blank')" mat-menu-item>FAQ</button>
-                <button onclick="window.open('https://rubic.finance/assets/pdf/OnePager.pdf','_blank')" mat-menu-item>How Rubic Works</button>
+                <button onclick="window.open('https://docs.decentra-lotto.com/delo-token/bsc-eth-bridge','_blank')" mat-menu-item>Using the bridge</button>
             </mat-menu>
         </mat-card-title>
     </mat-card-header>
@@ -34,27 +32,27 @@
             </mat-card>
             <mat-card class="card-mini">
                 <mat-card-header>
-                    ETH Reserve
+                    Arbitrage
                 </mat-card-header>
                 <mat-card-content>
-                    {{circ}}
+                    {{priceDiff}} 
                 </mat-card-content>
             </mat-card>
             <mat-card class="card-mini">
                 <mat-card-header>
-                    BSC Reserve
+                    Reserve
                 </mat-card-header>
                 <mat-card-content>
-                    {{circ}}
+                    {{reserves}} 
                 </mat-card-content>
             </mat-card>
         </div>
         <mat-card class="swap-card">
-            <mat-card-header class="title pad">
-                DELO &nbsp;<span *ngIf="isBSC">BSC</span><span *ngIf="!isBSC">ETH</span> &nbsp;<img src="../../../assets/images/swap.png" height="20px">&nbsp; <span *ngIf="isBSC">ETH</span><span *ngIf="!isBSC">BSC</span> &nbsp;Bridge
+            <mat-card-header class="title">
+                DELO&nbsp;<span *ngIf="isBSC">BSC</span><span *ngIf="!isBSC">ETH</span> &nbsp;~>&nbsp; <span *ngIf="isBSC">ETH</span><span *ngIf="!isBSC">BSC</span> &nbsp;
             </mat-card-header>
             <mat-card-content class="swap">
-                <app-bridge-swap></app-bridge-swap>
+                <app-bridge-swap [reserve]="reserves"></app-bridge-swap>
             </mat-card-content>
         </mat-card>
     </mat-card-content>

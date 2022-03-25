@@ -178,7 +178,7 @@ contract DecentraLottoETH is Context, IERC20, Ownable, RandomNumberConsumer {
             0x514910771AF9Ca656af840dff83E8264EcF986CA, // link address ETH mainnet
             0xAA77729D3466CA35AE8D28B3BBAC7CC36A5031EFDC430821C02BC31A238AF445, //key hash ETH mainnet
             2 * 10 ** 18 //fee ETH mainnet
-        ) public {
+        ) {
         _rOwned[owner()] = _rTotal;
 
         lottoJackpotAmount = lottoJackpotAmount_IN;

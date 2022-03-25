@@ -24,7 +24,7 @@ contract Reserve is Ownable {
   event Minted(address to, uint256 amount);
   event Burned(address from, uint256 amount);
   
-  constructor(IERC20 _token) public {
+  constructor(IERC20 _token) {
     token = _token;
   }
 

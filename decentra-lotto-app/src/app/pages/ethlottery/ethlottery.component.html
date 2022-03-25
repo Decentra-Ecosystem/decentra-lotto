@@ -1,0 +1,73 @@
+<div *ngIf="connectionError" class="outer-container">
+    <h1 class="white">Connect your wallet to continue...</h1>
+    <h2 class="white">If you are on mobile, make sure your are using a web3 browser like Metamask Browser.</h2>
+  </div>
+  <div *ngIf="wrongChain" class="outer-container">
+    <h1 class="white">Switch your wallet network to Binance Smart Chain to continue...</h1>
+  </div>
+  <!--dash.component.html-->
+  <div *ngIf="!connectionError && !wrongChain" class="outer-container">
+    <div class="grid-container">
+      <!-- <h1 class="mat-h1">Dashboard</h1> -->
+      <mat-grid-list cols="{{ ( cardLayout | async )?.columns }}" [rowHeight]="rowHeight">
+        <!-- Top Summary Cards -->
+        <div *ngIf="mobile()">
+          <mat-grid-tile *ngFor="let mc of miniCardTopData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+            [rowspan]="( cardLayout | async )?.miniCard?.rows">
+            <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+          </mat-grid-tile>
+        </div>
+        <!-- Buy Panel -->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.buy?.cols" [rowspan]="( cardLayout | async )?.buy?.rows">
+          <app-card title="Your Winnings">
+            <div class="white">
+                <h2>
+                    Your Winnings: {{winAmount}} <span *ngIf="winAmount != '?'">&nbsp;ETH</span>&nbsp;
+                    <span *ngIf="winAmount != '?' && winAmount == '0'">:(</span>
+                    <span *ngIf="winAmount != '?' && winAmount > '0'">:D</span>
+                </h2>
+            </div>
+            
+            <div class="buttons">
+                <button 
+                    class="button checkButton" 
+                    mat-raised-button color="primary" 
+                    [disabled]="loading"
+                    type="button" 
+                    [style.background]="'#c2a336'" 
+                    (click) = "checkWinner()">
+                    <mat-spinner style="margin: auto; padding: 0px;" [diameter]="25" *ngIf="loading"></mat-spinner>
+                    <span *ngIf="!loading">Check Winnings!</span>
+                </button>
+                <h2>
+                    
+                </h2>
+            </div>
+              
+            <!-- <app-enter-draw-card></app-enter-draw-card> -->
+          </app-card>
+        </mat-grid-tile>
+        <!--Summary Cards-->
+        <div *ngIf="mobile()">
+          <mat-grid-tile *ngFor="let mc of miniCardBottomData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+            [rowspan]="( cardLayout | async )?.miniCard?.rows">
+            <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+          </mat-grid-tile>
+        </div>
+        <div *ngIf="!mobile()">
+          <mat-grid-tile *ngFor="let mc of miniCardData" [colspan]="( cardLayout | async )?.miniCard?.cols"
+            [rowspan]="( cardLayout | async )?.miniCard?.rows">
+            <app-mini-card [icon]="mc.icon" [title]="mc.title" [value]="mc.value" [color]="mc.color" [isCurrency]="mc.isCurrency"></app-mini-card>
+          </mat-grid-tile>
+        </div>
+        
+        <!-- Info Panel -->
+        <mat-grid-tile [colspan]="( cardLayout | async )?.explainer?.cols" [rowspan]="( cardLayout | async )?.explainer?.rows">
+          <app-card title="Information">
+            <app-info-card title="Information" type="ETH"></app-info-card>
+          </app-card>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+  </div>
+  

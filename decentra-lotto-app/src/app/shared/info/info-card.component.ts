@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import { LotteryService } from 'src/app/services/lottery.service';
 
 @Component({
@@ -9,6 +9,7 @@ import { LotteryService } from 'src/app/services/lottery.service';
 })
 export class InfoCardComponent implements AfterViewInit {
 
+  @Input() type;
   discounts:any;
 
   constructor(private lotteryService: LotteryService) { }
