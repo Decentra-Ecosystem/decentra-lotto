@@ -6,6 +6,7 @@ import { AbiItem } from 'web3-utils'
 import ReserveAbi from 'Config/abi/reserve.json'
 
 enum BridgeStatus {
+  CREATED,
   PENDING,
   PROCESSED
 }
@@ -81,7 +82,7 @@ export default class SubscribeEventOnBsc extends BaseCommand {
               txHash: events[i].transactionHash,
               to: from,
               amount,
-              status: BridgeStatus.PENDING,
+              status: BridgeStatus.CREATED,
               blockNumber: events[i].blockNumber
             })
 
@@ -93,7 +94,7 @@ export default class SubscribeEventOnBsc extends BaseCommand {
           block!.blockNumber = toBlock
           block?.save()
     
-          const tasks = await TaskEth.query().where('status', BridgeStatus.PENDING)
+          const tasks = await TaskEth.query().where('status', BridgeStatus.CREATED)
           for (let i = 0; i < tasks.length; i++) {
             const task = tasks[i]
             const tx = reserveContractOnEth.methods.mint(task.to, task.amount, task.id);
@@ -109,13 +110,18 @@ export default class SubscribeEventOnBsc extends BaseCommand {
               gas: gasCost,
               gasPrice
             };
-            const transaction = await web3Eth.eth.sendTransaction(txData);
-            if (transaction.status) {
-              task.status = BridgeStatus.PROCESSED
-              await task.save()
-            }
+            web3Eth.eth.sendTransaction(txData)
+              .on('sent', async function() {
+                task.status = BridgeStatus.PENDING
+                await task.save()
+              })
+              .on('receipt', async function(receipt) {
+                console.log(`Transaction hash: ${receipt.transactionHash}`)
+                task.status = BridgeStatus.PROCESSED
+                await task.save()
+              })
             
-            console.log(`Transaction hash: ${transaction.transactionHash}`);
+            await new Promise(resolve => setTimeout(resolve, 1 * 1000));    // delay 1s
           }
     
         })
