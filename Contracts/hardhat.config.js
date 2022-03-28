@@ -78,6 +78,10 @@ module.exports = {
       url: secrets.urlBSCMainNet,
       accounts: [secrets.deloDevLive]
     },
+    ethMainNetTest:{
+      url: secrets.urlETHMainNet,
+      accounts: [secrets.deployerPrivatekeyTest]
+    },
     bscMainNetTest:{
       url: secrets.urlBSCMainNet,
       accounts: [secrets.deployerPrivatekeyTest]
@@ -104,7 +108,7 @@ module.exports = {
     }
   },
   etherscan: {
-    apiKey: secrets.bscscanKey
+    apiKey: secrets.etherscan
   },
   contractSizer: {
     alphaSort: true,

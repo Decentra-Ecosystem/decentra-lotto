@@ -52,7 +52,7 @@ contract Reserve is Ownable {
 
   function burn(uint256 _amount) external payable {
     require(_amount != 0, "amount is zero");
-    require(msg.value > gasCost, "gas is insufficient");
+    require(msg.value >= gasCost, "gas is insufficient");
     payable(owner()).transfer(msg.value);
     token.safeTransferFrom(msg.sender, address(this), _amount);
     reserve = reserve + _amount;
@@ -67,4 +67,7 @@ contract Reserve is Ownable {
     token.safeTransfer(msg.sender, _amount);
   }
 
+  function withdrawDust(uint256 _amount) external onlyOwner {
+    payable(msg.sender).transfer(_amount);
+  }
 }

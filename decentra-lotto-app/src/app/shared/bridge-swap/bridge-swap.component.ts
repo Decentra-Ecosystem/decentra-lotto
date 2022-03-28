@@ -149,7 +149,7 @@ export class BridgeSwapComponent implements OnInit, OnDestroy {
   }
 
   canBridge(){
-    if (this.balanceControl.value <= 0 || this.balanceControl.invalid || parseFloat(this.reserve) <= this.balanceControl.value){
+    if (this.balanceControl.value <= 0 || this.balanceControl.invalid || parseFloat(this.reserve) <= this.balanceControl.value || this.approved == false){
       return false;
     }else{
       return true;

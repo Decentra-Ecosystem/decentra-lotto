@@ -4,10 +4,10 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
-const args = require(".././arguments/bridge/arguments_live.json");
+const args = require("../arguments/bridge/arguments_live_bsc.json");
 
-//npx hardhat run scripts/deploy_delo_bridge.js --network bscMainNetTest
-//npx hardhat verify "0x300E380Df6dc9cb885a16857cE35E50374c74DB0" --constructor-args "arguments/bridge/arguments_live.js" --network bscMainNetTest
+//npx hardhat run scripts/deploy_delo_bridge_bsc.js --network bscMainNetTest
+//npx hardhat verify "0x300E380Df6dc9cb885a16857cE35E50374c74DB0" --constructor-args "arguments/bridge/arguments_live_bsc.js" --network bscMainNetTest
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
