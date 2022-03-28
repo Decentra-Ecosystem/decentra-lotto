@@ -24,6 +24,7 @@ export class HarvestCardComponent implements OnInit, OnDestroy {
   round: number;
   roundStaked: number;
   private ngUnsubscribe = new Subject();
+  loading: boolean = true;
 
   constructor(private statsService: StatsService, private lotteryService: LotteryService) { 
     this.user = {address: '', truncatedAddress: '', balance: ''};
@@ -72,6 +73,7 @@ export class HarvestCardComponent implements OnInit, OnDestroy {
     this.getStakingTVL();
     this.round = await this.lotteryService.getStakingRound();
     this.roundStaked = parseInt(localStorage.getItem('roundStaked'));
+    this.loading == false;
   }
 
   canWithdraw(){
@@ -86,6 +88,7 @@ export class HarvestCardComponent implements OnInit, OnDestroy {
   }
 
   async withdrawPendingRewards(){
+    this.loading == true;
     var success = await this.lotteryService.withdrawPendingRewards();
     this.getData();
   }

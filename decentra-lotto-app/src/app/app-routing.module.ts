@@ -9,8 +9,8 @@ import { TermsComponent } from './pages/terms/terms.component';
 import { DexkitComponent } from './pages/dexkit/dexkit.component';
 import { EtherlandComponent } from './pages/etherland/etherland.component';
 import { MarsecosystemComponent } from './pages/marsecosystem/marsecosystem.component';
-import { BridgeComponent } from './pages/bridge/bridge.component';
 import { EthlotteryComponent } from './pages/ethlottery/ethlottery.component';
+import { BridgeComponent } from './pages/bridge/bridge.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'bsc-lottery', pathMatch: 'full' },
