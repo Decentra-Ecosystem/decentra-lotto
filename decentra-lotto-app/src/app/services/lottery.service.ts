@@ -29,6 +29,7 @@ import DELOStaking from "../../assets/json/delo_stake.json";
 import DELOBridge from "../../assets/json/delo_reserve.json"
 import Approve from "../../assets/json/approve.json";
 import { StakingStats } from '../models/stakingstats.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -59,7 +60,7 @@ export class LotteryService {
     constructor() {
         const optionsLive = {
             rpc: {
-                56: 'https://bsc-dataseed.binance.org/' //https://red-spring-violet.bsc.quiknode.pro/' //https://bsc-dataseed.binance.org/ //https://bsc-dataseed1.defibit.io/
+                56: 'https://red-spring-violet.bsc.quiknode.pro/'+environment.quickNodeKey+'/' //https://red-spring-violet.bsc.quiknode.pro/' //https://bsc-dataseed.binance.org/ //https://bsc-dataseed1.defibit.io/
             },
             network: 'Binance Smart Chain',
             chainId: 56,

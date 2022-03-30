@@ -67,8 +67,8 @@ export class NavComponent implements OnInit, OnDestroy {
   chain_image: string;
   chain_name: string;
   metaConnection: any;
-  deloUSDPrice: any;
-  deloETHUSDPrice: any;
+  deloUSDPrice: any = '$';
+  deloETHUSDPrice: any = '$';
   pollingTimer: any;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
@@ -145,14 +145,10 @@ export class NavComponent implements OnInit, OnDestroy {
     .subscribe((data: any) => {
       if (typeof data.usdPrice === 'string' || data.usdPrice instanceof String){
         this.deloUSDPrice = data.usdPrice;
-      }else{
-        this.deloUSDPrice = "Error Fetching Data"
       }
 
       if (typeof data.usdPrice === 'string' || data.usdPrice instanceof String){
         this.deloETHUSDPrice = data.usdETHPrice;
-      }else{
-        this.deloETHUSDPrice = "Error Fetching Data"
       }
 
       this.pollingTimer = setTimeout(()=>{

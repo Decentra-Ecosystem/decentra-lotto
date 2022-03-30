@@ -43,6 +43,7 @@ export class StatsService implements OnDestroy {
   timeLastRefreshed: Date;
 
   initiated: boolean = false;
+  priceLoading: boolean = false;
 
   constructor(private lottery: LotteryService, private http: HttpClient,) { }
 
@@ -78,15 +79,6 @@ export class StatsService implements OnDestroy {
     try{
       this.drawStats = new DrawModel(await this.lottery.getDrawStats(null));
       this.walletStats = new WalletStats(await this.lottery.getWalletStats(null));
-      this.drawStats.totalPotRaw = await this.lottery.getCurrentPot();
-      this.drawStats.totalPot = WalletStats.round(this.drawStats.totalPotRaw, TOKEN_DECIMALS, 5);
-      this.walletStats.walletChance = this.getChance(false, 0);
-      this.drawStats.oddsPerTicket = parseFloat(((this.drawStats.numWinners/this.drawStats.numTickets)*100).toFixed(2));
-      var data = await this.getPrice().toPromise();
-      var price = data['usdPrice'];
-      price = parseFloat(price.substring(1));
-      this.drawStats.totalPotUSD = this.numberWithCommas(Math.round(price * this.drawStats.totalPot));
-        
       var chain = await this.lottery.getChain();
       var x;
       if (chain == 1){
@@ -96,20 +88,38 @@ export class StatsService implements OnDestroy {
       }
       this.walletStats.walletDELOBalance = x[0];
       this.walletStats.walletDELOBalanceRaw = x[1];
+      this.walletStats.walletChance = this.getChance(false, 0);
+      this.walletStatsSub.next(this.walletStats);
+
+      this.drawStats.totalPotRaw = await this.lottery.getCurrentPot();
+      this.drawStats.totalPot = WalletStats.round(this.drawStats.totalPotRaw, TOKEN_DECIMALS, 5);
+      this.drawStats.oddsPerTicket = parseFloat(((this.drawStats.numWinners/this.drawStats.numTickets)*100).toFixed(2));
       this.drawStats.stateString = this.getState(this.drawStats.state);
+      this.getUSDPotAsync();
+      this.drawStatsSub.next(this.drawStats);
   
       await this.getStakingStats();
-  
-      if (!this.walletStatsSub){
-        this.init();
-      }
-      this.walletStatsSub.next(this.walletStats);
-      this.drawStatsSub.next(this.drawStats);
       this.stakingStatsSub.next(this.stakingStats);
     }catch(err){
 
     }
     return (this.drawStats, this.walletStats);
+  }
+
+  async getUSDPotAsync(){
+    if (this.priceLoading == false){
+      try{
+        this.priceLoading = true;
+        var data = await this.getPrice().toPromise();
+        var price = data['usdPrice'];
+        price = parseFloat(price.substring(1));
+        this.drawStats.totalPotUSD = this.numberWithCommas(Math.round(price * this.drawStats.totalPot));
+        this.drawStatsSub.next(this.drawStats);
+        this.priceLoading = false;
+      }catch(err){
+        this.priceLoading = false;
+      }
+    }
   }
 
   getChance(calc: boolean, newTickets: number): number{
@@ -303,7 +313,6 @@ export class StatsService implements OnDestroy {
   }
 
   async getDrawStats(): Promise<Observable<DrawModel>> {   
-    await this.getData(); 
     return of(
       {
         id: this.drawStats.id,
@@ -326,7 +335,6 @@ export class StatsService implements OnDestroy {
   }
 
   async getWalletStats(): Promise<Observable<WalletStats>> {  
-    await this.getData(); 
     return of(
       {
         walletDrawSpendBNB: this.walletStats.walletDrawSpendBNB,

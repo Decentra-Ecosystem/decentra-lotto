@@ -14,8 +14,8 @@ declare var rubicWidget;
 })
 export class BridgeComponent implements OnInit, OnDestroy {
 
-  priceETH: string;
-  priceBSC: string;
+  priceETH: string = '$';
+  priceBSC: string = '$';
   reserves: string;
   holders: string;
   circ: string;
@@ -61,31 +61,25 @@ export class BridgeComponent implements OnInit, OnDestroy {
     .subscribe((data: any) => {
       if (typeof data.usdPrice === 'string' || data.usdPrice instanceof String){
         this.priceBSC = data.usdPrice;
-      }else{
-        this.priceBSC = "Error Fetching Data"
       }
 
       if (typeof data.usdPrice === 'string' || data.usdPrice instanceof String){
         this.priceETH = data.usdETHPrice;
-      }else{
-        this.priceBSC = "Error Fetching Data"
       }
 
-      if (this.priceBSC == "Error Fetching Data" || this.priceBSC == "Error Fetching Data"){
-        this.priceDiff = '0';
-      }else{
-        try{
-          var x = parseFloat(this.priceBSC.substring(1));
-          var y = parseFloat(this.priceETH.substring(1));
-    
-          if (this.isBSC){
-            this.priceDiff = (((y-x) / x)*100).toFixed(2) + '%';
-          }else{
-            this.priceDiff = (((x-y) / x)*100).toFixed(2) + '%';        
-          }
-        }catch(err){
-          
+      this.priceDiff = '0';
+
+      try{
+        var x = parseFloat(this.priceBSC.substring(1));
+        var y = parseFloat(this.priceETH.substring(1));
+  
+        if (this.isBSC){
+          this.priceDiff = (((y-x) / x)*100).toFixed(2) + '%';
+        }else{
+          this.priceDiff = (((x-y) / x)*100).toFixed(2) + '%';        
         }
+      }catch(err){
+        
       }
       
       this.pollingTimer = setTimeout(()=>{

@@ -155,7 +155,7 @@ export class EthlotteryComponent implements OnInit {
     var requestOptions = {                                                                                                                                                                                 
       headers: new HttpHeaders(headerDict), 
       params: {
-        token: 'DSHIB'
+        token: 'DELO'
       },
     };
     return this.http.get("https://delo-stats.azurewebsites.net/api/decentratokens-stats?code=1", requestOptions);
@@ -169,7 +169,7 @@ export class EthlotteryComponent implements OnInit {
     var requestOptions = {                                                                                                                                                                                 
       headers: new HttpHeaders(headerDict), 
       params: {
-        token: 'DSHIB',
+        token: 'DELO',
         address: this.user.address
       },
     };

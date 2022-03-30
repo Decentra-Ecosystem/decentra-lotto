@@ -57,10 +57,10 @@ export class BridgeSwapComponent implements OnInit, OnDestroy {
     var chain = await this.lotteryService.getChain();
     if(chain == 56 || chain == 97){
       this.isBSC = true;
-      this.gasFee = await this.lotteryService.getBridgeGasCost('BSC');
+      this.gasFee = WalletStats.round(await this.lotteryService.getBridgeGasCost('BSC'), 18, 4);
     }else if (chain == 1){
       this.isBSC = false;
-      this.gasFee = await this.lotteryService.getBridgeGasCost('ETH');
+      this.gasFee = WalletStats.round(await this.lotteryService.getBridgeGasCost('ETH'), 18, 4);
     }
 
     if (IS_LIVE){
