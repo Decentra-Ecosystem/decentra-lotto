@@ -89,7 +89,7 @@ export class HarvestCardComponent implements OnInit, OnDestroy {
 
   async withdrawPendingRewards(){
     this.loading == true;
-    var success = await this.lotteryService.withdrawPendingRewards();
+    await this.lotteryService.withdrawPendingRewards();
     this.getData();
   }
 

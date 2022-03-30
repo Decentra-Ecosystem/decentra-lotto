@@ -471,8 +471,6 @@ contract DecentraLottoETH is Context, IERC20, Ownable, RandomNumberConsumer {
 
     //withdraw token link or trapped tokens
     function withdrawToken(address _address, uint256 amount) external onlyOwner {
-        // Ensure requested tokens isn't Jackpot token (cannot withdraw the pot)
-        require(_address != address(this), "Cannot withdraw platform token");
         IERC20 token = IERC20(_address);
         token.transfer(msg.sender, amount);
     }

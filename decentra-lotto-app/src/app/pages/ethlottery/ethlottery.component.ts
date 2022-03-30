@@ -91,12 +91,8 @@ export class EthlotteryComponent implements OnInit {
       this.connectionError = true;
     }else{
       this.connectionError = false;
-      if (await this.lotteryService.getChain() != this.lotteryService.options.chainId){
-        this.wrongChain = true;
-      }else{
-        this.loading = false;
-        await this.getSummary();
-      }
+      this.loading = false;
+      this.getSummary();
     }
   }
   triggerWinner(win){

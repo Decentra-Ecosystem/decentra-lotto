@@ -6,8 +6,8 @@
 const hre = require("hardhat");
 const args = require("../arguments/bridge/arguments_live_bsc.json");
 
-//npx hardhat run scripts/deploy_delo_bridge_bsc.js --network bscMainNetTest
-//npx hardhat verify "0x300E380Df6dc9cb885a16857cE35E50374c74DB0" --constructor-args "arguments/bridge/arguments_live_bsc.js" --network bscMainNetTest
+//npx hardhat run scripts/deploy_delo_bridge_bsc.js --network bscMainNetBridge
+//npx hardhat verify "0x14686EF6104DBBfAFecbC5a49ccfd10EAe63F876" --constructor-args "arguments/bridge/arguments_live_bsc.js" --network bscMainNetBridge
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command

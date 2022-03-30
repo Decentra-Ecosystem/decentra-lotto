@@ -104,11 +104,19 @@ module.exports = {
     },
     ethMainNet:{
       url: secrets.urlETHMainNet,
-      accounts: [secrets.deployerPrivatekeyLive]
+      accounts: [secrets.deloDevLive]
+    },
+    ethMainNetBridge:{
+      url: secrets.urlETHMainNet,
+      accounts: [secrets.deloBridgeOwner]
+    },
+    bscMainNetBridge:{
+      url: secrets.urlBSCMainNet,
+      accounts: [secrets.deloBridgeOwner]
     }
   },
   etherscan: {
-    apiKey: secrets.etherscan
+    apiKey: secrets.bscscanKey
   },
   contractSizer: {
     alphaSort: true,

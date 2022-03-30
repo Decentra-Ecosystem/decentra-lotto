@@ -102,6 +102,7 @@ export class BridgeSwapComponent implements OnInit, OnDestroy {
   }
 
   async bridge(){
+    this.loading = true;
     var amount;
     if (this.balanceControl.value >= this.user.balance){
       amount = this.walletStats.walletDELOBalanceRaw;
@@ -109,14 +110,7 @@ export class BridgeSwapComponent implements OnInit, OnDestroy {
       amount = this.addDecimals(this.balanceControl.value);
     }
     await this.lotteryService.bridgeTokens(this.isBSC==true ? 'BSC' : 'ETH', amount);
-  }
-
-  async initialize(){
-    await this.lotteryService.bridgeInit(this.isBSC==true ? 'BSC' : 'ETH');
-  }
-
-  async setGas(){
-    await this.lotteryService.setGasCost(this.isBSC==true ? 'BSC' : 'ETH');
+    this.loading = false;
   }
 
   swapChain(){
@@ -129,17 +123,18 @@ export class BridgeSwapComponent implements OnInit, OnDestroy {
 
   async approveToken(){
     this.loading = true;
-    await this.lotteryService.enableBridge(this.symbols.DELOBridge.address, (this.walletStats.walletDELOBalanceRaw*2).toString());
+    await this.lotteryService.enableBridge(this.symbols.DELOBridge.address, (this.walletStats.walletDELOBalanceRaw*2).toString(), this.isBSC==true ? 'BSC' : 'ETH');
     this.isApproved();
   }
 
   async isApproved(){
+    this.loading = true;
     if (!this.walletStats){
+      this.loading = false;
       this.approved == false;
       return;
     } 
-    this.loading = true;
-    var allowance = await this.lotteryService.getAllowanceBridge(this.symbols.DELOBridge.address);
+    var allowance = await this.lotteryService.getAllowanceBridge(this.symbols.DELOBridge.address, this.isBSC==true ? 'BSC' : 'ETH');
     if (parseFloat(this.walletStats.walletDELOBalanceRaw.toString()) <= parseFloat(allowance.toString())){
       this.approved = true;
     }else{

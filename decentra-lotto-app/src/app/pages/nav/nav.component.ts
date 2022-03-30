@@ -43,13 +43,13 @@ export class NavComponent implements OnInit, OnDestroy {
     // {name:'vote', enabled:false, url:'', pages: []}, 
     {name:'trade', enabled:true, url:'', collapsed: true, pages: [
       {name:'buy bsc', enabled:true, url:'https://pancakeswap.finance/swap?outputCurrency=0xC91B4AA7e5C247CB506e112E7FEDF6af7077b90A'},
-      {name:'buy eth', enabled:true, url:'https://pancakeswap.finance/swap?outputCurrency=0xC91B4AA7e5C247CB506e112E7FEDF6af7077b90A'},
+      {name:'buy eth', enabled:true, url:'https://app.uniswap.org/#/swap?inputCurrency=0xe19C8be60a8093Cf65Ec742D05e35cc20D7FE535&chain=mainnet'},
       {name:'dextools bsc', enabled:true, url: 'https://www.dextools.io/app/bsc/pair-explorer/0xc989c0e5d5035e689c129868944db9e091690875'},
-      {name:'dextools eth', enabled:true, url: 'https://www.dextools.io/app/bsc/pair-explorer/0xc989c0e5d5035e689c129868944db9e091690875'},
+      {name:'dextools eth', enabled:true, url: 'https://www.dextools.io/app/ether/pair-explorer/0xe19C8be60a8093Cf65Ec742D05e35cc20D7FE535'},
     ]}, 
     {name:'audits', enabled:true, url:'', collapsed: true, pages: [
-      {name:'Certik', enabled:true, url:'https://www.certik.com/projects/decentra'},
-      {name:'Solidity', enabled:true, url:'https://solidity.finance/audits/DecentraLotto/'},
+      {name:'delo contract', enabled:true, url:'https://solidity.finance/audits/DecentraLotto/'},
+      {name:'delo contract', enabled:true, url:'https://solidity.finance/audits/DecentraLotto/'},
       {name:'lotto contract', enabled:true, url: 'https://solidity.finance/audits/DecentraLotto/'},
       {name:'staking contract', enabled:true, url: 'https://solidity.finance/audits/DecentraLotto/'}
     ]},

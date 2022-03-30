@@ -16,6 +16,8 @@ const routes: Routes = [
   { path: '', redirectTo: 'bsc-lottery', pathMatch: 'full' },
   { path: 'bsc-lottery', component: DashComponent},
   { path: 'bsc lottery', redirectTo: 'bsc-lottery', pathMatch: 'full'},
+  { path: 'lottery', redirectTo: 'bsc-lottery', pathMatch: 'full'},
+  { path: 'Lottery', redirectTo: 'bsc-lottery', pathMatch: 'full'},
   { path: 'eth-lottery', component: EthlotteryComponent},
   { path: 'eth lottery', redirectTo: 'eth-lottery', pathMatch: 'full'},
   { path: 'Staking', redirectTo: 'staking', pathMatch: 'full'},

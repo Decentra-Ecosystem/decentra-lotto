@@ -74,13 +74,17 @@ export class BridgeComponent implements OnInit, OnDestroy {
       if (this.priceBSC == "Error Fetching Data" || this.priceBSC == "Error Fetching Data"){
         this.priceDiff = '0';
       }else{
-        var x = parseFloat(this.priceBSC.substring(1));
-        var y = parseFloat(this.priceETH.substring(1));
-  
-        if (this.isBSC){
-          this.priceDiff = (((y-x) / x)*100).toFixed(2) + '%';
-        }else{
-          this.priceDiff = (((x-y) / x)*100).toFixed(2) + '%';        
+        try{
+          var x = parseFloat(this.priceBSC.substring(1));
+          var y = parseFloat(this.priceETH.substring(1));
+    
+          if (this.isBSC){
+            this.priceDiff = (((y-x) / x)*100).toFixed(2) + '%';
+          }else{
+            this.priceDiff = (((x-y) / x)*100).toFixed(2) + '%';        
+          }
+        }catch(err){
+          
         }
       }
       

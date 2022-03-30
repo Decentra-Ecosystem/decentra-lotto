@@ -1,11 +1,6 @@
 const isTest = false;
 const hre = require("hardhat");
-let args;
-if (isTest){
-  args = require("../arguments/DSHIB/arguments_test.json");
-}else{
-  args = require("../arguments/DSHIB/arguments_live.json");
-}
+let args = require("../arguments/delo_eth/arguments_live.json");
 
 //Burn 25% - 20500000000
 //Send 37.5% to bridge - 30750000000
@@ -18,10 +13,10 @@ if (isTest){
 //3. Call Add liquidity script
 
 
-//npx hardhat run scripts/deploy_decentratokens.js --network ethMainNet
-//npx hardhat run scripts/add_liquidity_decentratokens.js --network ethMainNet
+//npx hardhat run scripts/deploy_delo_eth.js --network ethMainNet
+//npx hardhat run scripts/add_liquidity_delo_eth.js --network ethMainNet
 //npx hardhat verify "0xd38d1913799909158e319453ab315CAB1bEfb55c" --constructor-args "arguments/DSHIB/arguments_live.js" --network ethMainNet
-//npx hardhat run scripts/distribute_decentratokens.js --network ethMainNet
+//npx hardhat run scripts/distribute_delo_eth.js --network ethMainNet
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -32,8 +27,8 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const DecentraTokens = await hre.ethers.getContractFactory("DecentraTokens");
-  const decentraTokens = await DecentraTokens.deploy(args[0], args[1], args[2], args[3], args[4]);
+  const DecentraTokens = await hre.ethers.getContractFactory("DecentraLottoETH");
+  const decentraTokens = await DecentraTokens.deploy(args[0], args[1], args[2]);
 
   await decentraTokens.deployed();
 

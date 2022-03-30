@@ -7,8 +7,8 @@ const hre = require("hardhat");
 const args = require("../arguments/bridge/arguments_live_eth.json");
 
 //update arguments_live_eth to delo eth
-//npx hardhat run scripts/deploy_delo_bridge_eth.js --network ethMainNetTest
-//npx hardhat verify "0x92FFc8022dA6778DA2E4D63D4FeFAba40afA6D80" --constructor-args "arguments/bridge/arguments_live_eth.js" --network ethMainNetTest
+//npx hardhat run scripts/deploy_delo_bridge_eth.js --network ethMainNetBridge
+//npx hardhat verify "0x14686EF6104DBBfAFecbC5a49ccfd10EAe63F876" --constructor-args "arguments/bridge/arguments_live_eth.js" --network ethMainNetBridge
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
