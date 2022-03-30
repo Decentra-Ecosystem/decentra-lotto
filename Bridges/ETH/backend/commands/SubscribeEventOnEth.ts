@@ -64,7 +64,7 @@ export default class SubscribeEventOnEth extends BaseCommand {
         const currentBlock = await web3Eth.eth.getBlockNumber()
         const fromBlock = block?.blockNumber ? block?.blockNumber : deployedBlock
         const toBlock = fromBlock + 10 < currentBlock ? fromBlock + 10 : currentBlock
-        
+        console.log('Last Block ETH:', fromBlock)
         reserveContractOnEth.getPastEvents('Burned', {
           fromBlock: fromBlock,
           toBlock: toBlock

@@ -64,7 +64,7 @@ export default class SubscribeEventOnBsc extends BaseCommand {
         const currentBlock = await web3Bsc.eth.getBlockNumber()
         const fromBlock = block?.blockNumber ? block?.blockNumber : deployedBlock
         const toBlock = fromBlock + 10 < currentBlock ? fromBlock + 10 : currentBlock
-        console.log('lastBlock:', fromBlock)
+        console.log('Last Block BSC:', fromBlock)
         reserveContractOnBsc.getPastEvents('Burned', {
           fromBlock: fromBlock,
           toBlock: toBlock
